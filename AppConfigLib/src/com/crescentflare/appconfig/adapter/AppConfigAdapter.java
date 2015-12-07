@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.crescentflare.appconfig.helper.ResourceHelper;
+
 import java.util.ArrayList;
 
 /**
@@ -119,15 +121,6 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
     private int dip(int pixels)
     {
         return (int)(context.getResources().getDisplayMetrics().density * pixels);
-    }
-
-    private int getAccentColor()
-    {
-        TypedValue typedValue = new TypedValue();
-        TypedArray a = context.obtainStyledAttributes(typedValue.data, new int[] { android.R.attr.colorAccent });
-        int color = a.getColor(0, 0);
-        a.recycle();
-        return color;
     }
 
     private Drawable generateSelectionBackgroundDrawable()
@@ -253,7 +246,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
                 createdView.addView(viewHolder.labelView = new TextView(context));
                 viewHolder.labelView.setPadding(dip(12), dip(12), dip(12), dip(12));
                 viewHolder.labelView.setTypeface(Typeface.DEFAULT_BOLD);
-                viewHolder.labelView.setTextColor(getAccentColor());
+                viewHolder.labelView.setTextColor(ResourceHelper.getAccentColor(context));
                 break;
             case Footer:
                 createdView = new LinearLayout(context);

@@ -28,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.crescentflare.appconfig.helper.ResourceHelper;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfig.model.AppConfigStorageItem;
 
@@ -156,15 +157,6 @@ public class EditAppConfigActivity extends AppCompatActivity
         return (int)(getResources().getDisplayMetrics().density * pixels);
     }
 
-    private int getAccentColor()
-    {
-        TypedValue typedValue = new TypedValue();
-        TypedArray a = obtainStyledAttributes(typedValue.data, new int[] { android.R.attr.colorAccent });
-        int color = a.getColor(0, 0);
-        a.recycle();
-        return color;
-    }
-
     private Drawable generateSelectionBackgroundDrawable()
     {
         Drawable drawable = null;
@@ -250,7 +242,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         createdView.addView(labelView = new TextView(this));
         labelView.setPadding(dip(12), dip(12), dip(12), dip(12));
         labelView.setTypeface(Typeface.DEFAULT_BOLD);
-        labelView.setTextColor(getAccentColor());
+        labelView.setTextColor(ResourceHelper.getAccentColor(this));
         labelView.setText(label);
         return createdView;
     }

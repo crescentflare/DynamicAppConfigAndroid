@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.crescentflare.appconfig.adapter.AppConfigChoiceAdapter;
+import com.crescentflare.appconfig.helper.ResourceHelper;
 
 import java.util.ArrayList;
 
@@ -129,15 +130,6 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         return (int)(getResources().getDisplayMetrics().density * pixels);
     }
 
-    private int getAccentColor()
-    {
-        TypedValue typedValue = new TypedValue();
-        TypedArray a = obtainStyledAttributes(typedValue.data, new int[] { android.R.attr.colorAccent });
-        int color = a.getColor(0, 0);
-        a.recycle();
-        return color;
-    }
-
     private View generateHeader()
     {
         LinearLayout createdView = new LinearLayout(this);
@@ -147,7 +139,7 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         createdView.addView(labelView);
         labelView.setPadding(dip(12), dip(12), dip(12), dip(12));
         labelView.setTypeface(Typeface.DEFAULT_BOLD);
-        labelView.setTextColor(getAccentColor());
+        labelView.setTextColor(ResourceHelper.getAccentColor(this));
         labelView.setText(getIntent().getStringExtra(ARG_SELECTION_TITLE));
         return createdView;
     }
