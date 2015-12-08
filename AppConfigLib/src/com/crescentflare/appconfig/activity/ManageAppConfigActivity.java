@@ -81,7 +81,7 @@ public class ManageAppConfigActivity extends AppCompatActivity
 
         //Create layout and configure action bar
         layout = createContentView();
-        setTitle("App configurations");
+        setTitle(AppConfigResourceHelper.getString(this, "app_config_title_list"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         setContentView(layout);
@@ -168,13 +168,13 @@ public class ManageAppConfigActivity extends AppCompatActivity
         spinnerView.addView(iconView);
 
         //Add loading text to it
-        String buildString = buildNr > 0 ? "\n(build: " + buildNr + ")" : "";
+        String buildString = buildNr > 0 ? "\n(" + AppConfigResourceHelper.getString(this, "app_config_field_build").toLowerCase() + ": " + buildNr + ")" : "";
         TextView progressTextView = new TextView(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(0, dip(8), 0, 0);
         progressTextView.setLayoutParams(layoutParams);
         progressTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-        progressTextView.setText("Loading configurations..." + buildString);
+        progressTextView.setText(AppConfigResourceHelper.getString(this, "app_config_loading") + buildString);
         spinnerView.addView(progressTextView);
 
         //Listview click handler
@@ -195,7 +195,7 @@ public class ManageAppConfigActivity extends AppCompatActivity
                     else
                     {
                         ArrayList<String> configs = AppConfigStorage.instance.configList();
-                        AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, "New custom configuration", "Copy from...", configs, RESULT_CODE_CUSTOM_COPY_FROM);
+                        AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_edit_new"), AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_custom_copy"), configs, RESULT_CODE_CUSTOM_COPY_FROM);
                     }
                 }
             }
@@ -217,7 +217,7 @@ public class ManageAppConfigActivity extends AppCompatActivity
                     else
                     {
                         ArrayList<String> configs = AppConfigStorage.instance.configList();
-                        AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, "New custom configuration", "Copy from...", configs, RESULT_CODE_CUSTOM_COPY_FROM);
+                        AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_choose_custom_copy"), AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_custom_copy"), configs, RESULT_CODE_CUSTOM_COPY_FROM);
                     }
                     return true;
                 }
@@ -238,11 +238,11 @@ public class ManageAppConfigActivity extends AppCompatActivity
         ArrayList<String> configs = AppConfigStorage.instance.configList();
         if (configs.size() > 0)
         {
-            entries.add(AppConfigAdapterEntry.entryForHeader("Predefined configurations"));
+            entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list")));
             if (AppConfigStorage.instance.getSelectedConfig() != null)
             {
                 String configName = AppConfigStorage.instance.getSelectedConfigName();
-                entries.add(AppConfigAdapterEntry.entryForConfiguration(configName, "Last selected: " + configName.substring(0, 1).toLowerCase() + configName.substring(1), AppConfigStorage.instance.isConfigOverride(configName)));
+                entries.add(AppConfigAdapterEntry.entryForConfiguration(configName, AppConfigResourceHelper.getString(this, "app_config_action_last_selection_prefix") + " " + configName.substring(0, 1).toLowerCase() + configName.substring(1), AppConfigStorage.instance.isConfigOverride(configName)));
             }
             for (String configName : configs)
             {
@@ -252,7 +252,7 @@ public class ManageAppConfigActivity extends AppCompatActivity
 
         //Add area for custom configurations, and adding them
         ArrayList<String> customConfigs = AppConfigStorage.instance.customConfigList();
-        entries.add(AppConfigAdapterEntry.entryForHeader("Custom configurations"));
+        entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_custom")));
         for (String configName : customConfigs)
         {
             if (AppConfigStorage.instance.isCustomConfig(configName))
@@ -260,12 +260,12 @@ public class ManageAppConfigActivity extends AppCompatActivity
                 entries.add(AppConfigAdapterEntry.entryForConfiguration(configName, true));
             }
         }
-        entries.add(AppConfigAdapterEntry.entryForConfiguration("", "Add new...", false));
+        entries.add(AppConfigAdapterEntry.entryForConfiguration("", AppConfigResourceHelper.getString(this, "app_config_action_add"), false));
 
         //Add build information
-        entries.add(AppConfigAdapterEntry.entryForHeader("Build information"));
-        entries.add(AppConfigAdapterEntry.entryForBuildInfo("Build", "" + buildNr));
-        entries.add(AppConfigAdapterEntry.entryForBuildInfo("API level", "" + Build.VERSION.SDK_INT));
+        entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_build_info")));
+        entries.add(AppConfigAdapterEntry.entryForBuildInfo(AppConfigResourceHelper.getString(this, "app_config_field_build"), "" + buildNr));
+        entries.add(AppConfigAdapterEntry.entryForBuildInfo(AppConfigResourceHelper.getString(this, "app_config_field_api_level"), "" + Build.VERSION.SDK_INT));
         entries.add(AppConfigAdapterEntry.entryForFooter());
         adapter.setEntries(entries);
     }

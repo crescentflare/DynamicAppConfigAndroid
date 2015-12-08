@@ -71,7 +71,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         //Create layout and configure action bar
         super.onCreate(savedInstanceState);
         layout = createContentView();
-        setTitle(getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? "New custom configuration" :"Edit configuration");
+        setTitle(AppConfigResourceHelper.getString(this, getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? "app_config_title_edit_new" : "app_config_title_edit"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         setContentView(layout);
@@ -384,7 +384,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         layoutParams.setMargins(0, dip(12), 0, 0);
         progressTextView.setLayoutParams(layoutParams);
         progressTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-        progressTextView.setText("Loading configurations...");
+        progressTextView.setText(AppConfigResourceHelper.getString(this, "app_config_loading"));
         spinnerView.addView(progressTextView);
         return layout;
     }
@@ -401,7 +401,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         LinearLayout fieldEditLayout = new LinearLayout(this);
         fieldEditLayout.setOrientation(LinearLayout.VERTICAL);
         fieldEditLayout.setBackgroundColor(Color.WHITE);
-        fieldEditLayout.addView(generateHeaderView(getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? "Adjust custom settings" : getIntent().getStringExtra(ARG_CONFIG_NAME)));
+        fieldEditLayout.addView(generateHeaderView(getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? AppConfigResourceHelper.getString(this, "app_config_header_edit_new") : getIntent().getStringExtra(ARG_CONFIG_NAME)));
         editingView.addView(fieldEditLayout);
         editingView.addView(generateSectionDivider(true));
 
@@ -409,7 +409,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         LinearLayout buttonLayout = new LinearLayout(this);
         buttonLayout.setOrientation(LinearLayout.VERTICAL);
         buttonLayout.setBackgroundColor(Color.WHITE);
-        buttonLayout.addView(generateHeaderView("Actions"));
+        buttonLayout.addView(generateHeaderView(AppConfigResourceHelper.getString(this, "app_config_header_edit_actions")));
         editingView.addView(buttonLayout);
         editingView.addView(generateSectionDivider(false));
 
@@ -426,7 +426,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             String name = getIntent().getStringExtra(ARG_CONFIG_NAME);
             if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
             {
-                name += " (copy)";
+                name += " " + AppConfigResourceHelper.getString(this, "app_config_modifier_copy");
             }
             LinearLayout layoutView = generateEditTextView("name", name, values.size() > 0);
             fieldEditLayout.addView(layoutView);
@@ -468,7 +468,13 @@ public class EditAppConfigActivity extends AppCompatActivity
                                 }
                                 if (enumValues.size() > 0)
                                 {
-                                    AppConfigStringChoiceActivity.startWithResult(EditAppConfigActivity.this, "Select " + value, "Possible values:", enumValues, RESULT_CODE_SELECT_ENUM + index);
+                                    AppConfigStringChoiceActivity.startWithResult(
+                                            EditAppConfigActivity.this,
+                                            AppConfigResourceHelper.getString(EditAppConfigActivity.this, "app_config_title_choose_enum_prefix") + " " + value,
+                                            AppConfigResourceHelper.getString(EditAppConfigActivity.this, "app_config_header_choose_enum"),
+                                            enumValues,
+                                            RESULT_CODE_SELECT_ENUM + index
+                                    );
                                 }
                             }
                         });
@@ -510,7 +516,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         //Add buttons
         if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
         {
-            LinearLayout createButton = generateButtonView("Confirm creation", true);
+            LinearLayout createButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_ok_edit_new"), true);
             buttonLayout.addView(createButton);
             createButton.setOnClickListener(new View.OnClickListener()
             {
@@ -561,7 +567,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         else
         {
             //Updating configuration handler
-            LinearLayout saveButton = generateButtonView("Apply changes", true);
+            LinearLayout saveButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_ok_edit"), true);
             buttonLayout.addView(saveButton);
             saveButton.setOnClickListener(new View.OnClickListener()
             {
@@ -614,7 +620,8 @@ public class EditAppConfigActivity extends AppCompatActivity
             });
 
             //Restore to defaults or delete handler
-            LinearLayout deleteButton = generateButtonView(AppConfigStorage.instance.isCustomConfig(getIntent().getStringExtra(ARG_CONFIG_NAME)) ? "Delete" : "Restore to defaults", true);
+            String buttonText = AppConfigResourceHelper.getString(this, AppConfigStorage.instance.isCustomConfig(getIntent().getStringExtra(ARG_CONFIG_NAME)) ? "app_config_action_delete" : "app_config_action_restore");
+            LinearLayout deleteButton = generateButtonView(buttonText, true);
             buttonLayout.addView(deleteButton);
             deleteButton.setOnClickListener(new View.OnClickListener()
             {
@@ -636,7 +643,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                 }
             });
         }
-        LinearLayout cancelButton = generateButtonView("Cancel", false);
+        LinearLayout cancelButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_cancel"), false);
         buttonLayout.addView(cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener()
         {

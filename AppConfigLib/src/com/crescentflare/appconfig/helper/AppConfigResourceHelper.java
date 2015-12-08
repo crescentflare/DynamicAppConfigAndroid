@@ -46,4 +46,14 @@ public class AppConfigResourceHelper
         }
         return Color.TRANSPARENT;
     }
+
+    static public String getString(Context context, String name)
+    {
+        int identifier = context.getResources().getIdentifier(name, "string", context.getPackageName());
+        if (identifier > 0)
+        {
+            return context.getResources().getString(identifier);
+        }
+        return "";
+    }
 }
