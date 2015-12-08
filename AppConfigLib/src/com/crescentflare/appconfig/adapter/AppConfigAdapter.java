@@ -2,7 +2,6 @@ package com.crescentflare.appconfig.adapter;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -11,7 +10,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import com.crescentflare.appconfig.helper.ResourceHelper;
+import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
 
 import java.util.ArrayList;
 
@@ -30,13 +28,6 @@ import java.util.ArrayList;
  */
 public class AppConfigAdapter extends BaseAdapter implements ListAdapter
 {
-    /**
-     * Constants
-     */
-    private static final int SECTION_DIVIDER_COLOR = 0xFFB0B0B0;
-    private static final int SECTION_DIVIDER_GRADIENT_START = 0xFFC0C0C0;
-    private static final int SECTION_DIVIDER_GRADIENT_END = 0xFFE8E8E8;
-
     /**
      * Members
      */
@@ -138,8 +129,8 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
             };
             int[] colors = new int[]
             {
-                    SECTION_DIVIDER_GRADIENT_END,
-                    SECTION_DIVIDER_GRADIENT_END,
+                    AppConfigResourceHelper.getColor(context, "app_config_background"),
+                    AppConfigResourceHelper.getColor(context, "app_config_background"),
                     Color.WHITE,
                     Color.WHITE
             };
@@ -151,8 +142,8 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
         else
         {
             StateListDrawable stateDrawable = new StateListDrawable();
-            stateDrawable.addState(new int[]{  android.R.attr.state_focused }, new ColorDrawable(SECTION_DIVIDER_GRADIENT_END));
-            stateDrawable.addState(new int[]{  android.R.attr.state_pressed }, new ColorDrawable(SECTION_DIVIDER_GRADIENT_END));
+            stateDrawable.addState(new int[]{  android.R.attr.state_focused }, new ColorDrawable(AppConfigResourceHelper.getColor(context, "app_config_background")));
+            stateDrawable.addState(new int[]{  android.R.attr.state_pressed }, new ColorDrawable(AppConfigResourceHelper.getColor(context, "app_config_background")));
             stateDrawable.addState(new int[]{  android.R.attr.state_enabled }, new ColorDrawable(Color.WHITE));
             stateDrawable.addState(new int[]{ -android.R.attr.state_enabled }, new ColorDrawable(Color.WHITE));
             drawable = stateDrawable;
@@ -169,12 +160,18 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
         //Top line divider (edge)
         View topLineView = new View(context);
         topLineView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        topLineView.setBackgroundColor(SECTION_DIVIDER_COLOR);
+        topLineView.setBackgroundColor(AppConfigResourceHelper.getColor(context, "app_config_section_divider_line"));
         dividerLayout.addView(topLineView);
 
         //Middle divider (gradient on background)
         View gradientView = new View(context);
-        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{ SECTION_DIVIDER_GRADIENT_START, SECTION_DIVIDER_GRADIENT_END, SECTION_DIVIDER_GRADIENT_END });
+        int colors[] = new int[]
+        {
+                AppConfigResourceHelper.getColor(context, "app_config_section_gradient_start"),
+                AppConfigResourceHelper.getColor(context, "app_config_section_gradient_end"),
+                AppConfigResourceHelper.getColor(context, "app_config_background")
+        };
+        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
         gradientView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dip(8)));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
         {
@@ -191,7 +188,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
         {
             View bottomLineView = new View(context);
             bottomLineView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-            bottomLineView.setBackgroundColor(SECTION_DIVIDER_COLOR);
+            bottomLineView.setBackgroundColor(AppConfigResourceHelper.getColor(context, "app_config_section_divider_line"));
             dividerLayout.addView(bottomLineView);
         }
 
@@ -223,7 +220,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
                 {
                     viewHolder.labelView.setBackground(generateSelectionBackgroundDrawable());
                 }
-                viewHolder.dividerView.setBackgroundColor(SECTION_DIVIDER_GRADIENT_START);
+                viewHolder.dividerView.setBackgroundColor(AppConfigResourceHelper.getColor(context, "app_config_list_divider_line"));
                 viewHolder.dividerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
                 ((LinearLayout.LayoutParams)viewHolder.dividerView.getLayoutParams()).setMargins(dip(12), 0, 0, 0);
                 break;
@@ -234,7 +231,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
                 createdView.addView(viewHolder.labelView = new TextView(context));
                 createdView.addView(viewHolder.dividerView = new View(context));
                 viewHolder.labelView.setPadding(dip(12), dip(12), dip(12), dip(12));
-                viewHolder.dividerView.setBackgroundColor(SECTION_DIVIDER_GRADIENT_START);
+                viewHolder.dividerView.setBackgroundColor(AppConfigResourceHelper.getColor(context, "app_config_list_divider_line"));
                 viewHolder.dividerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
                 ((LinearLayout.LayoutParams)viewHolder.dividerView.getLayoutParams()).setMargins(dip(12), 0, 0, 0);
                 break;
@@ -246,7 +243,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
                 createdView.addView(viewHolder.labelView = new TextView(context));
                 viewHolder.labelView.setPadding(dip(12), dip(12), dip(12), dip(12));
                 viewHolder.labelView.setTypeface(Typeface.DEFAULT_BOLD);
-                viewHolder.labelView.setTextColor(ResourceHelper.getAccentColor(context));
+                viewHolder.labelView.setTextColor(AppConfigResourceHelper.getAccentColor(context));
                 break;
             case Footer:
                 createdView = new LinearLayout(context);

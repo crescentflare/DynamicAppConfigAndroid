@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.crescentflare.appconfig.adapter.AppConfigAdapter;
 import com.crescentflare.appconfig.adapter.AppConfigAdapterEntry;
+import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 
 import java.util.ArrayList;
@@ -36,7 +37,6 @@ public class ManageAppConfigActivity extends AppCompatActivity
     /**
      * Constants
      */
-    private static final int BACKGROUND_COLOR = 0xFFE8E8E8;
     private static final int RESULT_CODE_CUSTOM_COPY_FROM = 1000;
     private static final int RESULT_CODE_EDIT_CONFIG = 1001;
 
@@ -150,7 +150,7 @@ public class ManageAppConfigActivity extends AppCompatActivity
         //Add listview for configurations
         listView = new ListViewCompat(this);
         adapter = new AppConfigAdapter(this);
-        listView.setBackgroundColor(BACKGROUND_COLOR);
+        listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "api_config_background"));
         listView.setAdapter(adapter);
         listView.setVisibility(View.GONE);
         layout.addView(listView);

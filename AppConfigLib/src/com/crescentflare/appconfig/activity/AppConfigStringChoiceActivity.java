@@ -3,7 +3,6 @@ package com.crescentflare.appconfig.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -11,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.internal.widget.ListViewCompat;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.crescentflare.appconfig.adapter.AppConfigChoiceAdapter;
-import com.crescentflare.appconfig.helper.ResourceHelper;
+import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
 
 import java.util.ArrayList;
 
@@ -39,9 +37,6 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
     private static final String ARG_TITLE = "ARG_TITLE";
     private static final String ARG_SELECTION_TITLE = "ARG_SELECTION_TITLE";
     private static final String ARG_CHOICES = "ARG_CHOICES";
-    private static final int SECTION_DIVIDER_COLOR = 0xFFB0B0B0;
-    private static final int SECTION_DIVIDER_GRADIENT_START = 0xFFC0C0C0;
-    private static final int SECTION_DIVIDER_GRADIENT_END = 0xFFE8E8E8;
 
     /**
      * Members
@@ -68,7 +63,7 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         //Add listview as content view
         super.onCreate(savedInstanceState);
         listView = new ListViewCompat(this);
-        listView.setBackgroundColor(SECTION_DIVIDER_GRADIENT_END);
+        listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
         setTitle(getIntent().getStringExtra(ARG_TITLE));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -139,7 +134,7 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         createdView.addView(labelView);
         labelView.setPadding(dip(12), dip(12), dip(12), dip(12));
         labelView.setTypeface(Typeface.DEFAULT_BOLD);
-        labelView.setTextColor(ResourceHelper.getAccentColor(this));
+        labelView.setTextColor(AppConfigResourceHelper.getAccentColor(this));
         labelView.setText(getIntent().getStringExtra(ARG_SELECTION_TITLE));
         return createdView;
     }
@@ -153,12 +148,18 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         //Top line divider (edge)
         View topLineView = new View(this);
         topLineView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
-        topLineView.setBackgroundColor(SECTION_DIVIDER_COLOR);
+        topLineView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_section_divider_line"));
         dividerLayout.addView(topLineView);
 
         //Middle divider (gradient on background)
         View gradientView = new View(this);
-        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, new int[]{ SECTION_DIVIDER_GRADIENT_START, SECTION_DIVIDER_GRADIENT_END, SECTION_DIVIDER_GRADIENT_END });
+        int colors[] = new int[]
+        {
+                AppConfigResourceHelper.getColor(this, "app_config_section_gradient_start"),
+                AppConfigResourceHelper.getColor(this, "app_config_section_gradient_end"),
+                AppConfigResourceHelper.getColor(this, "app_config_background")
+        };
+        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
         gradientView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dip(8)));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
         {

@@ -14,7 +14,7 @@ import com.crescentflare.appconfig.model.AppConfigStorageItem;
  * Library helper: resource access
  * A helper library to access app resources for skinning the user interface
  */
-public class ResourceHelper
+public class AppConfigResourceHelper
 {
     static public int getAccentColor(Context context)
     {
@@ -35,5 +35,15 @@ public class ResourceHelper
             }
         }
         return Color.BLACK;
+    }
+
+    static public int getColor(Context context, String name)
+    {
+        int identifier = context.getResources().getIdentifier(name, "color", context.getPackageName());
+        if (identifier > 0)
+        {
+            return context.getResources().getColor(identifier);
+        }
+        return Color.TRANSPARENT;
     }
 }
