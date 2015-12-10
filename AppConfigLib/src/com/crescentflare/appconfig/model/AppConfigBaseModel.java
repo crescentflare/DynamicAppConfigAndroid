@@ -86,7 +86,11 @@ public class AppConfigBaseModel
             {
                 try
                 {
-                    result = field.get(this);
+                    if (field.getName().equals(value))
+                    {
+                        result = field.get(this);
+                        break;
+                    }
                 }
                 catch (IllegalAccessException ignored)
                 {
