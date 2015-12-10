@@ -17,7 +17,7 @@ public class ExampleApplication extends Application
     public void onCreate()
     {
         super.onCreate();
-        AppConfigStorage.instance.init(this, new ExampleAppConfigManager());
+        AppConfigStorage.instance.init(this, ExampleAppConfigManager.instance);
         AppConfigStorage.instance.setLoadingSourceAssetFile("appConfig.json");
     }
 }

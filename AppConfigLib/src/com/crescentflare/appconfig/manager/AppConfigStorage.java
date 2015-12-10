@@ -64,7 +64,7 @@ public class AppConfigStorage
         loadSelectedItemFromPreferences(context);
         if (configManager != null)
         {
-            configManager.applyCurrentConfig(getSelectedConfigNotNull());
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
         }
     }
 
@@ -185,7 +185,7 @@ public class AppConfigStorage
             selectedItem = "";
             if (configManager != null)
             {
-                configManager.applyCurrentConfig(getSelectedConfigNotNull());
+                configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
             }
         }
         return removed;
@@ -208,7 +208,7 @@ public class AppConfigStorage
         storeSelectedItemInPreferences(context);
         if (configManager != null)
         {
-            configManager.applyCurrentConfig(getSelectedConfigNotNull());
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
         }
     }
 

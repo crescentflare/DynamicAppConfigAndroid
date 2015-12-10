@@ -103,7 +103,7 @@ public class AppConfigBaseModel
     /**
      * Reflection helper: overwrite fields using custom settings
      */
-    public void applyCustomSettings(AppConfigStorageItem item)
+    public void applyCustomSettings(String configName, AppConfigStorageItem item)
     {
         Method[] methods = getClass().getDeclaredMethods();
         boolean foundSetter = false;
@@ -115,7 +115,24 @@ public class AppConfigBaseModel
                 if (method.getName().startsWith("set") && method.getGenericParameterTypes().length == 1)
                 {
                     String value = method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4);
-                    if (item.get(value) != null)
+                    if (value.equals("name"))
+                    {
+                        try
+                        {
+                            Type parameterType = method.getGenericParameterTypes()[0];
+                            if (parameterType.equals(String.class) && configName.length() > 0)
+                            {
+                                method.invoke(this, configName);
+                            }
+                        }
+                        catch (InvocationTargetException ignored)
+                        {
+                        }
+                        catch (IllegalAccessException ignored)
+                        {
+                        }
+                    }
+                    else if (item.get(value) != null)
                     {
                         try
                         {
@@ -167,43 +184,60 @@ public class AppConfigBaseModel
             for (Field field : fields)
             {
                 field.setAccessible(true);
-                if (field.isAccessible() && item.get(field.getName()) != null)
+                if (field.isAccessible())
                 {
-                    try
+                    if (field.getName().equals("name"))
                     {
-                        Type parameterType = field.getGenericType();
-                        if (parameterType.equals(Boolean.class))
+                        try
                         {
-                            field.setBoolean(this, item.getBoolean(field.getName()));
-                        }
-                        else if (parameterType.equals(Integer.class))
-                        {
-                            field.setInt(this, item.getInt(field.getName()));
-                        }
-                        else if (parameterType.equals(Long.class))
-                        {
-                            field.setLong(this, item.getLong(field.getName()));
-                        }
-                        else if (parameterType.equals(String.class))
-                        {
-                            field.set(this, item.getStringNotNull(field.getName()));
-                        }
-                        else if (parameterType instanceof Class && ((Class)parameterType).isEnum())
-                        {
-                            Object enumTypes[] = ((Class)parameterType).getEnumConstants();
-                            String stringValue = item.getStringNotNull(field.getName());
-                            for (Object enumType : enumTypes)
+                            Type parameterType = field.getGenericType();
+                            if (parameterType.equals(String.class) && configName.length() > 0)
                             {
-                                if (enumType.toString().equals(stringValue))
+                                field.set(this, configName);
+                            }
+                        }
+                        catch (IllegalAccessException ignored)
+                        {
+                        }
+                    }
+                    if (item.get(field.getName()) != null)
+                    {
+                        try
+                        {
+                            Type parameterType = field.getGenericType();
+                            if (parameterType.equals(Boolean.class))
+                            {
+                                field.setBoolean(this, item.getBoolean(field.getName()));
+                            }
+                            else if (parameterType.equals(Integer.class))
+                            {
+                                field.setInt(this, item.getInt(field.getName()));
+                            }
+                            else if (parameterType.equals(Long.class))
+                            {
+                                field.setLong(this, item.getLong(field.getName()));
+                            }
+                            else if (parameterType.equals(String.class))
+                            {
+                                field.set(this, item.getStringNotNull(field.getName()));
+                            }
+                            else if (parameterType instanceof Class && ((Class) parameterType).isEnum())
+                            {
+                                Object enumTypes[] = ((Class) parameterType).getEnumConstants();
+                                String stringValue = item.getStringNotNull(field.getName());
+                                for (Object enumType : enumTypes)
                                 {
-                                    field.set(this, enumType);
-                                    break;
+                                    if (enumType.toString().equals(stringValue))
+                                    {
+                                        field.set(this, enumType);
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
-                    catch (IllegalAccessException ignored)
-                    {
+                        catch (IllegalAccessException ignored)
+                        {
+                        }
                     }
                 }
             }
