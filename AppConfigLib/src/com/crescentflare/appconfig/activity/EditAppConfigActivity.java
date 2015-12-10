@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
+import com.crescentflare.appconfig.model.AppConfigBaseModel;
 import com.crescentflare.appconfig.model.AppConfigStorageItem;
 
 import java.util.ArrayList;
@@ -434,7 +435,9 @@ public class EditAppConfigActivity extends AppCompatActivity
         }
         if (modelValues != null)
         {
+            AppConfigBaseModel baseModel = AppConfigStorage.instance.getConfigManager().getBaseModelInstance();
             Object saveResult = null;
+            baseModel.applyCustomSettings(getIntent().getStringExtra(ARG_CONFIG_NAME), config);
             for (int i = 0; i < modelValues.size(); i++)
             {
                 final String value = modelValues.get(i);
@@ -443,7 +446,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                     continue;
                 }
                 LinearLayout layoutView = null;
-                final Object result = AppConfigStorage.instance.getConfigManager().getBaseModelInstance().getDefaultValue(value);
+                final Object result = baseModel.getDefaultValue(value);
                 final Object previousResult = saveResult;
                 if (result != null)
                 {
