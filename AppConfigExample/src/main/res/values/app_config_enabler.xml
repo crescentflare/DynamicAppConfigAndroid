@@ -1,0 +1,3 @@
+<resources>
+    <bool name="app_config_selection_enabled">true</bool>
+</resources>

@@ -44,6 +44,7 @@ public class AppConfigStorage
     private String loadFromAssetFile = null;
     private String selectedItem = "";
     private boolean customConfigLoaded = false;
+    private boolean initialized = false;
 
 
     /**
@@ -66,6 +67,12 @@ public class AppConfigStorage
         {
             configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
         }
+        initialized = true;
+    }
+
+    public boolean isInitialized()
+    {
+        return initialized;
     }
 
     /**

@@ -63,6 +63,11 @@ public class ManageAppConfigActivity extends AppCompatActivity
     {
         //Obtain build number
         super.onCreate(savedInstanceState);
+        if (!AppConfigStorage.instance.isInitialized())
+        {
+            finish();
+            return;
+        }
         try
         {
             PackageManager manager = getPackageManager();

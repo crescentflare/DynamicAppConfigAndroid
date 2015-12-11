@@ -13,10 +13,20 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("./example.jks")
+            storePassword "example"
+            keyAlias "Example"
+            keyPassword "example"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -30,4 +40,26 @@ dependencies {
     compile (project(':AppConfigLib')) {
         transitive = false
     }
+}
+
+task cleanAppConfig {
+    doLast {
+        //The property below could be enforced by a build server for release (acceptance test) builds with configuration
+        //Important: make sure to design it as "opt-in" to prevent selection builds from being deployed to Google Play
+        if (!project.ext.has("keepAppConfig") || project.ext.get("keepAppConfig").toLowerCase() == "false") {
+            File jsonDest = file('src/main/assets/appConfig.json')
+            def jsonContents = "{}";
+            jsonDest.createNewFile()
+            jsonDest.write(jsonContents)
+
+            File resDest = file('src/main/res/values/app_config_enabler.xml')
+            def resContents = "<resources><bool name=\"app_config_selection_enabled\">false</bool></resources>";
+            resDest.createNewFile()
+            resDest.write(resContents)
+        }
+    }
+}
+
+afterEvaluate {
+    assembleRelease.dependsOn { task -> [cleanAppConfig] }
 }

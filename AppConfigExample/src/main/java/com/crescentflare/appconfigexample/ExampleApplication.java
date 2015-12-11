@@ -17,7 +17,10 @@ public class ExampleApplication extends Application
     public void onCreate()
     {
         super.onCreate();
-        AppConfigStorage.instance.init(this, ExampleAppConfigManager.instance);
-        AppConfigStorage.instance.setLoadingSourceAssetFile("appConfig.json");
+        if (getResources().getBoolean(R.bool.app_config_selection_enabled))
+        {
+            AppConfigStorage.instance.init(this, ExampleAppConfigManager.instance);
+            AppConfigStorage.instance.setLoadingSourceAssetFile("appConfig.json");
+        }
     }
 }
