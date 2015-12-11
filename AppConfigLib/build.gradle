@@ -10,15 +10,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
-        sourceSets {
-            main {
-                java.srcDirs = ['src']
-                res.srcDirs = ['res']
-                assets.srcDirs = ['assets']
-                manifest.srcFile 'AndroidManifest.xml'
-            }
-        }
     }
 
     buildTypes {
