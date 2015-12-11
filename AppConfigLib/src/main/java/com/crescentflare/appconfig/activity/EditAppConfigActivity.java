@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.SwitchCompat;
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -294,7 +296,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         return createdView;
     }
 
-    private LinearLayout generateEditTextView(String label, String setting, boolean addDivider)
+    private LinearLayout generateEditTextView(String label, String setting, boolean limitNumbers, boolean addDivider)
     {
         LinearLayout createdView = new LinearLayout(this);
         TextView labelView;
@@ -311,6 +313,11 @@ public class EditAppConfigActivity extends AppCompatActivity
         editView.setLayoutParams(editViewLayoutParams);
         editView.setText(setting);
         editView.setTag(label);
+        if (limitNumbers)
+        {
+            editView.setInputType(InputType.TYPE_CLASS_NUMBER);
+            editView.setKeyListener(DigitsKeyListener.getInstance(true, false));
+        }
         if (addDivider && false) //Don't make dividers for this type of view
         {
             createdView.addView(dividerView = new View(this));
@@ -429,7 +436,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             {
                 name += " " + AppConfigResourceHelper.getString(this, "app_config_modifier_copy");
             }
-            LinearLayout layoutView = generateEditTextView("name", name, values.size() > 0);
+            LinearLayout layoutView = generateEditTextView("name", name, false, values.size() > 0);
             fieldEditLayout.addView(layoutView);
             fieldViews.add(layoutView.findViewWithTag("name"));
         }
@@ -452,7 +459,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                 {
                     if (result instanceof Boolean)
                     {
-                        layoutView = generateSwitchView(value, (Boolean)result, i < modelValues.size() - 1, previousResult != null && previousResult instanceof String);
+                        layoutView = generateSwitchView(value, (Boolean) result, i < modelValues.size() - 1, previousResult != null && previousResult instanceof String);
                     }
                     else if (result.getClass().isEnum())
                     {
@@ -482,9 +489,13 @@ public class EditAppConfigActivity extends AppCompatActivity
                             }
                         });
                     }
+                    else if (result instanceof Integer || result instanceof Long)
+                    {
+                        layoutView = generateEditTextView(value, "" + result, true, i < modelValues.size() - 1);
+                    }
                     else if (result instanceof String)
                     {
-                        layoutView = generateEditTextView(value, (String)result, i < modelValues.size() - 1);
+                        layoutView = generateEditTextView(value, (String)result, false, i < modelValues.size() - 1);
                     }
                     if (layoutView != null)
                     {
@@ -502,13 +513,14 @@ public class EditAppConfigActivity extends AppCompatActivity
             {
                 String value = values.get(i);
                 LinearLayout layoutView = null;
-                if (config.get(value) instanceof Boolean)
+                Object rawValue = config.get(value);
+                if (rawValue instanceof Boolean)
                 {
                     layoutView = generateSwitchView(value, config.getBoolean(value), i < values.size() - 1, previousEditText);
                 }
                 else
                 {
-                    layoutView = generateEditTextView(value, config.getStringNotNull(value), i < values.size() - 1);
+                    layoutView = generateEditTextView(value, config.getStringNotNull(value), rawValue instanceof Integer || rawValue instanceof Long, i < values.size() - 1);
                     previousEditText = true;
                 }
                 fieldEditLayout.addView(layoutView);
@@ -545,7 +557,22 @@ public class EditAppConfigActivity extends AppCompatActivity
                         {
                             if (view instanceof AppCompatEditText)
                             {
-                                item.putString((String)view.getTag(), ((AppCompatEditText)view).getText().toString());
+                                if (((AppCompatEditText)view).getInputType() == InputType.TYPE_CLASS_NUMBER)
+                                {
+                                    long number = 0;
+                                    try
+                                    {
+                                        number = Long.parseLong(((AppCompatEditText) view).getText().toString());
+                                    }
+                                    catch (Exception ignored)
+                                    {
+                                    }
+                                    item.putLong((String) view.getTag(), number);
+                                }
+                                else
+                                {
+                                    item.putString((String)view.getTag(), ((AppCompatEditText)view).getText().toString());
+                                }
                             }
                             else if (view instanceof SwitchCompat)
                             {
@@ -596,7 +623,22 @@ public class EditAppConfigActivity extends AppCompatActivity
                         {
                             if (view instanceof AppCompatEditText)
                             {
-                                item.putString((String)view.getTag(), ((AppCompatEditText)view).getText().toString());
+                                if (((AppCompatEditText)view).getInputType() == InputType.TYPE_CLASS_NUMBER)
+                                {
+                                    long number = 0;
+                                    try
+                                    {
+                                        number = Long.parseLong(((AppCompatEditText) view).getText().toString());
+                                    }
+                                    catch (Exception ignored)
+                                    {
+                                    }
+                                    item.putLong((String) view.getTag(), number);
+                                }
+                                else
+                                {
+                                    item.putString((String) view.getTag(), ((AppCompatEditText) view).getText().toString());
+                                }
                             }
                             else if (view instanceof SwitchCompat)
                             {

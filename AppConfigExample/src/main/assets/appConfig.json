@@ -2,7 +2,8 @@
     {
         "name": "Mock server",
         "apiUrl": "https://mock.example.com/",
-        "runType": "runQuickly"
+        "runType": "runQuickly",
+        "networkTimeoutSec": 4
     },
     {
         "name": "Test server",

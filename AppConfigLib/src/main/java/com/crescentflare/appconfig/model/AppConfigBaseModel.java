@@ -141,11 +141,11 @@ public class AppConfigBaseModel
                             {
                                 method.invoke(this, item.getBoolean(value));
                             }
-                            else if (parameterType.equals(Integer.class))
+                            else if (parameterType.equals(Integer.class) || parameterType.equals(int.class))
                             {
                                 method.invoke(this, item.getInt(value));
                             }
-                            else if (parameterType.equals(Long.class))
+                            else if (parameterType.equals(Long.class) || parameterType.equals(long.class))
                             {
                                 method.invoke(this, item.getLong(value));
                             }
@@ -209,11 +209,11 @@ public class AppConfigBaseModel
                             {
                                 field.setBoolean(this, item.getBoolean(field.getName()));
                             }
-                            else if (parameterType.equals(Integer.class))
+                            else if (parameterType.equals(Integer.class) || parameterType.equals(int.class))
                             {
                                 field.setInt(this, item.getInt(field.getName()));
                             }
-                            else if (parameterType.equals(Long.class))
+                            else if (parameterType.equals(Long.class) || parameterType.equals(long.class))
                             {
                                 field.setLong(this, item.getLong(field.getName()));
                             }
