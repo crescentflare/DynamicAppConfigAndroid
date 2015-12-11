@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Example App Config</string>
+    <string name="message">Example application for the app configuration library</string>
+</resources>

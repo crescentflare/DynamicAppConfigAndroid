@@ -1,0 +1,17 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#f0f0f0"
+    android:padding="@dimen/activity_margin"
+    tools:context="com.crescentflare.appconfigexample.MainActivity">
+    <TextView
+        android:id="@+id/activity_main_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dip"
+        android:paddingBottom="12dip"
+        android:text="@string/message"/>
+</LinearLayout>
