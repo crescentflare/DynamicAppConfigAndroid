@@ -104,9 +104,22 @@ To finish integration, the library needs to be initialized. In your class derive
     
 This will tell the library to use the custom manager class and specifies the file containing the configuration overrides. At this moment no file is loaded yet (and performance is not impacted). It will be loaded when the configuration selection menu is opened.
 
+
+**Config selection**
+
+In your main activity you can start the app configuration menu to allow yourself or testers to choose a configuration (or make adjustments). Start it with the following code:
+
+    ManageAppConfigActivity.startWithResult(this, 1000);
+     
+The last parameter (1000) is the result code, which can be checked in onActivityResult.
+
+### Storage
+
+When existing configurations are edited or custom ones are being added, the changes are saved in the user preferences of the device. Also the last selected configuration is stored inside the preferences. This makes sure that it remembers the correct settings, even if the app is closed silently when the device is running out of memory.
+
 ### Security
 
-Because the library can give a lot of control on the product (by making its settings configurable), it's important to prevent any code (either the selection menu itself, or the JSON configuration data like test servers and passswords) from being deployed to Google Play. Take a look at the example project for more information. It uses a simple gradle script to make safe release builds.
+Because the library can give a lot of control on the product (by making its settings configurable), it's important to prevent any code (either the selection menu itself, or the JSON configuration data like test servers and passwords) from being deployed to Google Play. Take a look at the example project for more information. It uses a simple gradle script to make safe release builds.
 
 ### Status
 The library should be useful in its basic form, however, there may be bugs. Improvements in features, stability and code structure are welcome.
