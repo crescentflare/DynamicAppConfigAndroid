@@ -459,12 +459,12 @@ public class EditAppConfigActivity extends AppCompatActivity
                 {
                     if (result instanceof Boolean)
                     {
-                        layoutView = generateSwitchView(value, (Boolean) result, i < modelValues.size() - 1, previousResult != null && previousResult instanceof String);
+                        layoutView = generateSwitchView(value, (Boolean) result, i < modelValues.size() - 1, previousResult != null && (previousResult instanceof String || previousResult instanceof Integer || previousResult instanceof Long));
                     }
                     else if (result.getClass().isEnum())
                     {
                         final int index = i;
-                        layoutView = generateButtonView(value, value + ": " + result.toString(), i < modelValues.size() - 1, previousResult != null && previousResult instanceof String);
+                        layoutView = generateButtonView(value, value + ": " + result.toString(), i < modelValues.size() - 1, previousResult != null && (previousResult instanceof String || previousResult instanceof Integer || previousResult instanceof Long));
                         layoutView.setOnClickListener(new View.OnClickListener()
                         {
                             @Override
