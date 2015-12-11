@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 
 ext {
     bintrayRepo = 'maven'
-    bintrayName = 'appconfig'
+    bintrayName = 'AppConfigLib'
 
     publishedGroupId = 'com.crescentflare.appconfig'
     libraryName = 'DynamicAppConfigAndroid'
-    artifact = 'appconfig'
+    artifact = 'AppConfigLib'
 
     libraryDescription = 'A useful library to support multiple build configurations in one application build'
 
