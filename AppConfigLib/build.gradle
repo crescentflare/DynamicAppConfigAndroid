@@ -26,7 +26,7 @@ ext {
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '19.1.0'
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         minSdkVersion 9
