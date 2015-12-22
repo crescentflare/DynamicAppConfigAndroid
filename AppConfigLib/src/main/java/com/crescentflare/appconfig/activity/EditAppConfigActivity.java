@@ -453,7 +453,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                     continue;
                 }
                 LinearLayout layoutView = null;
-                final Object result = baseModel.getDefaultValue(value);
+                final Object result = baseModel.getCurrentValue(value);
                 final Object previousResult = saveResult;
                 if (result != null)
                 {
