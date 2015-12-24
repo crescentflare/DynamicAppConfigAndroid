@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/crescentflare/DynamicAppConfigAndroid'
     gitUrl = 'https://github.com/crescentflare/DynamicAppConfigAndroid.git'
 
-    libraryVersion = '0.5.0'
+    libraryVersion = '0.6.0'
 
     developerId = 'crescentflare'
     developerName = 'Johan Bos'
@@ -26,13 +26,13 @@ ext {
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '19.1.0'
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
         versionCode 1
-        versionName "0.5.0"
+        versionName "0.6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -50,6 +50,7 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
+    testCompile 'junit:junit:4.12'
 }
 
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'

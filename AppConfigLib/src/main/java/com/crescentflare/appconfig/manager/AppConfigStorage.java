@@ -41,6 +41,7 @@ public class AppConfigStorage
     private AppConfigBaseManager configManager = null;
     private LinkedHashMap<String, AppConfigStorageItem> storedConfigs = new LinkedHashMap<>();
     private LinkedHashMap<String, AppConfigStorageItem> customConfigs = new LinkedHashMap<>();
+    private ArrayList<ChangedConfigListener> changedConfigListeners = new ArrayList<>();
     private String loadFromAssetFile = null;
     private String selectedItem = "";
     private boolean customConfigLoaded = false;
@@ -194,6 +195,10 @@ public class AppConfigStorage
             {
                 configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
             }
+            for (ChangedConfigListener listener : changedConfigListeners)
+            {
+                listener.onChangedConfig();
+            }
         }
         return removed;
     }
@@ -216,6 +221,10 @@ public class AppConfigStorage
         if (configManager != null)
         {
             configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+        }
+        for (ChangedConfigListener listener : changedConfigListeners)
+        {
+            listener.onChangedConfig();
         }
     }
 
@@ -558,5 +567,32 @@ public class AppConfigStorage
             }
             editor.apply();
         }
+    }
+
+    /**
+     * Manager listeners
+     */
+    public void addChangedConfigListener(ChangedConfigListener listener)
+    {
+        if (!changedConfigListeners.contains(listener))
+        {
+            changedConfigListeners.add(listener);
+        }
+    }
+
+    public void removeChangedConfigListener(ChangedConfigListener listener)
+    {
+        if (changedConfigListeners.contains(listener))
+        {
+            changedConfigListeners.remove(listener);
+        }
+    }
+
+    /**
+     * Listener for current selection changes
+     */
+    public interface ChangedConfigListener
+    {
+        void onChangedConfig();
     }
 }

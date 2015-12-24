@@ -364,12 +364,12 @@ public class EditAppConfigActivity extends AppCompatActivity
     {
         //Create main layout
         layout = new FrameLayout(this);
+        layout.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
 
         //Add editing view for changing configuration
         ScrollView scrollView = new ScrollView(this);
         editingView = new LinearLayout(this);
         editingView.setOrientation(LinearLayout.VERTICAL);
-        editingView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
         editingView.setVisibility(View.GONE);
         scrollView.addView(editingView);
         layout.addView(scrollView);
@@ -453,7 +453,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                     continue;
                 }
                 LinearLayout layoutView = null;
-                final Object result = baseModel.getDefaultValue(value);
+                final Object result = baseModel.getCurrentValue(value);
                 final Object previousResult = saveResult;
                 if (result != null)
                 {

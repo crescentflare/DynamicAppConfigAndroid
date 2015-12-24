@@ -52,9 +52,9 @@ public class AppConfigBaseModel
     }
 
     /**
-     * Reflection helper: get the current (default) value of a field (either from a getter, or a field directly)
+     * Reflection helper: get the current (or default) value of a field (either from a getter, or a field directly)
      */
-    public Object getDefaultValue(String value)
+    public Object getCurrentValue(String value)
     {
         Method[] methods = getClass().getDeclaredMethods();
         Object result = null;
@@ -137,7 +137,7 @@ public class AppConfigBaseModel
                         try
                         {
                             Type parameterType = method.getGenericParameterTypes()[0];
-                            if (parameterType.equals(Boolean.class))
+                            if (parameterType.equals(Boolean.class) || parameterType.equals(boolean.class))
                             {
                                 method.invoke(this, item.getBoolean(value));
                             }
@@ -205,7 +205,7 @@ public class AppConfigBaseModel
                         try
                         {
                             Type parameterType = field.getGenericType();
-                            if (parameterType.equals(Boolean.class))
+                            if (parameterType.equals(Boolean.class) || parameterType.equals(boolean.class))
                             {
                                 field.setBoolean(this, item.getBoolean(field.getName()));
                             }

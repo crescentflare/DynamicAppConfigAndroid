@@ -13,7 +13,7 @@ For example: be able to make one build with a build selector that contains devel
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-    compile 'com.crescentflare.appconfig:AppConfigLib:0.5.0'
+    compile 'com.crescentflare.appconfig:AppConfigLib:0.6.0'
 
 Make sure that jcenter is added as a repository.
 
@@ -111,7 +111,7 @@ In your main activity you can start the app configuration menu to allow yourself
 
     ManageAppConfigActivity.startWithResult(this, 1000);
      
-The last parameter (1000) is the result code, which can be checked in onActivityResult.
+The last parameter (1000) is the result code, which can be checked in onActivityResult. There is also a listener available which is called when a different configuration is selected. Check the example for more details.
 
 ### Storage
 
