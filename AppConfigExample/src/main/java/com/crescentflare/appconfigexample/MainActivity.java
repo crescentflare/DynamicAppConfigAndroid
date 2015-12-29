@@ -27,7 +27,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fillContent();
-        ManageAppConfigActivity.startWithResult(this, RESULT_CODE_MANAGE_APP_CONFIG);
+        if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK) > 0)
+        {
+            ManageAppConfigActivity.startWithResult(this, RESULT_CODE_MANAGE_APP_CONFIG);
+        }
     }
 
     /**

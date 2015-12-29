@@ -10,7 +10,8 @@ android {
         versionCode 1
         versionName "1.0.0"
         applicationId "com.crescentflare.appconfigexample"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.crescentflare.appconfigexample.test.settings.CucumberInstrumentation"
+        testApplicationId "com.crescentflare.appconfigexample.test"
     }
 
     signingConfigs {
@@ -23,10 +24,20 @@ android {
     }
 
     buildTypes {
+        debug {
+            minifyEnabled false
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
+        }
+    }
+
+    sourceSets {
+        androidTest {
+            assets.srcDirs = ['src/androidTest/assets']
         }
     }
 
@@ -40,6 +51,18 @@ dependencies {
     compile (project(':AppConfigLib')) {
         transitive = false
     }
+
+    testCompile 'junit:junit:4.12'
+
+    androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
+    androidTestCompile 'com.android.support:support-annotations:22.1.1'
+    androidTestCompile 'com.android.support.test:runner:0.4.1'
+    androidTestCompile 'com.android.support.test:rules:0.4.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2'
+
+    androidTestCompile 'info.cukes:cucumber-android:1.2.0@jar'
+    androidTestCompile 'info.cukes:cucumber-picocontainer:1.2.0'
 }
 
 task cleanAppConfig {
