@@ -28,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.crescentflare.appconfig.R;
 import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfig.model.AppConfigBaseModel;
@@ -532,6 +533,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
         {
             LinearLayout createButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_ok_edit_new"), true);
+            createButton.setId(R.id.app_config_activity_edit_save);
             buttonLayout.addView(createButton);
             createButton.setOnClickListener(new View.OnClickListener()
             {
@@ -598,6 +600,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         {
             //Updating configuration handler
             LinearLayout saveButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_ok_edit"), true);
+            saveButton.setId(R.id.app_config_activity_edit_save);
             buttonLayout.addView(saveButton);
             saveButton.setOnClickListener(new View.OnClickListener()
             {
@@ -667,6 +670,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             //Restore to defaults or delete handler
             String buttonText = AppConfigResourceHelper.getString(this, AppConfigStorage.instance.isCustomConfig(getIntent().getStringExtra(ARG_CONFIG_NAME)) ? "app_config_action_delete" : "app_config_action_restore");
             LinearLayout deleteButton = generateButtonView(buttonText, true);
+            deleteButton.setId(R.id.app_config_activity_edit_clear);
             buttonLayout.addView(deleteButton);
             deleteButton.setOnClickListener(new View.OnClickListener()
             {
@@ -689,6 +693,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             });
         }
         LinearLayout cancelButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_cancel"), false);
+        cancelButton.setId(R.id.app_config_activity_edit_cancel);
         buttonLayout.addView(cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener()
         {

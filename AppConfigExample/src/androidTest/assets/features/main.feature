@@ -1,4 +1,4 @@
-@reset @main
+@reset @all @main
 Feature: I can change my application configuration
   As an app developer or tester
   I want to be able to change the configuration

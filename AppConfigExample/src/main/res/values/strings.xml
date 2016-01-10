@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Example App Config</string>
     <string name="message">Example application for the app configuration library</string>
-    <string name="prefix_config_name">Selected config:</string>
-    <string name="prefix_config_api_url">API URL:</string>
-    <string name="prefix_config_run_type">Run type:</string>
-    <string name="prefix_config_accept_all_ssl">Accepting all SSL traffic:</string>
-    <string name="prefix_config_network_timeout_sec">Network timeout (seconds):</string>
+    <string name="prefix_config_name">name:</string>
+    <string name="prefix_config_api_url">apiUrl:</string>
+    <string name="prefix_config_run_type">runType:</string>
+    <string name="prefix_config_accept_all_ssl">acceptAllSSL:</string>
+    <string name="prefix_config_network_timeout_sec">networkTimeoutSec:</string>
 </resources>
