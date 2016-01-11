@@ -257,6 +257,20 @@ public class AppConfigStorage
         }
     }
 
+    public void manuallyChangeCurrentConfig(Context context, String key, String value)
+    {
+        getSelectedConfigNotNull().putString(key, value);
+        storeSelectedItemInPreferences(context);
+        if (configManager != null)
+        {
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+        }
+        for (ChangedConfigListener listener : changedConfigListeners)
+        {
+            listener.onChangedConfig();
+        }
+    }
+
     /**
      * Loading
      */

@@ -1,5 +1,13 @@
 package com.crescentflare.appconfigexample.test.page;
 
+import android.app.Activity;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.ViewAction;
+import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.GeneralLocation;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Tap;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.BoundedMatcher;
 import android.test.ActivityInstrumentationTestCase2;
 
@@ -14,8 +22,11 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.java.en.When;
 
 import static android.support.test.espresso.Espresso.onData;
+import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.doubleClick;
 import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.action.ViewActions.pressBack;
 import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.Matchers.instanceOf;
@@ -42,6 +53,7 @@ public class Select extends ActivityInstrumentationTestCase2<MainActivity>
     @When("^I select the \"([^\"]*)\" configuration$")
     public void I_select_the_configurationName_configuration(String configurationName) throws Throwable
     {
+        onView(withId(R.id.app_config_activity_manage_hackfix)).perform(click());
         onData(allOf(is(instanceOf(AppConfigAdapterEntry.class)), withConfigSelectionContent(configurationName))).inAdapterView(withId(R.id.app_config_activity_manage_list)).perform(click());
     }
 

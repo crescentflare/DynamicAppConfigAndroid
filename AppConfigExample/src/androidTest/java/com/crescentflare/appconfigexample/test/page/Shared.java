@@ -45,12 +45,12 @@ public class Shared extends ActivityInstrumentationTestCase2<MainActivity>
     @When("^I reset configuration data$")
     public void I_reset_configuration_data() throws Throwable
     {
-        getActivity().runOnUiThread(new Runnable()
+        getInstrumentation().runOnMainSync(new Runnable()
         {
             @Override
             public void run()
             {
-                AppConfigStorage.instance.clearAllToDefaults(getActivity());
+                AppConfigStorage.instance.clearAllToDefaults(getInstrumentation().getTargetContext());
             }
         });
     }

@@ -12,7 +12,7 @@ import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigManager;
 /**
  * The example activity shows a simple screen with a message
  */
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements AppConfigStorage.ChangedConfigListener
 {
     /**
      * Constants
@@ -44,9 +44,30 @@ public class MainActivity extends AppCompatActivity
         fillContent();
     }
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        AppConfigStorage.instance.removeChangedConfigListener(this);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        AppConfigStorage.instance.addChangedConfigListener(this);
+        fillContent();
+    }
+
     /**
      * Fill content (show configuration values)
      */
+    @Override
+    public void onChangedConfig()
+    {
+        fillContent();
+    }
+
     public void fillContent()
     {
         //Fetch text views

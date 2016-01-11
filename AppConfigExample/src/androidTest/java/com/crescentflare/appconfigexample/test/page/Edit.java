@@ -4,6 +4,7 @@ import android.support.test.espresso.matcher.BoundedMatcher;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.crescentflare.appconfig.adapter.AppConfigAdapterEntry;
+import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.MainActivity;
 import com.crescentflare.appconfigexample.R;
 
@@ -65,6 +66,19 @@ public class Edit extends ActivityInstrumentationTestCase2<MainActivity>
     public void I_apply_the_changes() throws Throwable
     {
         onView(withId(R.id.app_config_activity_edit_save)).perform(click());
+    }
+
+    @When("I manually change \"([^\"]*)\" into \"([^\"]*)\"$")
+    public void I_manually_change_settingName_into_string_value(final String settingName, final String value) throws Throwable
+    {
+        getInstrumentation().runOnMainSync(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                AppConfigStorage.instance.manuallyChangeCurrentConfig(getInstrumentation().getTargetContext(), settingName, value);
+            }
+        });
     }
 
     /**
