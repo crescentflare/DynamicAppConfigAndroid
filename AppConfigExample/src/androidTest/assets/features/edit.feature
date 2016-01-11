@@ -6,7 +6,8 @@ Feature: I can edit an application configuration
 
   Scenario: Edit a configuration
     Given I am on the "App configurations" page
-    When I edit the "Test server" configuration
+    When I reset configuration data
+    And I edit the "Test server" configuration
     Then I see the "Edit configuration" page
     When I change "apiUrl" into string "https://changed.example.com/"
     And I change "networkTimeoutSec" into number "10"

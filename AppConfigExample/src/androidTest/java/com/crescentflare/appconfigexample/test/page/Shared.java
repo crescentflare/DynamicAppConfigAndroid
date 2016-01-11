@@ -2,12 +2,14 @@ package com.crescentflare.appconfigexample.test.page;
 
 import android.test.ActivityInstrumentationTestCase2;
 
+import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.MainActivity;
 import com.crescentflare.appconfigexample.R;
 
 import cucumber.api.CucumberOptions;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -38,6 +40,19 @@ public class Shared extends ActivityInstrumentationTestCase2<MainActivity>
     {
         getActivity();
         onView(allOf(isDescendantOfA(withId(R.id.action_bar_container)), withText(pageName))).check(matches(isDisplayed()));
+    }
+
+    @When("^I reset configuration data$")
+    public void I_reset_configuration_data() throws Throwable
+    {
+        getActivity().runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                AppConfigStorage.instance.clearAllToDefaults(getActivity());
+            }
+        });
     }
 
     @Then("^I see the \"([^\"]*)\" page$")

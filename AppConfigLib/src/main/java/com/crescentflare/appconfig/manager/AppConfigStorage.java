@@ -238,6 +238,25 @@ public class AppConfigStorage
         return customConfigs.containsKey(config) && storedConfigs.containsKey(config);
     }
 
+    public void clearAllToDefaults(Context context)
+    {
+        for (String config : customConfigs.keySet())
+        {
+            removeCustomItemFromPreferences(context, config);
+        }
+        customConfigs.clear();
+        selectedItem = "";
+        storeSelectedItemInPreferences(context);
+        if (configManager != null)
+        {
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+        }
+        for (ChangedConfigListener listener : changedConfigListeners)
+        {
+            listener.onChangedConfig();
+        }
+    }
+
     /**
      * Loading
      */
