@@ -578,11 +578,11 @@ public class EditAppConfigActivity extends AppCompatActivity
                             }
                             else if (view instanceof SwitchCompat)
                             {
-                                item.putBoolean((String) view.getTag(), ((SwitchCompat) view).isChecked());
+                                item.putBoolean((String)view.getTag(), ((SwitchCompat) view).isChecked());
                             }
                             else if (view instanceof TextView)
                             {
-                                item.putString((String)view.getTag(), ((TextView)view).getText().toString());
+                                item.putString((String)view.getTag(), ((TextView)view).getText().toString().replace(view.getTag() + ": ", ""));
                             }
                         }
                     }
@@ -636,11 +636,11 @@ public class EditAppConfigActivity extends AppCompatActivity
                                     catch (Exception ignored)
                                     {
                                     }
-                                    item.putLong((String) view.getTag(), number);
+                                    item.putLong((String)view.getTag(), number);
                                 }
                                 else
                                 {
-                                    item.putString((String) view.getTag(), ((AppCompatEditText) view).getText().toString());
+                                    item.putString((String)view.getTag(), ((AppCompatEditText) view).getText().toString());
                                 }
                             }
                             else if (view instanceof SwitchCompat)
@@ -649,7 +649,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                             }
                             else if (view instanceof TextView)
                             {
-                                item.putString((String)view.getTag(), ((TextView)view).getText().toString());
+                                item.putString((String)view.getTag(), ((TextView)view).getText().toString().replace(view.getTag() + ": ", ""));
                             }
                         }
                     }

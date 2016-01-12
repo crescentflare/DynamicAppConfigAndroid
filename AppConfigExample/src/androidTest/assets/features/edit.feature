@@ -11,7 +11,11 @@ Feature: I can edit an application configuration
     Then I see the "Edit configuration" page
     When I change "apiUrl" into string "https://changed.example.com/"
     And I change "networkTimeoutSec" into number "10"
+    And I change "runType" into enum "runQuickly"
+    And I change "acceptAllSSL" into boolean "true"
     And I apply the changes
     And I select the "Test server" configuration
     Then I see "apiUrl" set to "https://changed.example.com/"
     And I see "networkTimeoutSec" set to "10"
+    And I see "runType" set to "runQuickly"
+    And I see "acceptAllSSL" set to "true"

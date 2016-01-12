@@ -1,7 +1,12 @@
 package com.crescentflare.appconfigexample.test.page;
 
+import android.support.test.espresso.UiController;
+import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.matcher.ViewMatchers;
+import android.support.v7.widget.SwitchCompat;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
 
 import com.crescentflare.appconfig.adapter.AppConfigAdapterEntry;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
@@ -53,13 +58,27 @@ public class Edit extends ActivityInstrumentationTestCase2<MainActivity>
     @When("^I change \"([^\"]*)\" into string \"([^\"]*)\"$")
     public void I_change_settingName_into_string_value(String settingName, String value) throws Throwable
     {
-        onView(withTagValue(withStringMatching(settingName))).perform().perform(clearText()).perform(click()).perform(typeText(value));
+        onView(withTagValue(withStringMatching(settingName))).perform(clearText()).perform(click()).perform(typeText(value));
     }
 
     @When("^I change \"([^\"]*)\" into number \"([^\"]*)\"$")
     public void I_change_settingName_into_number_value(String settingName, String value) throws Throwable
     {
-        onView(withTagValue(withStringMatching(settingName))).perform().perform(clearText()).perform(click()).perform(typeText(value));
+        onView(withTagValue(withStringMatching(settingName))).perform(clearText()).perform(click()).perform(typeText(value));
+    }
+
+    @When("^I change \"([^\"]*)\" into enum \"([^\"]*)\"$")
+    public void I_change_settingName_into_enum_value(String settingName, String value) throws Throwable
+    {
+        onView(withTagValue(withStringMatching(settingName))).perform(click());
+        onData(allOf(is(instanceOf(String.class)), withStringSelectionContent(value))).perform(click());
+    }
+
+    @When("^I change \"([^\"]*)\" into boolean \"([^\"]*)\"$")
+    public void I_change_settingName_into_boolean_value(String settingName, String value) throws Throwable
+    {
+        boolean booleanValue = Boolean.valueOf(value);
+        onView(withTagValue(withStringMatching(settingName))).perform(setSwitch(booleanValue));
     }
 
     @When("^I apply the changes$")
@@ -107,6 +126,63 @@ public class Edit extends ActivityInstrumentationTestCase2<MainActivity>
             {
                 description.appendText("with string: ");
                 itemTextMatcher.describeTo(description);
+            }
+        };
+    }
+
+    /**
+     * Custom matcher for the manage config selection list view
+     */
+    public static Matcher<Object> withStringSelectionContent(String expectedText)
+    {
+        checkNotNull(expectedText);
+        return withStringSelectionContent(equalTo(expectedText));
+    }
+
+    public static Matcher<Object> withStringSelectionContent(final Matcher<String> itemTextMatcher)
+    {
+        checkNotNull(itemTextMatcher);
+        return new BoundedMatcher<Object, String>(String.class)
+        {
+            @Override
+            public boolean matchesSafely(String entry)
+            {
+                return itemTextMatcher.matches(entry);
+            }
+
+            @Override
+            public void describeTo(Description description)
+            {
+                description.appendText("with item text: ");
+                itemTextMatcher.describeTo(description);
+            }
+        };
+    }
+
+    /**
+     * View action to force a switch setting
+     */
+    public static ViewAction setSwitch(final boolean enabled)
+    {
+        return new ViewAction()
+        {
+            @Override
+            public Matcher<View> getConstraints()
+            {
+                return ViewMatchers.isAssignableFrom(SwitchCompat.class);
+            }
+
+            @Override
+            public String getDescription()
+            {
+                return "Set switch to: " + enabled;
+            }
+
+            @Override
+            public void perform(UiController uiController, View view)
+            {
+                SwitchCompat switchView = (SwitchCompat)view;
+                switchView.setChecked(enabled);
             }
         };
     }
