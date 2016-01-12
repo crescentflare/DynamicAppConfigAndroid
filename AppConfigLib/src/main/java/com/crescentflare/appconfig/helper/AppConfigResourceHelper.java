@@ -56,4 +56,9 @@ public class AppConfigResourceHelper
         }
         return "";
     }
+
+    static public int getIdentifier(Context context, String name)
+    {
+        return context.getResources().getIdentifier(name, "id", context.getPackageName());
+    }
 }

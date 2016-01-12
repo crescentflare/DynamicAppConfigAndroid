@@ -21,7 +21,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.crescentflare.appconfig.R;
 import com.crescentflare.appconfig.adapter.AppConfigAdapter;
 import com.crescentflare.appconfig.adapter.AppConfigAdapterEntry;
 import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
@@ -180,7 +179,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         //Add listview for configurations
         listView = new ListViewCompat(this);
         adapter = new AppConfigAdapter(this);
-        listView.setId(R.id.app_config_activity_manage_list);
+        listView.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_list"));
         listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "api_config_background"));
         listView.setAdapter(adapter);
         listView.setVisibility(View.GONE);
