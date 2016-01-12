@@ -13,7 +13,7 @@ For example: be able to make one build with a build selector that contains devel
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-    compile 'com.crescentflare.appconfig:AppConfigLib:0.6.0'
+    compile 'com.crescentflare.appconfig:AppConfigLib:0.7.0'
 
 Make sure that jcenter is added as a repository.
 
@@ -117,9 +117,14 @@ The last parameter (1000) is the result code, which can be checked in onActivity
 
 When existing configurations are edited or custom ones are being added, the changes are saved in the user preferences of the device. Also the last selected configuration is stored inside the preferences. This makes sure that it remembers the correct settings, even if the app is closed silently when the device is running out of memory.
 
+### Automated testing
+
+The library is ready for automated testing using Espresso and Cucumber. The example project provides a demonstration on how to modify the configuration within automated test scripts. 
+
 ### Security
 
 Because the library can give a lot of control on the product (by making its settings configurable), it's important to prevent any code (either the selection menu itself, or the JSON configuration data like test servers and passwords) from being deployed to Google Play. Take a look at the example project for more information. It uses a simple gradle script to make safe release builds.
 
 ### Status
+
 The library should be useful in its basic form, however, there may be bugs. Improvements in features, stability and code structure are welcome.
