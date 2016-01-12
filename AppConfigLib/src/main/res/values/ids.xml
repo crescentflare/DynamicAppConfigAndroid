@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item type="id" name="app_config_activity_manage_list"/>
-    <item type="id" name="app_config_activity_manage_hackfix"/>
     <item type="id" name="app_config_activity_edit_save"/>
     <item type="id" name="app_config_activity_edit_clear"/>
     <item type="id" name="app_config_activity_edit_cancel"/>

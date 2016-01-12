@@ -2,6 +2,7 @@ package com.crescentflare.appconfigexample.test.page;
 
 import android.app.Activity;
 import android.support.test.espresso.Espresso;
+import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
@@ -9,7 +10,10 @@ import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.matcher.ViewMatchers;
+import android.support.v7.internal.widget.ListViewCompat;
 import android.test.ActivityInstrumentationTestCase2;
+import android.view.View;
 
 import com.crescentflare.appconfig.adapter.AppConfigAdapterEntry;
 import com.crescentflare.appconfigexample.MainActivity;
@@ -53,7 +57,7 @@ public class Select extends ActivityInstrumentationTestCase2<MainActivity>
     @When("^I select the \"([^\"]*)\" configuration$")
     public void I_select_the_configurationName_configuration(String configurationName) throws Throwable
     {
-        onView(withId(R.id.app_config_activity_manage_hackfix)).perform(click());
+        onView(withId(R.id.app_config_activity_manage_list)).perform(disableListViewLongClick());
         onData(allOf(is(instanceOf(AppConfigAdapterEntry.class)), withConfigSelectionContent(configurationName))).inAdapterView(withId(R.id.app_config_activity_manage_list)).perform(click());
     }
 
@@ -88,6 +92,33 @@ public class Select extends ActivityInstrumentationTestCase2<MainActivity>
             {
                 description.appendText("with item content: ");
                 itemTextMatcher.describeTo(description);
+            }
+        };
+    }
+
+    /**
+     * View action to disable long click (workaround)
+     */
+    public static ViewAction disableListViewLongClick()
+    {
+        return new ViewAction()
+        {
+            @Override
+            public Matcher<View> getConstraints()
+            {
+                return ViewMatchers.isAssignableFrom(ListViewCompat.class);
+            }
+
+            @Override
+            public String getDescription()
+            {
+                return "Disable long click on listview (workaround)";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view)
+            {
+                ((ListViewCompat)view).setOnItemLongClickListener(null);
             }
         };
     }

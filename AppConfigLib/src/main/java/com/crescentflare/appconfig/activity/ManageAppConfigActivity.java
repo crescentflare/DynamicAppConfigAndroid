@@ -255,20 +255,6 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
                 return false;
             }
         });
-
-        //Add click handler workaround to disable long clicks (Espresso is not reliable with click vs. longClick)
-        FrameLayout hackLayout = new FrameLayout(this);
-        hackLayout.setLayoutParams(new FrameLayout.LayoutParams(1, 1));
-        hackLayout.setId(R.id.app_config_activity_manage_hackfix);
-        layout.addView(hackLayout);
-        hackLayout.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                listView.setOnLongClickListener(null);
-            }
-        });
         return layout;
     }
 
