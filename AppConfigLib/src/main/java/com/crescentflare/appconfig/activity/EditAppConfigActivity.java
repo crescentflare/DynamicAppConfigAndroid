@@ -532,6 +532,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
         {
             LinearLayout createButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_ok_edit_new"), true);
+            createButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_edit_save"));
             buttonLayout.addView(createButton);
             createButton.setOnClickListener(new View.OnClickListener()
             {
@@ -576,11 +577,11 @@ public class EditAppConfigActivity extends AppCompatActivity
                             }
                             else if (view instanceof SwitchCompat)
                             {
-                                item.putBoolean((String) view.getTag(), ((SwitchCompat) view).isChecked());
+                                item.putBoolean((String)view.getTag(), ((SwitchCompat) view).isChecked());
                             }
                             else if (view instanceof TextView)
                             {
-                                item.putString((String)view.getTag(), ((TextView)view).getText().toString());
+                                item.putString((String)view.getTag(), ((TextView)view).getText().toString().replace(view.getTag() + ": ", ""));
                             }
                         }
                     }
@@ -598,6 +599,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         {
             //Updating configuration handler
             LinearLayout saveButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_ok_edit"), true);
+            saveButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_edit_save"));
             buttonLayout.addView(saveButton);
             saveButton.setOnClickListener(new View.OnClickListener()
             {
@@ -633,11 +635,11 @@ public class EditAppConfigActivity extends AppCompatActivity
                                     catch (Exception ignored)
                                     {
                                     }
-                                    item.putLong((String) view.getTag(), number);
+                                    item.putLong((String)view.getTag(), number);
                                 }
                                 else
                                 {
-                                    item.putString((String) view.getTag(), ((AppCompatEditText) view).getText().toString());
+                                    item.putString((String)view.getTag(), ((AppCompatEditText) view).getText().toString());
                                 }
                             }
                             else if (view instanceof SwitchCompat)
@@ -646,7 +648,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                             }
                             else if (view instanceof TextView)
                             {
-                                item.putString((String)view.getTag(), ((TextView)view).getText().toString());
+                                item.putString((String)view.getTag(), ((TextView)view).getText().toString().replace(view.getTag() + ": ", ""));
                             }
                         }
                     }
@@ -667,6 +669,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             //Restore to defaults or delete handler
             String buttonText = AppConfigResourceHelper.getString(this, AppConfigStorage.instance.isCustomConfig(getIntent().getStringExtra(ARG_CONFIG_NAME)) ? "app_config_action_delete" : "app_config_action_restore");
             LinearLayout deleteButton = generateButtonView(buttonText, true);
+            deleteButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_edit_clear"));
             buttonLayout.addView(deleteButton);
             deleteButton.setOnClickListener(new View.OnClickListener()
             {
@@ -689,6 +692,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             });
         }
         LinearLayout cancelButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_cancel"), false);
+        cancelButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_edit_cancel"));
         buttonLayout.addView(cancelButton);
         cancelButton.setOnClickListener(new View.OnClickListener()
         {

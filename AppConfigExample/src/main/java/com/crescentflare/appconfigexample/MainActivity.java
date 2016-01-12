@@ -6,12 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.crescentflare.appconfig.activity.ManageAppConfigActivity;
+import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigManager;
 
 /**
  * The example activity shows a simple screen with a message
  */
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements AppConfigStorage.ChangedConfigListener
 {
     /**
      * Constants
@@ -27,7 +28,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         fillContent();
-        ManageAppConfigActivity.startWithResult(this, RESULT_CODE_MANAGE_APP_CONFIG);
+        if (AppConfigStorage.instance.isInitialized() && (getIntent().getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK) > 0)
+        {
+            ManageAppConfigActivity.startWithResult(this, RESULT_CODE_MANAGE_APP_CONFIG);
+        }
     }
 
     /**
@@ -40,9 +44,30 @@ public class MainActivity extends AppCompatActivity
         fillContent();
     }
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        AppConfigStorage.instance.removeChangedConfigListener(this);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        AppConfigStorage.instance.addChangedConfigListener(this);
+        fillContent();
+    }
+
     /**
      * Fill content (show configuration values)
      */
+    @Override
+    public void onChangedConfig()
+    {
+        fillContent();
+    }
+
     public void fillContent()
     {
         //Fetch text views

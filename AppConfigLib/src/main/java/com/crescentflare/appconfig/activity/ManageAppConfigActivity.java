@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * Library activity: managing configurations
  * Be able to select, add and edit app configurations
  */
-public class ManageAppConfigActivity extends AppCompatActivity
+public class ManageAppConfigActivity extends AppCompatActivity implements AppConfigStorage.ChangedConfigListener
 {
     /**
      * Constants
@@ -107,6 +107,9 @@ public class ManageAppConfigActivity extends AppCompatActivity
         fromActivity.startActivityForResult(newInstance(fromActivity), resultCode);
     }
 
+    /**
+     * State handling
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -123,6 +126,21 @@ public class ManageAppConfigActivity extends AppCompatActivity
         {
             populateContent();
         }
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        AppConfigStorage.instance.removeChangedConfigListener(this);
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        populateContent();
+        AppConfigStorage.instance.addChangedConfigListener(this);
     }
 
     /**
@@ -142,6 +160,12 @@ public class ManageAppConfigActivity extends AppCompatActivity
     /**
      * Layout and content handling
      */
+    @Override
+    public void onChangedConfig()
+    {
+        populateContent();
+    }
+
     private int dip(int pixels)
     {
         return (int)(getResources().getDisplayMetrics().density * pixels);
@@ -155,6 +179,7 @@ public class ManageAppConfigActivity extends AppCompatActivity
         //Add listview for configurations
         listView = new ListViewCompat(this);
         adapter = new AppConfigAdapter(this);
+        listView.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_list"));
         listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "api_config_background"));
         listView.setAdapter(adapter);
         listView.setVisibility(View.GONE);
