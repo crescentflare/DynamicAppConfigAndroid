@@ -13,7 +13,7 @@ For example: be able to make one build with a build selector that contains devel
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-    compile 'com.crescentflare.appconfig:AppConfigLib:0.7.0'
+    compile 'com.crescentflare.appconfig:AppConfigLib:0.8.0'
 
 Make sure that jcenter is added as a repository.
 
@@ -75,7 +75,7 @@ A model always assumes a production configuration (as in, the settings inside ca
         }
     }
 
-The manager is a singleton and can be referenced everywhere. The currentConfig method has been made for convenience (to reduce casting code elsewhere).
+The manager is a singleton and can be referenced everywhere. The currentConfig method has been made for convenience (to reduce casting code elsewhere). When having a lot of settings, the AppConfigModelCategory annotation can be used to group certain settings together.
 
 
 **Configuration overrides**

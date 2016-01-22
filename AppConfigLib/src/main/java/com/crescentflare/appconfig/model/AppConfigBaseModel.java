@@ -1,9 +1,11 @@
 package com.crescentflare.appconfig.model;
 
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -20,35 +22,113 @@ public class AppConfigBaseModel
     public ArrayList<String> valueList()
     {
         ArrayList<String> list = new ArrayList<>();
-        Method[] methods = getClass().getDeclaredMethods();
-        for (Method method : methods)
-        {
-            method.setAccessible(true);
-            if (method.isAccessible())
-            {
-                if (method.getName().startsWith("get"))
-                {
-                    list.add(method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4));
-                }
-                else if (method.getName().startsWith("is"))
-                {
-                    list.add(method.getName().substring(2, 3).toLowerCase() + method.getName().substring(3));
-                }
-            }
-        }
         if (list.size() == 0)
         {
             Field[] fields = getClass().getDeclaredFields();
             for (Field field : fields)
             {
-                field.setAccessible(true);
-                if (field.isAccessible())
+                if (Modifier.isPublic(field.getModifiers()))
                 {
                     list.add(field.getName());
+                }
+                else
+                {
+                    String findMethod = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+                    boolean foundSetter = false;
+                    boolean foundGetter = false;
+                    for (Method method : getClass().getDeclaredMethods())
+                    {
+                        if (method.getName().equals("get" + findMethod) || method.getName().equals("is" + findMethod))
+                        {
+                            foundGetter = true;
+                        }
+                        if (method.getName().equals("set" + findMethod))
+                        {
+                            foundSetter = true;
+                        }
+                        if (foundGetter && foundSetter)
+                        {
+                            list.add(field.getName());
+                            break;
+                        }
+                    }
                 }
             }
         }
         return list;
+    }
+
+    /**
+     * Reflection helper: get the list of categories (if some items don't have any category, an empty string is added)
+     */
+    public ArrayList<String> getCategories()
+    {
+        ArrayList<String> categories = new ArrayList<>();
+        ArrayList<String> values = valueList();
+        boolean foundUnCategorized = false;
+        for (String value : values)
+        {
+            if (value.equals("name"))
+            {
+                continue;
+            }
+            try
+            {
+                Field field = getClass().getDeclaredField(value);
+                boolean hasCategory = false;
+                for (Annotation annotation : field.getDeclaredAnnotations())
+                {
+                    if (annotation instanceof AppConfigModelCategory)
+                    {
+                        String category = ((AppConfigModelCategory)annotation).value();
+                        if (category.length() > 0)
+                        {
+                            if (!categories.contains(category))
+                            {
+                                categories.add(category);
+                            }
+                            hasCategory = true;
+                            break;
+                        }
+                    }
+                }
+                if (!hasCategory)
+                {
+                    foundUnCategorized = true;
+                }
+            }
+            catch (NoSuchFieldException ignored)
+            {
+            }
+        }
+        if (foundUnCategorized && categories.size() > 0)
+        {
+            categories.add("");
+        }
+        return categories;
+    }
+
+    /**
+     * Reflection helper: check if the value belongs to the given category
+     */
+    public boolean valueBelongsToCategory(String value, String category)
+    {
+        for (Field field : getClass().getDeclaredFields())
+        {
+            if (field.getName().equals(value))
+            {
+                for (Annotation annotation : field.getDeclaredAnnotations())
+                {
+                    if (annotation instanceof AppConfigModelCategory)
+                    {
+                        String checkCategory = ((AppConfigModelCategory)annotation).value();
+                        return checkCategory.equals(category);
+                    }
+                }
+                return category.length() == 0;
+            }
+        }
+        return false;
     }
 
     /**

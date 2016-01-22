@@ -104,30 +104,10 @@ public class EditAppConfigActivity extends AppCompatActivity
             String resultString = data.getStringExtra(AppConfigStringChoiceActivity.ARG_INTENT_RESULT_SELECTED_STRING);
             if (resultString.length() > 0)
             {
-                ArrayList<String> modelValues = new ArrayList<>();
                 int index = requestCode - RESULT_CODE_SELECT_ENUM;
-                if (AppConfigStorage.instance.getConfigManager() != null)
+                if (index < fieldViews.size() && fieldViews.get(index) instanceof TextView)
                 {
-                    modelValues = AppConfigStorage.instance.getConfigManager().getBaseModelInstance().valueList();
-                }
-                if (index < modelValues.size())
-                {
-                    TextView foundView = null;
-                    for (View view : fieldViews)
-                    {
-                        if (view instanceof TextView)
-                        {
-                            if (view.getTag().equals(modelValues.get(index)))
-                            {
-                                foundView = (TextView)view;
-                                break;
-                            }
-                        }
-                    }
-                    if (foundView != null)
-                    {
-                        foundView.setText(modelValues.get(index) + ": " + resultString);
-                    }
+                    ((TextView)fieldViews.get(index)).setText(fieldViews.get(index).getTag() + ": " + resultString);
                 }
             }
         }
@@ -148,7 +128,7 @@ public class EditAppConfigActivity extends AppCompatActivity
     }
 
     /**
-     * Layout and content handling
+     * View component generators
      */
     private int dip(int pixels)
     {
@@ -360,6 +340,9 @@ public class EditAppConfigActivity extends AppCompatActivity
         return createdView;
     }
 
+    /**
+     * View and layout generation
+     */
     private FrameLayout createContentView()
     {
         //Create main layout
@@ -397,6 +380,104 @@ public class EditAppConfigActivity extends AppCompatActivity
         return layout;
     }
 
+    private LinearLayout generateEditingContent(String category, ArrayList<String> values, AppConfigStorageItem config, AppConfigBaseModel baseModel)
+    {
+        //Create container
+        LinearLayout fieldEditLayout = new LinearLayout(this);
+        String title = getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? AppConfigResourceHelper.getString(this, "app_config_header_edit_new") : getIntent().getStringExtra(ARG_CONFIG_NAME);
+        if (category != null)
+        {
+            if (category.length() > 0)
+            {
+                title += ": " + category;
+            }
+            else
+            {
+                title += ": " + AppConfigResourceHelper.getString(this, "app_config_header_edit_other");
+            }
+        }
+        fieldEditLayout.setOrientation(LinearLayout.VERTICAL);
+        fieldEditLayout.setBackgroundColor(Color.WHITE);
+        fieldEditLayout.addView(generateHeaderView(title));
+
+        //Fetch objects and filter by category
+        ArrayList<String> editValues = new ArrayList<>();
+        ArrayList<Object> editObjects = new ArrayList<>();
+        for (String value : values)
+        {
+            boolean belongsToCategory = true;
+            if (category != null && baseModel != null)
+            {
+                belongsToCategory = baseModel.valueBelongsToCategory(value, category);
+            }
+            if (belongsToCategory && !value.equals("name"))
+            {
+                editValues.add(value);
+                editObjects.add(baseModel != null ? baseModel.getCurrentValue(value) : config.get(value));
+            }
+        }
+
+        //Add editing views
+        for (int i = 0; i < editValues.size(); i++)
+        {
+            final String value = editValues.get(i);
+            LinearLayout layoutView = null;
+            final Object previousResult = i > 0 ? editObjects.get(i - 1) : null;
+            final Object result = editObjects.get(i);
+            if (result != null)
+            {
+                if (result instanceof Boolean)
+                {
+                    layoutView = generateSwitchView(value, (Boolean)result, i < editValues.size() - 1, previousResult != null && (previousResult instanceof String || previousResult instanceof Integer || previousResult instanceof Long));
+                }
+                else if (result.getClass().isEnum())
+                {
+                    final int index = fieldViews.size();
+                    layoutView = generateButtonView(value, value + ": " + result.toString(), i < editValues.size() - 1, previousResult != null && (previousResult instanceof String || previousResult instanceof Integer || previousResult instanceof Long));
+                    layoutView.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Object constants[] = result.getClass().getEnumConstants();
+                            ArrayList<String> enumValues = new ArrayList<>();
+                            for (int i = 0; i < constants.length; i++)
+                            {
+                                enumValues.add(constants[i].toString());
+                            }
+                            if (enumValues.size() > 0)
+                            {
+                                AppConfigStringChoiceActivity.startWithResult(
+                                        EditAppConfigActivity.this,
+                                        AppConfigResourceHelper.getString(EditAppConfigActivity.this, "app_config_title_choose_enum_prefix") + " " + value,
+                                        AppConfigResourceHelper.getString(EditAppConfigActivity.this, "app_config_header_choose_enum"),
+                                        enumValues,
+                                        RESULT_CODE_SELECT_ENUM + index
+                                );
+                            }
+                        }
+                    });
+                }
+                else if (result instanceof Integer || result instanceof Long)
+                {
+                    layoutView = generateEditTextView(value, "" + result, true, i < editValues.size() - 1);
+                }
+                else if (result instanceof String)
+                {
+                    layoutView = generateEditTextView(value, (String)result, false, i < editValues.size() - 1);
+                }
+                if (layoutView != null)
+                {
+                    fieldEditLayout.addView(layoutView);
+                    fieldViews.add(layoutView.findViewWithTag(value));
+                }
+            }
+        }
+
+        //Return container
+        return fieldEditLayout;
+    }
+
     private void populateContent()
     {
         //Enable content view (and remove all existing content), hide spinner
@@ -405,13 +486,54 @@ public class EditAppConfigActivity extends AppCompatActivity
         editingView.removeAllViews();
         fieldViews.clear();
 
-        //Create layout containing editing views
-        LinearLayout fieldEditLayout = new LinearLayout(this);
-        fieldEditLayout.setOrientation(LinearLayout.VERTICAL);
-        fieldEditLayout.setBackgroundColor(Color.WHITE);
-        fieldEditLayout.addView(generateHeaderView(getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? AppConfigResourceHelper.getString(this, "app_config_header_edit_new") : getIntent().getStringExtra(ARG_CONFIG_NAME)));
-        editingView.addView(fieldEditLayout);
-        editingView.addView(generateSectionDivider(true));
+        //Determine values and categories
+        AppConfigStorageItem config = AppConfigStorage.instance.getConfigNotNull(getIntent().getStringExtra(ARG_CONFIG_NAME));
+        ArrayList<String> values = config.valueList();
+        ArrayList<String> categories = new ArrayList<>();
+        AppConfigBaseModel baseModel = null;
+        if (AppConfigStorage.instance.getConfigManager() != null)
+        {
+            baseModel = AppConfigStorage.instance.getConfigManager().getBaseModelInstance();
+            baseModel.applyCustomSettings(getIntent().getStringExtra(ARG_CONFIG_NAME), config);
+            values = AppConfigStorage.instance.getConfigManager().getBaseModelInstance().valueList();
+            categories = baseModel.getCategories();
+        }
+
+        //Add section for name (if applicable)
+        if (AppConfigStorage.instance.isCustomConfig(getIntent().getStringExtra(ARG_CONFIG_NAME)) || getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
+        {
+            String name = getIntent().getStringExtra(ARG_CONFIG_NAME);
+            LinearLayout nameEditLayout = new LinearLayout(this);
+            nameEditLayout.setOrientation(LinearLayout.VERTICAL);
+            nameEditLayout.setBackgroundColor(Color.WHITE);
+            nameEditLayout.addView(generateHeaderView(AppConfigResourceHelper.getString(this, "app_config_header_edit_name")));
+            editingView.addView(nameEditLayout);
+            editingView.addView(generateSectionDivider(true));
+            if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
+            {
+                name += " " + AppConfigResourceHelper.getString(this, "app_config_modifier_copy");
+            }
+            LinearLayout layoutView = generateEditTextView("name", name, false, values.size() > 0);
+            nameEditLayout.addView(layoutView);
+            fieldViews.add(layoutView.findViewWithTag("name"));
+        }
+
+        //Add editing fields to view
+        if (categories.size() > 0)
+        {
+            for (String category : categories)
+            {
+                LinearLayout fieldEditLayout = generateEditingContent(category, values, config, baseModel);
+                editingView.addView(fieldEditLayout);
+                editingView.addView(generateSectionDivider(true));
+            }
+        }
+        else
+        {
+            LinearLayout fieldEditLayout = generateEditingContent(null, values, config, baseModel);
+            editingView.addView(fieldEditLayout);
+            editingView.addView(generateSectionDivider(true));
+        }
 
         //Create layout containing buttons
         LinearLayout buttonLayout = new LinearLayout(this);
@@ -420,113 +542,6 @@ public class EditAppConfigActivity extends AppCompatActivity
         buttonLayout.addView(generateHeaderView(AppConfigResourceHelper.getString(this, "app_config_header_edit_actions")));
         editingView.addView(buttonLayout);
         editingView.addView(generateSectionDivider(false));
-
-        //Add editing fields to view
-        AppConfigStorageItem config = AppConfigStorage.instance.getConfigNotNull(getIntent().getStringExtra(ARG_CONFIG_NAME));
-        ArrayList<String> values = config.valueList();
-        ArrayList<String> modelValues = null;
-        if (AppConfigStorage.instance.getConfigManager() != null)
-        {
-            modelValues = AppConfigStorage.instance.getConfigManager().getBaseModelInstance().valueList();
-        }
-        if (AppConfigStorage.instance.isCustomConfig(getIntent().getStringExtra(ARG_CONFIG_NAME)) || getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
-        {
-            String name = getIntent().getStringExtra(ARG_CONFIG_NAME);
-            if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
-            {
-                name += " " + AppConfigResourceHelper.getString(this, "app_config_modifier_copy");
-            }
-            LinearLayout layoutView = generateEditTextView("name", name, false, values.size() > 0);
-            fieldEditLayout.addView(layoutView);
-            fieldViews.add(layoutView.findViewWithTag("name"));
-        }
-        if (modelValues != null)
-        {
-            AppConfigBaseModel baseModel = AppConfigStorage.instance.getConfigManager().getBaseModelInstance();
-            Object saveResult = null;
-            baseModel.applyCustomSettings(getIntent().getStringExtra(ARG_CONFIG_NAME), config);
-            for (int i = 0; i < modelValues.size(); i++)
-            {
-                final String value = modelValues.get(i);
-                if (value.equals("name"))
-                {
-                    continue;
-                }
-                LinearLayout layoutView = null;
-                final Object result = baseModel.getCurrentValue(value);
-                final Object previousResult = saveResult;
-                if (result != null)
-                {
-                    if (result instanceof Boolean)
-                    {
-                        layoutView = generateSwitchView(value, (Boolean) result, i < modelValues.size() - 1, previousResult != null && (previousResult instanceof String || previousResult instanceof Integer || previousResult instanceof Long));
-                    }
-                    else if (result.getClass().isEnum())
-                    {
-                        final int index = i;
-                        layoutView = generateButtonView(value, value + ": " + result.toString(), i < modelValues.size() - 1, previousResult != null && (previousResult instanceof String || previousResult instanceof Integer || previousResult instanceof Long));
-                        layoutView.setOnClickListener(new View.OnClickListener()
-                        {
-                            @Override
-                            public void onClick(View v)
-                            {
-                                Object constants[] = result.getClass().getEnumConstants();
-                                ArrayList<String> enumValues = new ArrayList<>();
-                                for (int i = 0; i < constants.length; i++)
-                                {
-                                    enumValues.add(constants[i].toString());
-                                }
-                                if (enumValues.size() > 0)
-                                {
-                                    AppConfigStringChoiceActivity.startWithResult(
-                                            EditAppConfigActivity.this,
-                                            AppConfigResourceHelper.getString(EditAppConfigActivity.this, "app_config_title_choose_enum_prefix") + " " + value,
-                                            AppConfigResourceHelper.getString(EditAppConfigActivity.this, "app_config_header_choose_enum"),
-                                            enumValues,
-                                            RESULT_CODE_SELECT_ENUM + index
-                                    );
-                                }
-                            }
-                        });
-                    }
-                    else if (result instanceof Integer || result instanceof Long)
-                    {
-                        layoutView = generateEditTextView(value, "" + result, true, i < modelValues.size() - 1);
-                    }
-                    else if (result instanceof String)
-                    {
-                        layoutView = generateEditTextView(value, (String)result, false, i < modelValues.size() - 1);
-                    }
-                    if (layoutView != null)
-                    {
-                        fieldEditLayout.addView(layoutView);
-                        fieldViews.add(layoutView.findViewWithTag(value));
-                    }
-                    saveResult = result;
-                }
-            }
-        }
-        else
-        {
-            boolean previousEditText = false;
-            for (int i = 0; i < values.size(); i++)
-            {
-                String value = values.get(i);
-                LinearLayout layoutView = null;
-                Object rawValue = config.get(value);
-                if (rawValue instanceof Boolean)
-                {
-                    layoutView = generateSwitchView(value, config.getBoolean(value), i < values.size() - 1, previousEditText);
-                }
-                else
-                {
-                    layoutView = generateEditTextView(value, config.getStringNotNull(value), rawValue instanceof Integer || rawValue instanceof Long, i < values.size() - 1);
-                    previousEditText = true;
-                }
-                fieldEditLayout.addView(layoutView);
-                fieldViews.add(layoutView.findViewWithTag(value));
-            }
-        }
 
         //Add buttons
         if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
@@ -654,9 +669,10 @@ public class EditAppConfigActivity extends AppCompatActivity
                     }
                     if (name.length() > 0)
                     {
-                        if (AppConfigStorage.instance.isCustomConfig(name) || AppConfigStorage.instance.isConfigOverride(name))
+                        String oldName = getIntent().getStringExtra(ARG_CONFIG_NAME);
+                        if (AppConfigStorage.instance.isCustomConfig(oldName) || AppConfigStorage.instance.isConfigOverride(oldName))
                         {
-                            AppConfigStorage.instance.removeConfig(getIntent().getStringExtra(ARG_CONFIG_NAME));
+                            AppConfigStorage.instance.removeConfig(oldName);
                         }
                         AppConfigStorage.instance.putCustomConfig(name, item);
                         AppConfigStorage.instance.synchronizeCustomConfigWithPreferences(EditAppConfigActivity.this, name);

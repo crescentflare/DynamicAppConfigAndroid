@@ -2,6 +2,7 @@ package com.crescentflare.appconfigexample.appconfig;
 
 
 import com.crescentflare.appconfig.model.AppConfigBaseModel;
+import com.crescentflare.appconfig.model.AppConfigModelCategory;
 
 /**
  * App config: application configuration
@@ -14,10 +15,17 @@ public class ExampleAppConfigModel extends AppConfigBaseModel
      * Members
      */
     private String name = "Production";
+
+    @AppConfigModelCategory("API related")
     private String apiUrl = "https://production.example.com/";
-    private ExampleAppConfigEnum runType = ExampleAppConfigEnum.RunNormally;
+
+    @AppConfigModelCategory("API related")
     private boolean acceptAllSSL = false;
+
+    @AppConfigModelCategory("API related")
     private int networkTimeoutSec = 20;
+
+    private ExampleAppConfigEnum runType = ExampleAppConfigEnum.RunNormally;
 
 
     /**
