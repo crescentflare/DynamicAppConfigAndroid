@@ -33,6 +33,28 @@ public class AppConfigBaseModelTest
     }
 
     @Test
+    public void testGetCategories()
+    {
+        DerivedModelWithFields model = new DerivedModelWithFields();
+        String[] expectedValues = { "Enums", "Strings", "Numbers", "Booleans" };
+        String[] modelValues = model.getCategories().toArray(new String[0]);
+        Arrays.sort(expectedValues);
+        Arrays.sort(modelValues);
+        Assert.assertArrayEquals(expectedValues, modelValues);
+    }
+
+    @Test
+    public void testGetCategoriesWithUnCategorized()
+    {
+        DerivedModelWithMethods model = new DerivedModelWithMethods();
+        String[] expectedValues = { "Enums", "Strings", "Numbers", "" };
+        String[] modelValues = model.getCategories().toArray(new String[0]);
+        Arrays.sort(expectedValues);
+        Arrays.sort(modelValues);
+        Assert.assertArrayEquals(expectedValues, modelValues);
+    }
+
+    @Test
     public void testGetCurrentValueForFields()
     {
         DerivedModelWithFields model = new DerivedModelWithFields();
@@ -155,11 +177,22 @@ public class AppConfigBaseModelTest
      */
     public static class DerivedModelWithFields extends AppConfigBaseModel
     {
+        @AppConfigModelCategory("Enums")
         public SimpleEnum simpleEnumField = SimpleEnum.Simple;
+
+        @AppConfigModelCategory("Enums")
         public ComplexEnum complexEnumField = ComplexEnum.Unknown;
+
+        @AppConfigModelCategory("Strings")
         public String stringField = "";
+
+        @AppConfigModelCategory("Numbers")
         public long longField = 0;
+
+        @AppConfigModelCategory("Numbers")
         public int intField = 0;
+
+        @AppConfigModelCategory("Booleans")
         public boolean boolField = false;
     }
 
@@ -168,11 +201,21 @@ public class AppConfigBaseModelTest
      */
     public static class DerivedModelWithMethods extends AppConfigBaseModel
     {
+        @AppConfigModelCategory("Enums")
         private SimpleEnum simpleEnumField = SimpleEnum.Simple;
+
+        @AppConfigModelCategory("Enums")
         private ComplexEnum complexEnumField = ComplexEnum.Unknown;
+
+        @AppConfigModelCategory("Strings")
         private String stringField = "";
+
+        @AppConfigModelCategory("Numbers")
         private long longField = 0;
+
+        @AppConfigModelCategory("Numbers")
         private int intField = 0;
+
         private boolean boolField = false;
 
         public SimpleEnum getSimpleEnumField()
