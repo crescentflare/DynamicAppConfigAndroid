@@ -669,9 +669,10 @@ public class EditAppConfigActivity extends AppCompatActivity
                     }
                     if (name.length() > 0)
                     {
-                        if (AppConfigStorage.instance.isCustomConfig(name) || AppConfigStorage.instance.isConfigOverride(name))
+                        String oldName = getIntent().getStringExtra(ARG_CONFIG_NAME);
+                        if (AppConfigStorage.instance.isCustomConfig(oldName) || AppConfigStorage.instance.isConfigOverride(oldName))
                         {
-                            AppConfigStorage.instance.removeConfig(getIntent().getStringExtra(ARG_CONFIG_NAME));
+                            AppConfigStorage.instance.removeConfig(oldName);
                         }
                         AppConfigStorage.instance.putCustomConfig(name, item);
                         AppConfigStorage.instance.synchronizeCustomConfigWithPreferences(EditAppConfigActivity.this, name);
