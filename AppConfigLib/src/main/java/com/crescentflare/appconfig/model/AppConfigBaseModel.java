@@ -4,6 +4,7 @@ package com.crescentflare.appconfig.model;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -20,31 +21,36 @@ public class AppConfigBaseModel
     public ArrayList<String> valueList()
     {
         ArrayList<String> list = new ArrayList<>();
-        Method[] methods = getClass().getDeclaredMethods();
-        for (Method method : methods)
-        {
-            method.setAccessible(true);
-            if (method.isAccessible())
-            {
-                if (method.getName().startsWith("get"))
-                {
-                    list.add(method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4));
-                }
-                else if (method.getName().startsWith("is"))
-                {
-                    list.add(method.getName().substring(2, 3).toLowerCase() + method.getName().substring(3));
-                }
-            }
-        }
         if (list.size() == 0)
         {
             Field[] fields = getClass().getDeclaredFields();
             for (Field field : fields)
             {
-                field.setAccessible(true);
-                if (field.isAccessible())
+                if (Modifier.isPublic(field.getModifiers()))
                 {
                     list.add(field.getName());
+                }
+                else
+                {
+                    String findMethod = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+                    boolean foundSetter = false;
+                    boolean foundGetter = false;
+                    for (Method method : getClass().getDeclaredMethods())
+                    {
+                        if (method.getName().equals("get" + findMethod) || method.getName().equals("is" + findMethod))
+                        {
+                            foundGetter = true;
+                        }
+                        if (method.getName().equals("set" + findMethod))
+                        {
+                            foundSetter = true;
+                        }
+                        if (foundGetter && foundSetter)
+                        {
+                            list.add(field.getName());
+                            break;
+                        }
+                    }
                 }
             }
         }

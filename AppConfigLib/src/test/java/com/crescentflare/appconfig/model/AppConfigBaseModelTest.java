@@ -234,5 +234,19 @@ public class AppConfigBaseModelTest
         {
             this.boolField = boolField;
         }
+
+        public void setShouldSkip()
+        {
+        }
+
+        public String getShouldSkipValue()
+        {
+            return null;
+        }
+
+        public boolean isShouldSkipValue()
+        {
+            return false;
+        }
     }
 }
