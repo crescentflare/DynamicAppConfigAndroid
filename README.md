@@ -75,7 +75,7 @@ A model always assumes a production configuration (as in, the settings inside ca
         }
     }
 
-The manager is a singleton and can be referenced everywhere. The currentConfig method has been made for convenience (to reduce casting code elsewhere).
+The manager is a singleton and can be referenced everywhere. The currentConfig method has been made for convenience (to reduce casting code elsewhere). When having a lot of settings, the AppConfigModelCategory annotation can be used to group certain settings together.
 
 
 **Configuration overrides**
