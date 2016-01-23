@@ -640,7 +640,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                         {
                             if (view instanceof AppCompatEditText)
                             {
-                                if (((AppCompatEditText)view).getInputType() == InputType.TYPE_CLASS_NUMBER)
+                                if ((((AppCompatEditText)view).getInputType() & InputType.TYPE_CLASS_NUMBER) > 0)
                                 {
                                     long number = 0;
                                     try
