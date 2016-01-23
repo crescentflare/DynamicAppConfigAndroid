@@ -8,6 +8,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Library model: base model for strict typing
@@ -21,41 +23,71 @@ public class AppConfigBaseModel
      */
     public ArrayList<String> valueList()
     {
-        ArrayList<String> list = new ArrayList<>();
-        if (list.size() == 0)
+        //Gather items
+        ArrayList<ModelValue> list = new ArrayList<>();
+        Field[] fields = getClass().getDeclaredFields();
+        for (Field field : fields)
         {
-            Field[] fields = getClass().getDeclaredFields();
-            for (Field field : fields)
+            String addValue = null;
+            if (Modifier.isPublic(field.getModifiers()))
             {
-                if (Modifier.isPublic(field.getModifiers()))
+                addValue = field.getName();
+            }
+            else
+            {
+                String findMethod = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+                boolean foundSetter = false;
+                boolean foundGetter = false;
+                for (Method method : getClass().getDeclaredMethods())
                 {
-                    list.add(field.getName());
-                }
-                else
-                {
-                    String findMethod = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-                    boolean foundSetter = false;
-                    boolean foundGetter = false;
-                    for (Method method : getClass().getDeclaredMethods())
+                    if (method.getName().equals("get" + findMethod) || method.getName().equals("is" + findMethod))
                     {
-                        if (method.getName().equals("get" + findMethod) || method.getName().equals("is" + findMethod))
-                        {
-                            foundGetter = true;
-                        }
-                        if (method.getName().equals("set" + findMethod))
-                        {
-                            foundSetter = true;
-                        }
-                        if (foundGetter && foundSetter)
-                        {
-                            list.add(field.getName());
-                            break;
-                        }
+                        foundGetter = true;
+                    }
+                    if (method.getName().equals("set" + findMethod))
+                    {
+                        foundSetter = true;
+                    }
+                    if (foundGetter && foundSetter)
+                    {
+                        addValue = field.getName();
+                        break;
                     }
                 }
             }
+            if (addValue != null)
+            {
+                ModelValue modelValue = new ModelValue();
+                modelValue.value = addValue;
+                for (Annotation annotation : field.getDeclaredAnnotations())
+                {
+                    if (annotation instanceof AppConfigModelSort)
+                    {
+                        modelValue.sortIndex = ((AppConfigModelSort)annotation).value();
+                        break;
+                    }
+                }
+                list.add(modelValue);
+            }
         }
-        return list;
+
+        //Sort
+        Collections.sort(list, new Comparator<ModelValue>()
+        {
+            @Override
+            public int compare(ModelValue v1, ModelValue v2)
+            {
+                return v1.sortIndex - v2.sortIndex;
+            }
+        });
+
+        //Extract strings and return
+        ArrayList<String> stringValues = new ArrayList<>();
+        for (ModelValue listItem : list)
+        {
+            stringValues.add(listItem.value);
+        }
+        return stringValues;
     }
 
     /**
@@ -322,5 +354,14 @@ public class AppConfigBaseModel
                 }
             }
         }
+    }
+
+    /**
+     * Helper object
+     */
+    private static class ModelValue
+    {
+        public String value = "";
+        public int sortIndex = 0;
     }
 }
