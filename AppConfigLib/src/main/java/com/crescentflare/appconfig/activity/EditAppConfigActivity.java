@@ -640,7 +640,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                         {
                             if (view instanceof AppCompatEditText)
                             {
-                                if (((AppCompatEditText)view).getInputType() == InputType.TYPE_CLASS_NUMBER)
+                                if ((((AppCompatEditText)view).getInputType() & InputType.TYPE_CLASS_NUMBER) > 0)
                                 {
                                     long number = 0;
                                     try
@@ -670,11 +670,16 @@ public class EditAppConfigActivity extends AppCompatActivity
                     if (name.length() > 0)
                     {
                         String oldName = getIntent().getStringExtra(ARG_CONFIG_NAME);
+                        boolean wasSelected = oldName.equals(AppConfigStorage.instance.getSelectedConfigName());
                         if (AppConfigStorage.instance.isCustomConfig(oldName) || AppConfigStorage.instance.isConfigOverride(oldName))
                         {
                             AppConfigStorage.instance.removeConfig(oldName);
                         }
                         AppConfigStorage.instance.putCustomConfig(name, item);
+                        if (wasSelected)
+                        {
+                            AppConfigStorage.instance.selectConfig(EditAppConfigActivity.this, name);
+                        }
                         AppConfigStorage.instance.synchronizeCustomConfigWithPreferences(EditAppConfigActivity.this, name);
                         setResult(RESULT_OK);
                         finish();

@@ -335,6 +335,41 @@ public class AppConfigStorage
             return null;
         }
 
+        //Create default item from model (if it exists)
+        AppConfigStorageItem defaultItem = null;
+        if (configManager != null)
+        {
+            ArrayList<String> values = configManager.getBaseModelInstance().valueList();
+            if (values.size() > 0)
+            {
+                defaultItem = new AppConfigStorageItem();
+                for (String value : values)
+                {
+                    if (value.equals("name"))
+                    {
+                        continue;
+                    }
+                    Object setting = configManager.getBaseModelInstance().getCurrentValue(value);
+                    if (setting instanceof Long)
+                    {
+                        defaultItem.putLong(value, (Long)setting);
+                    }
+                    else if (setting instanceof Integer)
+                    {
+                        defaultItem.putInt(value, (Integer)setting);
+                    }
+                    else if (setting instanceof Boolean)
+                    {
+                        defaultItem.putBoolean(value, (Boolean)setting);
+                    }
+                    else
+                    {
+                        defaultItem.putString(value, setting.toString());
+                    }
+                }
+            }
+        }
+
         //Prepare input stream for loading
         LinkedHashMap<String, AppConfigStorageItem> loadedConfigs = new LinkedHashMap<>();
         InputStream inputStream = null;
@@ -372,7 +407,7 @@ public class AppConfigStorage
             JSONArray configArray = new JSONArray(result);
             for (int i = 0; i < configArray.length(); i++)
             {
-                addStorageItemFromJson(loadedConfigs, configArray.optJSONObject(i), null);
+                addStorageItemFromJson(loadedConfigs, configArray.optJSONObject(i), defaultItem);
             }
         }
         catch (JSONException ignored)
