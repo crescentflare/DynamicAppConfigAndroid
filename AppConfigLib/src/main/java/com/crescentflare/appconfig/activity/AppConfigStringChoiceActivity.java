@@ -9,7 +9,6 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.internal.widget.ListViewCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +61,7 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
     {
         //Add listview as content view
         super.onCreate(savedInstanceState);
-        listView = new ListViewCompat(this);
+        listView = new ListView(this);
         listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
         setTitle(getIntent().getStringExtra(ARG_TITLE));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
