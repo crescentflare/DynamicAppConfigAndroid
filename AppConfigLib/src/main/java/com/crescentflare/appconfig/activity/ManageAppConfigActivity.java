@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.internal.widget.ListViewCompat;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -177,7 +176,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         layout = new FrameLayout(this);
 
         //Add listview for configurations
-        listView = new ListViewCompat(this);
+        listView = new ListView(this);
         adapter = new AppConfigAdapter(this);
         listView.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_list"));
         listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "api_config_background"));
