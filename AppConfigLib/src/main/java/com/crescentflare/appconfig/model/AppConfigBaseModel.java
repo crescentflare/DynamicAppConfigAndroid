@@ -28,6 +28,10 @@ public class AppConfigBaseModel
         Field[] fields = getClass().getDeclaredFields();
         for (Field field : fields)
         {
+            if (field.getName().substring(0, 1).equals("$"))
+            {
+                continue;
+            }
             String addValue = null;
             if (Modifier.isPublic(field.getModifiers()))
             {
