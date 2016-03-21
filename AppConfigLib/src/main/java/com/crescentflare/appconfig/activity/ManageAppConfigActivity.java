@@ -180,6 +180,8 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         adapter = new AppConfigAdapter(this);
         listView.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_list"));
         listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "api_config_background"));
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
         listView.setAdapter(adapter);
         listView.setVisibility(View.GONE);
         layout.addView(listView);

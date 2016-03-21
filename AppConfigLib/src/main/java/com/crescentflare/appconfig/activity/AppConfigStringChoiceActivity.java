@@ -63,6 +63,8 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         listView = new ListView(this);
         listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
+        listView.setDivider(null);
+        listView.setDividerHeight(0);
         setTitle(getIntent().getStringExtra(ARG_TITLE));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
