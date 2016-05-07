@@ -119,7 +119,7 @@ When existing configurations are edited or custom ones are being added, the chan
 
 ### Automated testing
 
-The library is ready for automated testing using Espresso and Cucumber. The example project provides a demonstration on how to modify the configuration within automated test scripts. 
+The library is ready for automated testing using Espresso. The example project provides a demonstration on how to modify the configuration within automated test scripts.
 
 ### Security
 
