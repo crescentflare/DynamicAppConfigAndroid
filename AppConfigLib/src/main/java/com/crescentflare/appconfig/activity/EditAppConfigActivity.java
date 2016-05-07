@@ -13,6 +13,7 @@ import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.SwitchCompat;
@@ -480,9 +481,15 @@ public class EditAppConfigActivity extends AppCompatActivity
 
     private void populateContent()
     {
-        //Enable content view (and remove all existing content), hide spinner
-        spinnerView.setVisibility(View.GONE);
-        editingView.setVisibility(View.VISIBLE);
+        //Show/hide spinner depending on the config being loaded
+        spinnerView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.GONE : View.VISIBLE);
+        editingView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.VISIBLE : View.GONE);
+        if (!AppConfigStorage.instance.isLoaded())
+        {
+            return;
+        }
+
+        //Clear all views to re-populate
         editingView.removeAllViews();
         fieldViews.clear();
 

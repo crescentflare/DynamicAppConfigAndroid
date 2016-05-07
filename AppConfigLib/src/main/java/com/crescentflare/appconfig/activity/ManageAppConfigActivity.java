@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -199,14 +200,25 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         spinnerView.addView(iconView);
 
         //Add loading text to it
-        String buildString = buildNr > 0 ? "\n(" + AppConfigResourceHelper.getString(this, "app_config_field_build").toLowerCase() + ": " + buildNr + ")" : "";
         TextView progressTextView = new TextView(this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0, dip(8), 0, 0);
-        progressTextView.setLayoutParams(layoutParams);
+        LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textLayoutParams.setMargins(0, dip(8), 0, 0);
+        progressTextView.setLayoutParams(textLayoutParams);
         progressTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-        progressTextView.setText(AppConfigResourceHelper.getString(this, "app_config_loading") + buildString);
+        progressTextView.setText(AppConfigResourceHelper.getString(this, "app_config_loading"));
         spinnerView.addView(progressTextView);
+
+        //Add build number below loading text
+        if (buildNr > 0)
+        {
+            TextView progressBuildView = new TextView(this);
+            LinearLayout.LayoutParams buildLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            buildLayoutParams.setMargins(0, dip(2), 0, 0);
+            progressBuildView.setLayoutParams(buildLayoutParams);
+            progressBuildView.setGravity(Gravity.CENTER_HORIZONTAL);
+            progressBuildView.setText("(" + AppConfigResourceHelper.getString(this, "app_config_field_build").toLowerCase() + ": " + buildNr + ")");
+            spinnerView.addView(progressBuildView);
+        }
 
         //Listview click handler
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -260,9 +272,13 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
 
     private void populateContent()
     {
-        //Enable listview, hide spinner
-        spinnerView.setVisibility(View.GONE);
-        listView.setVisibility(View.VISIBLE);
+        //Show/hide spinner depending on the config being loaded
+        spinnerView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.GONE : View.VISIBLE);
+        listView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.VISIBLE : View.GONE);
+        if (!AppConfigStorage.instance.isLoaded())
+        {
+            return;
+        }
 
         //Add list of configurations
         ArrayList<AppConfigAdapterEntry> entries = new ArrayList<>();

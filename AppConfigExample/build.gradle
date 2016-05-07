@@ -10,8 +10,8 @@ android {
         versionCode 1
         versionName "1.0.0"
         applicationId "com.crescentflare.appconfigexample"
-        testInstrumentationRunner "com.crescentflare.appconfigexample.test.settings.CucumberInstrumentation"
         testApplicationId "com.crescentflare.appconfigexample.test"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -60,9 +60,6 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2'
-
-    androidTestCompile 'info.cukes:cucumber-android:1.2.0@jar'
-    androidTestCompile 'info.cukes:cucumber-picocontainer:1.2.0'
 }
 
 task cleanAppConfig {
