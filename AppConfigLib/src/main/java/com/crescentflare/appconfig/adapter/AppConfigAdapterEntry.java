@@ -7,7 +7,7 @@ package com.crescentflare.appconfig.adapter;
 public class AppConfigAdapterEntry
 {
     /**
-     * Enum
+     * Enums
      */
     public enum Type
     {
@@ -17,10 +17,20 @@ public class AppConfigAdapterEntry
         Footer
     }
 
+    public enum Section
+    {
+        Unknown,
+        LastSelected,
+        Predefined,
+        Custom,
+        Add
+    }
+
     /**
      * Members
      */
     private Type type = Type.Configuration;
+    private Section section = Section.Unknown;
     private String name = "";
     private String label = "";
 
@@ -28,36 +38,37 @@ public class AppConfigAdapterEntry
     /**
      * Initialization
      */
-    public AppConfigAdapterEntry(Type type, String name, String label)
+    public AppConfigAdapterEntry(Type type, Section section, String name, String label)
     {
         this.type = type;
+        this.section = section;
         this.name = name;
         this.label = label;
     }
 
-    public static AppConfigAdapterEntry entryForConfiguration(String configurationName, boolean edited)
+    public static AppConfigAdapterEntry entryForConfiguration(Section section, String configurationName, boolean edited)
     {
-        return new AppConfigAdapterEntry(Type.Configuration, configurationName, configurationName + (edited ? " *" : ""));
+        return new AppConfigAdapterEntry(Type.Configuration, section, configurationName, configurationName + (edited ? " *" : ""));
     }
 
-    public static AppConfigAdapterEntry entryForConfiguration(String configurationName, String customLabel, boolean edited)
+    public static AppConfigAdapterEntry entryForConfiguration(Section section, String configurationName, String customLabel, boolean edited)
     {
-        return new AppConfigAdapterEntry(Type.Configuration, configurationName, customLabel + (edited ? " *" : ""));
+        return new AppConfigAdapterEntry(Type.Configuration, section, configurationName, customLabel + (edited ? " *" : ""));
     }
 
     public static AppConfigAdapterEntry entryForBuildInfo(String key, String value)
     {
-        return new AppConfigAdapterEntry(Type.BuildInfo, "", key + ": " + value);
+        return new AppConfigAdapterEntry(Type.BuildInfo, Section.Unknown, "", key + ": " + value);
     }
 
     public static AppConfigAdapterEntry entryForHeader(String headerName)
     {
-        return new AppConfigAdapterEntry(Type.Header, "", headerName);
+        return new AppConfigAdapterEntry(Type.Header, Section.Unknown, "", headerName);
     }
 
     public static AppConfigAdapterEntry entryForFooter()
     {
-        return new AppConfigAdapterEntry(Type.Footer, "", "");
+        return new AppConfigAdapterEntry(Type.Footer, Section.Unknown, "", "");
     }
 
     /**
@@ -66,6 +77,11 @@ public class AppConfigAdapterEntry
     public Type getType()
     {
         return type;
+    }
+
+    public Section getSection()
+    {
+        return section;
     }
 
     public String getName()

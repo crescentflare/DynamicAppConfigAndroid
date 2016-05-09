@@ -124,7 +124,7 @@ public class ManageAppConfigModel
             @Override
             public boolean matchesSafely(AppConfigAdapterEntry entry)
             {
-                return itemTextMatcher.matches(entry.getLabel().replace(" *", "")) && entry.getType() == AppConfigAdapterEntry.Type.Configuration;
+                return itemTextMatcher.matches(entry.getLabel().replace(" *", "")) && entry.getType() == AppConfigAdapterEntry.Type.Configuration && entry.getSection() != AppConfigAdapterEntry.Section.LastSelected;
             }
 
             @Override

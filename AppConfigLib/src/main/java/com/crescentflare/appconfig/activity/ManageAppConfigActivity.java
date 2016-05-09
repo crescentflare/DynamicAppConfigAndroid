@@ -220,7 +220,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             spinnerView.addView(progressBuildView);
         }
 
-        //Listview click handler
+        //List view click handler
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -229,22 +229,22 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
                 AppConfigAdapterEntry entry = (AppConfigAdapterEntry)parent.getItemAtPosition(position);
                 if (entry.getType() == AppConfigAdapterEntry.Type.Configuration)
                 {
-                    if (entry.getName().length() > 0)
+                    if (entry.getSection() == AppConfigAdapterEntry.Section.Add)
+                    {
+                        ArrayList<String> configs = AppConfigStorage.instance.configList();
+                        AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_edit_new"), AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_custom_copy"), configs, RESULT_CODE_CUSTOM_COPY_FROM);
+                    }
+                    else
                     {
                         AppConfigStorage.instance.selectConfig(ManageAppConfigActivity.this, entry.getName());
                         setResult(RESULT_OK);
                         finish();
                     }
-                    else
-                    {
-                        ArrayList<String> configs = AppConfigStorage.instance.configList();
-                        AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_edit_new"), AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_custom_copy"), configs, RESULT_CODE_CUSTOM_COPY_FROM);
-                    }
                 }
             }
         });
 
-        //Listview long click handler (edit configuration)
+        //List view long click handler (edit configuration)
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
         {
             @Override
@@ -253,14 +253,14 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
                 AppConfigAdapterEntry entry = (AppConfigAdapterEntry)parent.getItemAtPosition(position);
                 if (entry.getType() == AppConfigAdapterEntry.Type.Configuration)
                 {
-                    if (entry.getName().length() > 0)
-                    {
-                        EditAppConfigActivity.startWithResult(ManageAppConfigActivity.this, entry.getName(), false, RESULT_CODE_EDIT_CONFIG);
-                    }
-                    else
+                    if (entry.getSection() == AppConfigAdapterEntry.Section.Add)
                     {
                         ArrayList<String> configs = AppConfigStorage.instance.configList();
                         AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_choose_custom_copy"), AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_custom_copy"), configs, RESULT_CODE_CUSTOM_COPY_FROM);
+                    }
+                    else
+                    {
+                        EditAppConfigActivity.startWithResult(ManageAppConfigActivity.this, entry.getName(), false, RESULT_CODE_EDIT_CONFIG);
                     }
                     return true;
                 }
@@ -280,20 +280,27 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             return;
         }
 
-        //Add list of configurations
+        //Add last selection configuration (if present)
         ArrayList<AppConfigAdapterEntry> entries = new ArrayList<>();
+        entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_last_selection")));
+        if (AppConfigStorage.instance.getSelectedConfig() != null)
+        {
+            String configName = AppConfigStorage.instance.getSelectedConfigName();
+            entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.LastSelected, configName, configName, AppConfigStorage.instance.isConfigOverride(configName)));
+        }
+        else
+        {
+            entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.LastSelected, "", AppConfigResourceHelper.getString(this, "app_config_item_none"), false));
+        }
+
+        //Add list of configurations
         ArrayList<String> configs = AppConfigStorage.instance.configList();
         if (configs.size() > 0)
         {
             entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list")));
-            if (AppConfigStorage.instance.getSelectedConfig() != null)
-            {
-                String configName = AppConfigStorage.instance.getSelectedConfigName();
-                entries.add(AppConfigAdapterEntry.entryForConfiguration(configName, AppConfigResourceHelper.getString(this, "app_config_action_last_selection_prefix") + " " + configName.substring(0, 1).toLowerCase() + configName.substring(1), AppConfigStorage.instance.isConfigOverride(configName)));
-            }
             for (String configName : configs)
             {
-                entries.add(AppConfigAdapterEntry.entryForConfiguration(configName, AppConfigStorage.instance.isConfigOverride(configName)));
+                entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.Predefined, configName, AppConfigStorage.instance.isConfigOverride(configName)));
             }
         }
 
@@ -304,10 +311,10 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         {
             if (AppConfigStorage.instance.isCustomConfig(configName))
             {
-                entries.add(AppConfigAdapterEntry.entryForConfiguration(configName, true));
+                entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.Custom, configName, false));
             }
         }
-        entries.add(AppConfigAdapterEntry.entryForConfiguration("", AppConfigResourceHelper.getString(this, "app_config_action_add"), false));
+        entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.Add, "", AppConfigResourceHelper.getString(this, "app_config_action_add"), false));
 
         //Add build information
         entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_build_info")));
