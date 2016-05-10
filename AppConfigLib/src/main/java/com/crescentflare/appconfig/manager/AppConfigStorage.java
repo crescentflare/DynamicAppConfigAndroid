@@ -76,6 +76,11 @@ public class AppConfigStorage
         return initialized;
     }
 
+    public boolean isLoaded()
+    {
+        return customConfigLoaded;
+    }
+
     /**
      * Obtain manager instance, only used internally if the given manager is a singleton (which is recommended)
      */

@@ -55,7 +55,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
     @Override
     public boolean isEnabled(int i)
     {
-        return entries.get(i).getType() == AppConfigAdapterEntry.Type.Configuration;
+        return entries.get(i).getType() == AppConfigAdapterEntry.Type.Configuration && (entries.get(i).getName().length() > 0 || entries.get(i).getSection() == AppConfigAdapterEntry.Section.Add);
     }
 
     /**

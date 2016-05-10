@@ -13,7 +13,7 @@ For example: be able to make one build with a build selector that contains devel
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-    compile 'com.crescentflare.appconfig:AppConfigLib:0.8.3'
+    compile 'com.crescentflare.appconfig:AppConfigLib:0.9.0'
 
 Make sure that jcenter is added as a repository.
 
@@ -119,7 +119,7 @@ When existing configurations are edited or custom ones are being added, the chan
 
 ### Automated testing
 
-The library is ready for automated testing using Espresso and Cucumber. The example project provides a demonstration on how to modify the configuration within automated test scripts. 
+The library is ready for automated testing using Espresso. The example project provides a demonstration on how to modify the configuration within automated test scripts.
 
 ### Security
 
