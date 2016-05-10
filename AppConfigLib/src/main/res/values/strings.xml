@@ -7,6 +7,7 @@
     <string name="app_config_title_edit_new">New custom configuration</string>
     <string name="app_config_title_choose_custom_copy">New custom configuration</string>
     <string name="app_config_title_choose_enum_prefix">Select</string>
+    <string name="app_config_title_dialog_confirm_save_changes">Save changes?</string>
     <string name="app_config_header_list">Predefined configurations</string>
     <string name="app_config_header_list_custom">Custom configurations</string>
     <string name="app_config_header_list_build_info">Build information</string>
@@ -18,6 +19,8 @@
     <string name="app_config_header_choose_custom_copy">Copy from...</string>
     <string name="app_config_header_choose_enum">Possible values:</string>
     <string name="app_config_item_none">None</string>
+    <string name="app_config_action_confirm">Yes</string>
+    <string name="app_config_action_deny">No</string>
     <string name="app_config_action_ok_edit">Apply changes</string>
     <string name="app_config_action_ok_edit_new">Confirm creation</string>
     <string name="app_config_action_delete">Delete</string>

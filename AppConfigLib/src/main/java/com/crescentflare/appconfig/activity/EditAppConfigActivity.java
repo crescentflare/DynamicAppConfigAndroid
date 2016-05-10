@@ -2,6 +2,7 @@ package com.crescentflare.appconfig.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -14,6 +15,7 @@ import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.SwitchCompat;
@@ -119,6 +121,44 @@ public class EditAppConfigActivity extends AppCompatActivity
                 }
             }
             supportInvalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        boolean hasChange = false;
+        if (initialEditValues != null)
+        {
+            hasChange = !fetchEditedValues().equals(initialEditValues);
+        }
+        if (hasChange)
+        {
+            AlertDialog.Builder alert = new AlertDialog.Builder(this)
+                    .setTitle(AppConfigResourceHelper.getString(this, "app_config_title_dialog_confirm_save_changes"))
+                    .setCancelable(true)
+                    .setPositiveButton(AppConfigResourceHelper.getString(this, "app_config_action_confirm"), new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            saveData();
+                        }
+                    })
+                    .setNegativeButton(AppConfigResourceHelper.getString(this, "app_config_action_deny"), new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            setResult(RESULT_CANCELED);
+                            finish();
+                        }
+                    });
+            alert.show();
+        }
+        else
+        {
+            super.onBackPressed();
         }
     }
 

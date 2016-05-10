@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/app_config_menu_save"
+        android:id="@id/app_config_menu_save"
         android:title="@string/app_config_menu_save"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/app_config_menu_create"
+        android:id="@id/app_config_menu_create"
         android:title="@string/app_config_menu_create"
         app:showAsAction="ifRoom"/>
 </menu>
