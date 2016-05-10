@@ -17,18 +17,23 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.SwitchCompat;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.crescentflare.appconfig.R;
 import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfig.model.AppConfigBaseModel;
@@ -56,6 +61,7 @@ public class EditAppConfigActivity extends AppCompatActivity
     private FrameLayout layout = null;
     private LinearLayout editingView = null;
     private LinearLayout spinnerView = null;
+    private AppConfigStorageItem initialEditValues = null;
 
 
     /**
@@ -87,6 +93,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             public void run()
             {
                 populateContent();
+                initialEditValues = fetchEditedValues();
             }
         });
     }
@@ -111,6 +118,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                     ((TextView)fieldViews.get(index)).setText(fieldViews.get(index).getTag() + ": " + resultString);
                 }
             }
+            supportInvalidateOptionsMenu();
         }
     }
 
@@ -118,9 +126,40 @@ public class EditAppConfigActivity extends AppCompatActivity
      * Menu handling
      */
     @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.edit, menu);
+        if (menu == null)
+        {
+            return false;
+        }
+        menu.findItem(R.id.app_config_menu_save).setVisible(!getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false));
+        menu.findItem(R.id.app_config_menu_create).setVisible(getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false));
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        boolean hasChange = false;
+        if (initialEditValues != null)
+        {
+            hasChange = !fetchEditedValues().equals(initialEditValues);
+        }
+        menu.findItem(R.id.app_config_menu_save).setEnabled(hasChange);
+        menu.findItem(R.id.app_config_menu_create).setEnabled(hasChange);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if (item.getItemId() == android.R.id.home)
+        if (item.getItemId() == R.id.app_config_menu_create || item.getItemId() == R.id.app_config_menu_save)
+        {
+            saveData();
+            return true;
+        }
+        else if (item.getItemId() == android.R.id.home)
         {
             onBackPressed();
             return true;
@@ -294,6 +333,24 @@ public class EditAppConfigActivity extends AppCompatActivity
         editView.setLayoutParams(editViewLayoutParams);
         editView.setText(setting);
         editView.setTag(label);
+        editView.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                supportInvalidateOptionsMenu();
+            }
+        });
         if (limitNumbers)
         {
             editView.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -331,6 +388,14 @@ public class EditAppConfigActivity extends AppCompatActivity
         switchView.setText(label);
         switchView.setChecked(setting);
         switchView.setTag(label);
+        switchView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                supportInvalidateOptionsMenu();
+            }
+        });
         if (addDivider)
         {
             createdView.addView(dividerView = new View(this));
@@ -561,59 +626,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v)
                 {
-                    AppConfigStorageItem item = new AppConfigStorageItem();
-                    String name = "";
-                    for (View view : fieldViews)
-                    {
-                        if (view.getTag() == null)
-                        {
-                            break;
-                        }
-                        if (view.getTag().equals("name"))
-                        {
-                            if (view instanceof AppCompatEditText)
-                            {
-                                name = ((AppCompatEditText)view).getText().toString();
-                            }
-                        }
-                        else
-                        {
-                            if (view instanceof AppCompatEditText)
-                            {
-                                if (((AppCompatEditText)view).getInputType() == InputType.TYPE_CLASS_NUMBER)
-                                {
-                                    long number = 0;
-                                    try
-                                    {
-                                        number = Long.parseLong(((AppCompatEditText) view).getText().toString());
-                                    }
-                                    catch (Exception ignored)
-                                    {
-                                    }
-                                    item.putLong((String) view.getTag(), number);
-                                }
-                                else
-                                {
-                                    item.putString((String)view.getTag(), ((AppCompatEditText)view).getText().toString());
-                                }
-                            }
-                            else if (view instanceof SwitchCompat)
-                            {
-                                item.putBoolean((String)view.getTag(), ((SwitchCompat) view).isChecked());
-                            }
-                            else if (view instanceof TextView)
-                            {
-                                item.putString((String)view.getTag(), ((TextView)view).getText().toString().replace(view.getTag() + ": ", ""));
-                            }
-                        }
-                    }
-                    if (name.length() > 0)
-                    {
-                        AppConfigStorage.instance.putCustomConfig(name, item);
-                        AppConfigStorage.instance.synchronizeCustomConfigWithPreferences(EditAppConfigActivity.this, name);
-                        setResult(RESULT_OK);
-                        finish();
-                    }
+                    saveData();
                 }
             });
         }
@@ -628,69 +641,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                 @Override
                 public void onClick(View v)
                 {
-                    AppConfigStorageItem item = new AppConfigStorageItem();
-                    String name = getIntent().getStringExtra(ARG_CONFIG_NAME);
-                    for (View view : fieldViews)
-                    {
-                        if (view.getTag() == null)
-                        {
-                            break;
-                        }
-                        if (view.getTag().equals("name"))
-                        {
-                            if (view instanceof AppCompatEditText)
-                            {
-                                name = ((AppCompatEditText)view).getText().toString();
-                            }
-                        }
-                        else
-                        {
-                            if (view instanceof AppCompatEditText)
-                            {
-                                if ((((AppCompatEditText)view).getInputType() & InputType.TYPE_CLASS_NUMBER) > 0)
-                                {
-                                    long number = 0;
-                                    try
-                                    {
-                                        number = Long.parseLong(((AppCompatEditText) view).getText().toString());
-                                    }
-                                    catch (Exception ignored)
-                                    {
-                                    }
-                                    item.putLong((String)view.getTag(), number);
-                                }
-                                else
-                                {
-                                    item.putString((String)view.getTag(), ((AppCompatEditText) view).getText().toString());
-                                }
-                            }
-                            else if (view instanceof SwitchCompat)
-                            {
-                                item.putBoolean((String)view.getTag(), ((SwitchCompat) view).isChecked());
-                            }
-                            else if (view instanceof TextView)
-                            {
-                                item.putString((String)view.getTag(), ((TextView)view).getText().toString().replace(view.getTag() + ": ", ""));
-                            }
-                        }
-                    }
-                    if (name.length() > 0)
-                    {
-                        String oldName = getIntent().getStringExtra(ARG_CONFIG_NAME);
-                        boolean wasSelected = oldName.equals(AppConfigStorage.instance.getSelectedConfigName());
-                        if (AppConfigStorage.instance.isCustomConfig(oldName) || AppConfigStorage.instance.isConfigOverride(oldName))
-                        {
-                            AppConfigStorage.instance.removeConfig(oldName);
-                        }
-                        AppConfigStorage.instance.putCustomConfig(name, item);
-                        if (wasSelected)
-                        {
-                            AppConfigStorage.instance.selectConfig(EditAppConfigActivity.this, name);
-                        }
-                        AppConfigStorage.instance.synchronizeCustomConfigWithPreferences(EditAppConfigActivity.this, name);
-                        setResult(RESULT_OK);
-                        finish();
-                    }
+                    saveData();
                 }
             });
 
@@ -730,5 +681,94 @@ public class EditAppConfigActivity extends AppCompatActivity
                 onBackPressed();
             }
         });
+    }
+
+    /**
+     * Configuration mutations
+     */
+    private AppConfigStorageItem fetchEditedValues()
+    {
+        AppConfigStorageItem item = new AppConfigStorageItem();
+        String name = getIntent().getStringExtra(ARG_CONFIG_NAME);
+        for (View view : fieldViews)
+        {
+            if (view.getTag() == null)
+            {
+                break;
+            }
+            if (view.getTag().equals("name"))
+            {
+                if (view instanceof AppCompatEditText)
+                {
+                    name = ((AppCompatEditText)view).getText().toString();
+                }
+            }
+            else
+            {
+                if (view instanceof AppCompatEditText)
+                {
+                    if ((((AppCompatEditText)view).getInputType() & InputType.TYPE_CLASS_NUMBER) > 0)
+                    {
+                        long number = 0;
+                        try
+                        {
+                            number = Long.parseLong(((AppCompatEditText)view).getText().toString());
+                        }
+                        catch (Exception ignored)
+                        {
+                        }
+                        item.putLong((String)view.getTag(), number);
+                    }
+                    else
+                    {
+                        item.putString((String)view.getTag(), ((AppCompatEditText)view).getText().toString());
+                    }
+                }
+                else if (view instanceof SwitchCompat)
+                {
+                    item.putBoolean((String)view.getTag(), ((SwitchCompat) view).isChecked());
+                }
+                else if (view instanceof TextView)
+                {
+                    item.putString((String)view.getTag(), ((TextView)view).getText().toString().replace(view.getTag() + ": ", ""));
+                }
+            }
+        }
+        if (name.length() > 0)
+        {
+            item.putString("name", name);
+        }
+        return item;
+    }
+
+    private void saveData()
+    {
+        AppConfigStorageItem item = fetchEditedValues();
+        String name = item.getString("name");
+        item.removeSetting("name");
+        if (name.length() > 0)
+        {
+            if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
+            {
+                AppConfigStorage.instance.putCustomConfig(name, item);
+            }
+            else
+            {
+                String oldName = getIntent().getStringExtra(ARG_CONFIG_NAME);
+                boolean wasSelected = oldName.equals(AppConfigStorage.instance.getSelectedConfigName());
+                if (AppConfigStorage.instance.isCustomConfig(oldName) || AppConfigStorage.instance.isConfigOverride(oldName))
+                {
+                    AppConfigStorage.instance.removeConfig(oldName);
+                }
+                AppConfigStorage.instance.putCustomConfig(name, item);
+                if (wasSelected)
+                {
+                    AppConfigStorage.instance.selectConfig(EditAppConfigActivity.this, name);
+                }
+            }
+            AppConfigStorage.instance.synchronizeCustomConfigWithPreferences(EditAppConfigActivity.this, name);
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 }

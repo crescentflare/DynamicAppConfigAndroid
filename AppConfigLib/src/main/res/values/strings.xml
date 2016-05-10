@@ -1,5 +1,7 @@
 <resources>
     <string name="app_config_loading">Loading configurations...</string>
+    <string name="app_config_menu_save">Save</string>
+    <string name="app_config_menu_create">Create</string>
     <string name="app_config_title_list">App configurations</string>
     <string name="app_config_title_edit">Edit configuration</string>
     <string name="app_config_title_edit_new">New custom configuration</string>
