@@ -5,11 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.crescentflare.appconfig.adapter.AppConfigAdapter;
@@ -43,7 +49,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
     /**
      * Members
      */
-    private FrameLayout layout = null;
+    private LinearLayout layout = null;
     private ListView listView = null;
     private LinearLayout spinnerView = null;
     private AppConfigAdapter adapter = null;
@@ -87,8 +93,11 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         //Create layout and configure action bar
         layout = createContentView();
         setTitle(AppConfigResourceHelper.getString(this, "app_config_title_list"));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
         setContentView(layout);
 
         //Load data and populate content
@@ -171,10 +180,23 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         return (int)(getResources().getDisplayMetrics().density * pixels);
     }
 
-    private FrameLayout createContentView()
+    private LinearLayout createContentView()
     {
         //Create main layout
-        layout = new FrameLayout(this);
+        layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        //Add a toolbar on top (if no action bar is present)
+        if (getSupportActionBar() == null)
+        {
+            Toolbar bar = new Toolbar(this);
+            layout.addView(bar, 0);
+            setSupportActionBar(bar);
+        }
+
+        //Add frame layout to contain listview or loading indicator
+        FrameLayout container = new FrameLayout(this);
+        layout.addView(container);
 
         //Add listview for configurations
         listView = new ListView(this);
@@ -185,7 +207,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         listView.setDividerHeight(0);
         listView.setAdapter(adapter);
         listView.setVisibility(View.GONE);
-        layout.addView(listView);
+        container.addView(listView);
 
         //Add spinner view for loading
         spinnerView = new LinearLayout(this);
@@ -193,7 +215,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         spinnerView.setGravity(Gravity.CENTER);
         spinnerView.setOrientation(LinearLayout.VERTICAL);
         spinnerView.setPadding(dip(8), dip(8), dip(8), dip(8));
-        layout.addView(spinnerView);
+        container.addView(spinnerView);
 
         //Add progress bar to it (animated spinner)
         ProgressBar iconView = new ProgressBar(this);
