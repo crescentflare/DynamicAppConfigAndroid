@@ -9,6 +9,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,16 +60,32 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        //Add listview as content view
+        //Create main layout
         super.onCreate(savedInstanceState);
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        setContentView(layout);
+
+        //Add a toolbar on top (if no action bar is present)
+        if (getSupportActionBar() == null)
+        {
+            Toolbar bar = new Toolbar(this);
+            layout.addView(bar, 0);
+            setSupportActionBar(bar);
+        }
+
+        //Add list view
         listView = new ListView(this);
         listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
         listView.setDivider(null);
         listView.setDividerHeight(0);
         setTitle(getIntent().getStringExtra(ARG_TITLE));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        setContentView(listView);
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
+        layout.addView(listView);
 
         //Add header and footer
         listView.setHeaderDividersEnabled(false);

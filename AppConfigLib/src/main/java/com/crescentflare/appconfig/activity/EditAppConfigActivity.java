@@ -19,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.SwitchCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -60,7 +61,7 @@ public class EditAppConfigActivity extends AppCompatActivity
      * Members
      */
     private ArrayList<View> fieldViews = new ArrayList<>();
-    private FrameLayout layout = null;
+    private LinearLayout layout = null;
     private LinearLayout editingView = null;
     private LinearLayout spinnerView = null;
     private AppConfigStorageItem initialEditValues = null;
@@ -84,8 +85,11 @@ public class EditAppConfigActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         layout = createContentView();
         setTitle(AppConfigResourceHelper.getString(this, getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? "app_config_title_edit_new" : "app_config_title_edit"));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if (getSupportActionBar() != null)
+        {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
         setContentView(layout);
 
         //Load data and populate content
@@ -449,11 +453,24 @@ public class EditAppConfigActivity extends AppCompatActivity
     /**
      * View and layout generation
      */
-    private FrameLayout createContentView()
+    private LinearLayout createContentView()
     {
         //Create main layout
-        layout = new FrameLayout(this);
-        layout.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
+        layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        //Add a toolbar on top (if no action bar is present)
+        if (getSupportActionBar() == null)
+        {
+            Toolbar bar = new Toolbar(this);
+            layout.addView(bar, 0);
+            setSupportActionBar(bar);
+        }
+
+        //Add frame layout to contain the editing views or loading indicator
+        FrameLayout container = new FrameLayout(this);
+        container.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
+        layout.addView(container);
 
         //Add editing view for changing configuration
         ScrollView scrollView = new ScrollView(this);
@@ -461,7 +478,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         editingView.setOrientation(LinearLayout.VERTICAL);
         editingView.setVisibility(View.GONE);
         scrollView.addView(editingView);
-        layout.addView(scrollView);
+        container.addView(scrollView);
 
         //Add spinner view for loading
         spinnerView = new LinearLayout(this);
@@ -469,7 +486,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         spinnerView.setGravity(Gravity.CENTER);
         spinnerView.setOrientation(LinearLayout.VERTICAL);
         spinnerView.setPadding(dip(8), dip(8), dip(8), dip(8));
-        layout.addView(spinnerView);
+        container.addView(spinnerView);
 
         //Add progress bar to it (animated spinner)
         ProgressBar iconView = new ProgressBar(this);
