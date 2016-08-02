@@ -13,7 +13,7 @@ For example: be able to make one build with a build selector that contains devel
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-    compile 'com.crescentflare.appconfig:AppConfigLib:0.9.0'
+    compile 'com.crescentflare.appconfig:AppConfigLib:0.9.1'
 
 Make sure that jcenter is added as a repository.
 
