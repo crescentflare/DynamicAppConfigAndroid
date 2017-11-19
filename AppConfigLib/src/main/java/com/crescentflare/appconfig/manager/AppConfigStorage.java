@@ -27,16 +27,19 @@ import java.util.Map;
  */
 public class AppConfigStorage
 {
-    /**
-     * Constants
-     */
+    // ---
+    // Constants
+    // ---
+
     private static final String PREFERENCE_FILE_NAME = "custom.app.config";
     private static final String SELECTED_PREFIX = "selected.";
     private static final String CUSTOM_PREFIX = "custom.";
 
-    /**
-     * Members
-     */
+
+    // ---
+    // Members
+    // ---
+
     public static AppConfigStorage instance = new AppConfigStorage();
     private AppConfigBaseManager configManager = null;
     private LinkedHashMap<String, AppConfigStorageItem> storedConfigs = new LinkedHashMap<>();
@@ -48,9 +51,10 @@ public class AppConfigStorage
     private boolean initialized = false;
 
 
-    /**
-     * Initialization
-     */
+    // ---
+    // Initialization
+    // ---
+
     private AppConfigStorage()
     {
     }
@@ -81,17 +85,21 @@ public class AppConfigStorage
         return customConfigLoaded;
     }
 
-    /**
-     * Obtain manager instance, only used internally if the given manager is a singleton (which is recommended)
-     */
+
+    // ---
+    // Obtain manager instance, only used internally if the given manager is a singleton (which is recommended)
+    // ---
+
     public AppConfigBaseManager getConfigManager()
     {
         return configManager;
     }
 
-    /**
-     * Obtain from storage
-     */
+
+    // ---
+    // Obtain from storage
+    // ---
+
     public AppConfigStorageItem getConfig(String config)
     {
         if (customConfigs.containsKey(config))
@@ -150,9 +158,11 @@ public class AppConfigStorage
         return list;
     }
 
-    /**
-     * Add to storage
-     */
+
+    // ---
+    // Add to storage
+    // ---
+
     public void putConfig(String config, AppConfigStorageItem item)
     {
         removeConfig(config);
@@ -177,9 +187,11 @@ public class AppConfigStorage
         }
     }
 
-    /**
-     * Other operations
-     */
+
+    // ---
+    // Other operations
+    // ---
+
     public boolean removeConfig(String config)
     {
         boolean removed = false;
@@ -276,9 +288,11 @@ public class AppConfigStorage
         }
     }
 
-    /**
-     * Loading
-     */
+
+    // ---
+    // Loading
+    // ---
+
     public void setLoadingSourceAssetFile(String fileName)
     {
         loadFromAssetFile = fileName;
@@ -334,13 +348,13 @@ public class AppConfigStorage
 
     private LinkedHashMap<String, AppConfigStorageItem> loadFromSourceInternal(Context context, String assetFile)
     {
-        //Return early if specified asset file is not supported or empty
+        // Return early if specified asset file is not supported or empty
         if (assetFile == null || !assetFile.endsWith(".json"))
         {
             return null;
         }
 
-        //Create default item from model (if it exists)
+        // Create default item from model (if it exists)
         AppConfigStorageItem defaultItem = null;
         if (configManager != null)
         {
@@ -375,7 +389,7 @@ public class AppConfigStorage
             }
         }
 
-        //Prepare input stream for loading
+        // Prepare input stream for loading
         LinkedHashMap<String, AppConfigStorageItem> loadedConfigs = new LinkedHashMap<>();
         InputStream inputStream = null;
         try
@@ -386,7 +400,7 @@ public class AppConfigStorage
         {
         }
 
-        //Load file
+        // Load file
         String result = "{}";
         if (inputStream != null)
         {
@@ -406,7 +420,7 @@ public class AppConfigStorage
             result = stringBuilder.toString();
         }
 
-        //Parse JSON
+        // Parse JSON
         try
         {
             JSONArray configArray = new JSONArray(result);
@@ -423,7 +437,7 @@ public class AppConfigStorage
 
     private void addStorageItemFromJson(HashMap<String, AppConfigStorageItem> loadedConfigs, JSONObject json, AppConfigStorageItem parent)
     {
-        //Add item
+        // Add item
         AppConfigStorageItem addItem = new AppConfigStorageItem();
         Iterator<String> iterator = json.keys();
         addItem.copyValues(parent);
@@ -440,7 +454,7 @@ public class AppConfigStorage
             loadedConfigs.put(json.optString("name"), addItem);
         }
 
-        //Find sub configurations with overrided values
+        // Find sub configurations with overrided values
         JSONArray subConfigs = json.optJSONArray("subConfigs");
         if (subConfigs != null)
         {
@@ -451,9 +465,11 @@ public class AppConfigStorage
         }
     }
 
-    /**
-     * Preferences handling
-     */
+
+    // ---
+    // Preferences handling
+    // ---
+
     public void synchronizeCustomConfigWithPreferences(Context context, String config)
     {
         if (customConfigs.containsKey(config))
@@ -552,7 +568,7 @@ public class AppConfigStorage
                 int dotPos = customKey.indexOf('.');
                 if (dotPos >= 0)
                 {
-                    //Add config if not already in
+                    // Add config if not already in
                     String configName = customKey.substring(0, dotPos);
                     String keyName = customKey.substring(dotPos + 1);
                     if (!loadedConfigs.containsKey(configName))
@@ -560,7 +576,7 @@ public class AppConfigStorage
                         loadedConfigs.put(configName, new AppConfigStorageItem());
                     }
 
-                    //Add value
+                    // Add value
                     AppConfigStorageItem item = loadedConfigs.get(configName);
                     Object addObject = objectMap.get(key);
                     if (addObject instanceof Boolean)
@@ -609,13 +625,13 @@ public class AppConfigStorage
     {
         if (customConfigs.containsKey(config))
         {
-            //First remove existing item
+            // First remove existing item
             String preferencesFileName = context.getPackageName() + "." + PREFERENCE_FILE_NAME;
             SharedPreferences preferences = context.getSharedPreferences(preferencesFileName, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
             removeCustomItemFromPreferences(context, config);
 
-            //Add new one
+            // Add new one
             AppConfigStorageItem item = customConfigs.get(config);
             ArrayList<String> valueList = item.valueList();
             for (String key : valueList)
@@ -642,9 +658,11 @@ public class AppConfigStorage
         }
     }
 
-    /**
-     * Manager listeners
-     */
+
+    // ---
+    // Manager listeners
+    // ---
+
     public void addChangedConfigListener(ChangedConfigListener listener)
     {
         if (!changedConfigListeners.contains(listener))
@@ -661,9 +679,11 @@ public class AppConfigStorage
         }
     }
 
-    /**
-     * Listener for current selection changes
-     */
+
+    // ---
+    // Listener for current selection changes
+    // ---
+
     public interface ChangedConfigListener
     {
         void onChangedConfig();

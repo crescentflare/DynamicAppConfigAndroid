@@ -14,14 +14,17 @@ import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigManager;
  */
 public class MainActivity extends AppCompatActivity implements AppConfigStorage.ChangedConfigListener
 {
-    /**
-     * Constants
-     */
+    // ---
+    // Constants
+    // ---
+
     private static final int RESULT_CODE_MANAGE_APP_CONFIG = 1001;
 
-    /**
-     * Initialization
-     */
+
+    // ---
+    // Initialization
+    // ---
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -34,9 +37,11 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
         }
     }
 
-    /**
-     * Activity state handling
-     */
+
+    // ---
+    // Activity state handling
+    // ---
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -59,9 +64,11 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
         fillContent();
     }
 
-    /**
-     * Fill content (show configuration values)
-     */
+
+    // ---
+    // Fill content (show configuration values)
+    // ---
+
     @Override
     public void onChangedConfig()
     {
@@ -70,14 +77,14 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
 
     public void fillContent()
     {
-        //Fetch text views
+        // Fetch text views
         TextView tvConfigName = (TextView)findViewById(R.id.activity_main_config_name);
         TextView tvConfigApiUrl = (TextView)findViewById(R.id.activity_main_config_api_url);
         TextView tvConfigRunType = (TextView)findViewById(R.id.activity_main_config_run_type);
         TextView tvConfigAcceptAllSSL = (TextView)findViewById(R.id.activity_main_config_accept_all_ssl);
         TextView tvConfigNetworkTimeout = (TextView)findViewById(R.id.activity_main_config_network_timeout_sec);
 
-        //Fill with config settings
+        // Fill with config settings
         tvConfigName.setText(getString(R.string.prefix_config_name) + " " + ExampleAppConfigManager.currentConfig().getName());
         tvConfigApiUrl.setText(getString(R.string.prefix_config_api_url) + " " + ExampleAppConfigManager.currentConfig().getApiUrl());
         tvConfigRunType.setText(getString(R.string.prefix_config_run_type) + " " + ExampleAppConfigManager.currentConfig().getRunType().toString());

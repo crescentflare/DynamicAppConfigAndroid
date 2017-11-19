@@ -23,17 +23,20 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class CheckViewHelper
 {
-    /**
-     * Convenience functions
-     */
+    // ---
+    // Convenience functions
+    // ---
+
     public static void checkOnPage(String pageTitle)
     {
         onView(allOf(isDescendantOfA(withId(R.id.action_bar_container)), withText(pageTitle))).check(matches(isDisplayed()));
     }
 
-    /**
-     * Custom matcher for checking tags
-     */
+
+    // ---
+    // Custom matcher for checking tags
+    // ---
+
     public static Matcher<Object> withTagStringMatching(String expectedText)
     {
         checkNotNull(expectedText);
@@ -61,9 +64,11 @@ public class CheckViewHelper
         };
     }
 
-    /**
-     * Custom matcher for a list view containing a string adapter
-     */
+
+    // ---
+    // Custom matcher for a list view containing a string adapter
+    // ---
+
     public static Matcher<Object> withStringAdapterContent(String expectedText)
     {
         checkNotNull(expectedText);

@@ -6,9 +6,10 @@ package com.crescentflare.appconfig.adapter;
  */
 public class AppConfigAdapterEntry
 {
-    /**
-     * Enums
-     */
+    // ---
+    // Enums
+    // ---
+
     public enum Type
     {
         Configuration,
@@ -26,18 +27,21 @@ public class AppConfigAdapterEntry
         Add
     }
 
-    /**
-     * Members
-     */
+
+    // ---
+    // Members
+    // ---
+
     private Type type = Type.Configuration;
     private Section section = Section.Unknown;
     private String name = "";
     private String label = "";
 
 
-    /**
-     * Initialization
-     */
+    // ---
+    // Initialization
+    // ---
+
     public AppConfigAdapterEntry(Type type, Section section, String name, String label)
     {
         this.type = type;
@@ -71,9 +75,11 @@ public class AppConfigAdapterEntry
         return new AppConfigAdapterEntry(Type.Footer, Section.Unknown, "", "");
     }
 
-    /**
-     * Getters
-     */
+
+    // ---
+    // Getters
+    // ---
+
     public Type getType()
     {
         return type;

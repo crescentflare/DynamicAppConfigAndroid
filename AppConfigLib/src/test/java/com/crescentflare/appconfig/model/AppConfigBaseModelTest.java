@@ -10,6 +10,10 @@ import java.util.Arrays;
  */
 public class AppConfigBaseModelTest
 {
+    // ---
+    // Test cases
+    // ---
+
     @Test
     public void testValueListForFields()
     {
@@ -130,9 +134,11 @@ public class AppConfigBaseModelTest
         Assert.assertEquals(true, model.isBoolField());
     }
 
-    /**
-     * A simple enum
-     */
+
+    // ---
+    // A simple enum
+    // ---
+
     public enum SimpleEnum
     {
         Simple,
@@ -140,9 +146,11 @@ public class AppConfigBaseModelTest
         Name;
     }
 
-    /**
-     * A more complex enum which has string serialization
-     */
+
+    // ---
+    // A more complex enum which has string serialization
+    // ---
+
     public enum ComplexEnum
     {
         Unknown(""),
@@ -172,9 +180,11 @@ public class AppConfigBaseModelTest
         }
     }
 
-    /**
-     * A derived model using public fields
-     */
+
+    // ---
+    // A derived model using public fields
+    // ---
+
     public static class DerivedModelWithFields extends AppConfigBaseModel
     {
         @AppConfigModelCategory("Enums")
@@ -196,9 +206,11 @@ public class AppConfigBaseModelTest
         public boolean boolField = false;
     }
 
-    /**
-     * A derived model using getters and setters
-     */
+
+    // ---
+    // A derived model using getters and setters
+    // ---
+
     public static class DerivedModelWithMethods extends AppConfigBaseModel
     {
         @AppConfigModelCategory("Enums")

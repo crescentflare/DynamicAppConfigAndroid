@@ -10,9 +10,10 @@ import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigManager;
  */
 public class ExampleApplication extends Application implements AppConfigStorage.ChangedConfigListener
 {
-    /**
-     * Initialization
-     */
+    // ---
+    // Initialization
+    // ---
+
     @Override
     public void onCreate()
     {
@@ -24,13 +25,15 @@ public class ExampleApplication extends Application implements AppConfigStorage.
         }
     }
 
-    /**
-     * Listeners
-     */
+
+    // ---
+    // Listeners
+    // ---
+
     @Override
     public void onChangedConfig()
     {
-        //In here the application can re-initialize singletons if they rely on the config or
-        //do other things necessary
+        // In here the application can re-initialize singletons if they rely on the config or
+        // do other things necessary
     }
 }

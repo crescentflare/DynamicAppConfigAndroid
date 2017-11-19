@@ -22,11 +22,17 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class Main
 {
-    /**
-     * Members
-     */
+    // ---
+    // Members
+    // ---
+
     @Rule
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule(MainActivity.class);
+
+
+    // ---
+    // Scenarios
+    // ---
 
     /**
      * Scenario: Selecting a configuration

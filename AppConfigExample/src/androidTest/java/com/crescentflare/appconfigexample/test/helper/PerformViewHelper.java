@@ -18,17 +18,20 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
  */
 public class PerformViewHelper
 {
-    /**
-     * Utility functions
-     */
+    // ---
+    // Utility functions
+    // ---
+
     public static void disableLongClick(int viewId)
     {
         onView(withId(viewId)).perform(disableListViewLongClick());
     }
 
-    /**
-     * View action to force a switch setting
-     */
+
+    // ---
+    // View action to force a switch setting
+    // ---
+
     public static ViewAction setSwitch(final boolean enabled)
     {
         return new ViewAction()
@@ -54,9 +57,11 @@ public class PerformViewHelper
         };
     }
 
-    /**
-     * View action: disable long click (workaround for list views supporting long click which is triggered, even when not intended)
-     */
+
+    // ---
+    // View action: disable long click (workaround for list views supporting long click which is triggered, even when not intended)
+    // ---
+
     private static ViewAction disableListViewLongClick()
     {
         return new ViewAction()

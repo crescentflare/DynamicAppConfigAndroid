@@ -12,9 +12,10 @@ import com.crescentflare.appconfig.model.AppConfigModelSort;
  */
 public class ExampleAppConfigModel extends AppConfigBaseModel
 {
-    /**
-     * Members
-     */
+    // ---
+    // Members
+    // ---
+
     private String name = "Production";
 
     @AppConfigModelSort(0)
@@ -33,9 +34,10 @@ public class ExampleAppConfigModel extends AppConfigBaseModel
     private ExampleAppConfigEnum runType = ExampleAppConfigEnum.RunNormally;
 
 
-    /**
-     * Generated code
-     */
+    // ---
+    // Generated code
+    // ---
+
     public String getName()
     {
         return name;

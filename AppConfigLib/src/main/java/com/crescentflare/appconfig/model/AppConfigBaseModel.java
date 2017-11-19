@@ -18,12 +18,13 @@ import java.util.Comparator;
  */
 public class AppConfigBaseModel
 {
-    /**
-     * Reflection helper: get list of values (either from getters, or from fields directly)
-     */
+    // ---
+    // Reflection helper: get list of values (either from getters, or from fields directly)
+    // ---
+
     public ArrayList<String> valueList()
     {
-        //Gather items
+        // Gather items
         ArrayList<ModelValue> list = new ArrayList<>();
         Field[] fields = getClass().getDeclaredFields();
         for (Field field : fields)
@@ -75,7 +76,7 @@ public class AppConfigBaseModel
             }
         }
 
-        //Sort
+        // Sort
         Collections.sort(list, new Comparator<ModelValue>()
         {
             @Override
@@ -85,7 +86,7 @@ public class AppConfigBaseModel
             }
         });
 
-        //Extract strings and return
+        // Extract strings and return
         ArrayList<String> stringValues = new ArrayList<>();
         for (ModelValue listItem : list)
         {
@@ -94,9 +95,11 @@ public class AppConfigBaseModel
         return stringValues;
     }
 
-    /**
-     * Reflection helper: get the list of categories (if some items don't have any category, an empty string is added)
-     */
+
+    // ---
+    // Reflection helper: get the list of categories (if some items don't have any category, an empty string is added)
+    // ---
+
     public ArrayList<String> getCategories()
     {
         ArrayList<String> categories = new ArrayList<>();
@@ -144,9 +147,11 @@ public class AppConfigBaseModel
         return categories;
     }
 
-    /**
-     * Reflection helper: check if the value belongs to the given category
-     */
+
+    // ---
+    // Reflection helper: check if the value belongs to the given category
+    // ---
+
     public boolean valueBelongsToCategory(String value, String category)
     {
         for (Field field : getClass().getDeclaredFields())
@@ -167,9 +172,11 @@ public class AppConfigBaseModel
         return false;
     }
 
-    /**
-     * Reflection helper: get the current (or default) value of a field (either from a getter, or a field directly)
-     */
+
+    // ---
+    // Reflection helper: get the current (or default) value of a field (either from a getter, or a field directly)
+    // ---
+
     public Object getCurrentValue(String value)
     {
         Method[] methods = getClass().getDeclaredMethods();
@@ -216,9 +223,11 @@ public class AppConfigBaseModel
         return result;
     }
 
-    /**
-     * Reflection helper: overwrite fields using custom settings
-     */
+
+    // ---
+    // Reflection helper: overwrite fields using custom settings
+    // ---
+
     public void applyCustomSettings(String configName, AppConfigStorageItem item)
     {
         Method[] methods = getClass().getDeclaredMethods();
@@ -360,9 +369,11 @@ public class AppConfigBaseModel
         }
     }
 
-    /**
-     * Helper object
-     */
+
+    // ---
+    // Helper object
+    // ---
+
     private static class ModelValue
     {
         public String value = "";

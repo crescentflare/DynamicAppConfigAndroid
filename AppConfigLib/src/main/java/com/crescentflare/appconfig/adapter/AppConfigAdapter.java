@@ -28,24 +28,28 @@ import java.util.ArrayList;
  */
 public class AppConfigAdapter extends BaseAdapter implements ListAdapter
 {
-    /**
-     * Members
-     */
+    // ---
+    // Members
+    // ---
+
     private Context context;
     private ArrayList<AppConfigAdapterEntry> entries = new ArrayList<>();
 
 
-    /**
-     * Initialization
-     */
+    // ---
+    // Initialization
+    // ---
+
     public AppConfigAdapter(Context context)
     {
         this.context = context;
     }
 
-    /**
-     * Enabled check
-     */
+
+    // ---
+    // Enabled check
+    // ---
+
     @Override
     public boolean areAllItemsEnabled()
     {
@@ -58,9 +62,11 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
         return entries.get(i).getType() == AppConfigAdapterEntry.Type.Configuration && (entries.get(i).getName().length() > 0 || entries.get(i).getSection() == AppConfigAdapterEntry.Section.Add);
     }
 
-    /**
-     * Item handling
-     */
+
+    // ---
+    // Item handling
+    // ---
+
     @Override
     public int getCount()
     {
@@ -106,9 +112,11 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
         return AppConfigAdapterEntry.Type.values().length;
     }
 
-    /**
-     * View handling
-     */
+
+    // ---
+    // View handling
+    // ---
+
     private int dip(int pixels)
     {
         return (int)(context.getResources().getDisplayMetrics().density * pixels);
@@ -119,7 +127,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
         Drawable drawable = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
-            //Set up color state list
+            // Set up color state list
             int[][] states = new int[][]
             {
                     new int[] {  android.R.attr.state_focused }, // focused
@@ -135,7 +143,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
                     Color.WHITE
             };
 
-            //And create ripple drawable effect
+            // And create ripple drawable effect
             RippleDrawable rippleDrawable = new RippleDrawable(new ColorStateList(states, colors), null, null);
             drawable = rippleDrawable;
         }
@@ -153,17 +161,17 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
 
     private View generateSectionDivider(boolean includeBottomDivider)
     {
-        //Create container
+        // Create container
         LinearLayout dividerLayout = new LinearLayout(context);
         dividerLayout.setOrientation(LinearLayout.VERTICAL);
 
-        //Top line divider (edge)
+        // Top line divider (edge)
         View topLineView = new View(context);
         topLineView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         topLineView.setBackgroundColor(AppConfigResourceHelper.getColor(context, "app_config_section_divider_line"));
         dividerLayout.addView(topLineView);
 
-        //Middle divider (gradient on background)
+        // Middle divider (gradient on background)
         View gradientView = new View(context);
         int colors[] = new int[]
         {
@@ -183,7 +191,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
         }
         dividerLayout.addView(gradientView);
 
-        //Bottom line divider (edge)
+        // Bottom line divider (edge)
         if (includeBottomDivider)
         {
             View bottomLineView = new View(context);
@@ -192,7 +200,7 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
             dividerLayout.addView(bottomLineView);
         }
 
-        //Return created view
+        // Return created view
         return dividerLayout;
     }
 
@@ -298,18 +306,22 @@ public class AppConfigAdapter extends BaseAdapter implements ListAdapter
         return view;
     }
 
-    /**
-     * Update list and notify data change
-     */
+
+    // ---
+    // Update list and notify data change
+    // ---
+
     public void setEntries(ArrayList<AppConfigAdapterEntry> entries)
     {
         this.entries = entries;
         notifyDataSetChanged();
     }
 
-    /**
-     * List view tag to easily access subviews
-     */
+
+    // ---
+    // List view tag to easily access subviews
+    // ---
+
     public static class ViewHolder
     {
         public TextView labelView = null;

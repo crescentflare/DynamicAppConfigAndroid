@@ -21,11 +21,17 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class Manual
 {
-    /**
-     * Members
-     */
+    // ---
+    // Members
+    // ---
+
     @Rule
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule(MainActivity.class);
+
+
+    // ---
+    // Scenarios
+    // ---
 
     /**
      * Scenario: Manually change a configuration

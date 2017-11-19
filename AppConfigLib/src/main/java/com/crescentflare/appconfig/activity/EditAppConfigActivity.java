@@ -50,16 +50,19 @@ import java.util.ArrayList;
  */
 public class EditAppConfigActivity extends AppCompatActivity
 {
-    /**
-     * Constants
-     */
+    // ---
+    // Constants
+    // ---
+
     private static final String ARG_CONFIG_NAME = "ARG_CONFIG_NAME";
     private static final String ARG_CREATE_CUSTOM = "ARG_CREATE_CUSTOM";
     private static final int RESULT_CODE_SELECT_ENUM = 1004;
 
-    /**
-     * Members
-     */
+
+    // ---
+    // Members
+    // ---
+
     private ArrayList<View> fieldViews = new ArrayList<>();
     private LinearLayout layout = null;
     private LinearLayout editingView = null;
@@ -67,9 +70,10 @@ public class EditAppConfigActivity extends AppCompatActivity
     private AppConfigStorageItem initialEditValues = null;
 
 
-    /**
-     * Initialization
-     */
+    // ---
+    // Initialization
+    // ---
+
     public static Intent newInstance(Context context, String config, boolean createCustom)
     {
         Intent intent = new Intent(context, EditAppConfigActivity.class);
@@ -81,7 +85,7 @@ public class EditAppConfigActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        //Create layout and configure action bar
+        // Create layout and configure action bar
         super.onCreate(savedInstanceState);
         layout = createContentView();
         setTitle(AppConfigResourceHelper.getString(this, getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? "app_config_title_edit_new" : "app_config_title_edit"));
@@ -92,7 +96,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         }
         setContentView(layout);
 
-        //Load data and populate content
+        // Load data and populate content
         AppConfigStorage.instance.loadFromSource(this, new Runnable()
         {
             @Override
@@ -166,9 +170,11 @@ public class EditAppConfigActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * Menu handling
-     */
+
+    // ---
+    // Menu handling
+    // ---
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -211,9 +217,11 @@ public class EditAppConfigActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * View component generators
-     */
+
+    // ---
+    // View component generators
+    // ---
+
     private int dip(int pixels)
     {
         return (int)(getResources().getDisplayMetrics().density * pixels);
@@ -224,13 +232,13 @@ public class EditAppConfigActivity extends AppCompatActivity
         Drawable drawable = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
-            //Set up color state list
+            // Set up color state list
             int[][] states = new int[][]
             {
-                    new int[] {  android.R.attr.state_focused }, // focused
-                    new int[] {  android.R.attr.state_pressed }, // pressed
-                    new int[] {  android.R.attr.state_enabled }, // enabled
-                    new int[] { -android.R.attr.state_enabled }  // disabled
+                    new int[] {  android.R.attr.state_focused }, // Focused
+                    new int[] {  android.R.attr.state_pressed }, // Pressed
+                    new int[] {  android.R.attr.state_enabled }, // Enabled
+                    new int[] { -android.R.attr.state_enabled }  // Disabled
             };
             int[] colors = new int[]
             {
@@ -240,7 +248,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                     Color.WHITE
             };
 
-            //And create ripple drawable effect
+            // And create ripple drawable effect
             RippleDrawable rippleDrawable = new RippleDrawable(new ColorStateList(states, colors), null, null);
             drawable = rippleDrawable;
         }
@@ -258,17 +266,17 @@ public class EditAppConfigActivity extends AppCompatActivity
 
     private View generateSectionDivider(boolean includeBottomDivider)
     {
-        //Create container
+        // Create container
         LinearLayout dividerLayout = new LinearLayout(this);
         dividerLayout.setOrientation(LinearLayout.VERTICAL);
 
-        //Top line divider (edge)
+        // Top line divider (edge)
         View topLineView = new View(this);
         topLineView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         topLineView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_section_divider_line"));
         dividerLayout.addView(topLineView);
 
-        //Middle divider (gradient on background)
+        // Middle divider (gradient on background)
         View gradientView = new View(this);
         int colors[] = new int[]
         {
@@ -288,7 +296,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         }
         dividerLayout.addView(gradientView);
 
-        //Bottom line divider (edge)
+        // Bottom line divider (edge)
         if (includeBottomDivider)
         {
             View bottomLineView = new View(this);
@@ -297,7 +305,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             dividerLayout.addView(bottomLineView);
         }
 
-        //Return created view
+        // Return created view
         return dividerLayout;
     }
 
@@ -400,7 +408,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             editView.setInputType(InputType.TYPE_CLASS_NUMBER);
             editView.setKeyListener(DigitsKeyListener.getInstance(true, false));
         }
-        if (addDivider && false) //Don't make dividers for this type of view
+        if (addDivider && false) // Don't make dividers for this type of view
         {
             createdView.addView(dividerView = new View(this));
             dividerView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_list_divider_line"));
@@ -450,16 +458,18 @@ public class EditAppConfigActivity extends AppCompatActivity
         return createdView;
     }
 
-    /**
-     * View and layout generation
-     */
+
+    // ---
+    // View and layout generation
+    // ---
+
     private LinearLayout createContentView()
     {
-        //Create main layout
+        // Create main layout
         layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        //Add a toolbar on top (if no action bar is present)
+        // Add a toolbar on top (if no action bar is present)
         if (getSupportActionBar() == null)
         {
             Toolbar bar = new Toolbar(this);
@@ -467,12 +477,12 @@ public class EditAppConfigActivity extends AppCompatActivity
             setSupportActionBar(bar);
         }
 
-        //Add frame layout to contain the editing views or loading indicator
+        // Add frame layout to contain the editing views or loading indicator
         FrameLayout container = new FrameLayout(this);
         container.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
         layout.addView(container);
 
-        //Add editing view for changing configuration
+        // Add editing view for changing configuration
         ScrollView scrollView = new ScrollView(this);
         editingView = new LinearLayout(this);
         editingView.setOrientation(LinearLayout.VERTICAL);
@@ -480,7 +490,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         scrollView.addView(editingView);
         container.addView(scrollView);
 
-        //Add spinner view for loading
+        // Add spinner view for loading
         spinnerView = new LinearLayout(this);
         spinnerView.setBackgroundColor(Color.WHITE);
         spinnerView.setGravity(Gravity.CENTER);
@@ -488,11 +498,11 @@ public class EditAppConfigActivity extends AppCompatActivity
         spinnerView.setPadding(dip(8), dip(8), dip(8), dip(8));
         container.addView(spinnerView);
 
-        //Add progress bar to it (animated spinner)
+        // Add progress bar to it (animated spinner)
         ProgressBar iconView = new ProgressBar(this);
         spinnerView.addView(iconView);
 
-        //Add loading text to it
+        // Add loading text to it
         TextView progressTextView = new TextView(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(0, dip(12), 0, 0);
@@ -505,7 +515,7 @@ public class EditAppConfigActivity extends AppCompatActivity
 
     private LinearLayout generateEditingContent(String category, ArrayList<String> values, AppConfigStorageItem config, AppConfigBaseModel baseModel)
     {
-        //Create container
+        // Create container
         LinearLayout fieldEditLayout = new LinearLayout(this);
         String title = getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false) ? AppConfigResourceHelper.getString(this, "app_config_header_edit_new") : getIntent().getStringExtra(ARG_CONFIG_NAME);
         if (category != null)
@@ -523,7 +533,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         fieldEditLayout.setBackgroundColor(Color.WHITE);
         fieldEditLayout.addView(generateHeaderView(title));
 
-        //Fetch objects and filter by category
+        // Fetch objects and filter by category
         ArrayList<String> editValues = new ArrayList<>();
         ArrayList<Object> editObjects = new ArrayList<>();
         for (String value : values)
@@ -540,7 +550,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             }
         }
 
-        //Add editing views
+        // Add editing views
         for (int i = 0; i < editValues.size(); i++)
         {
             final String value = editValues.get(i);
@@ -597,13 +607,13 @@ public class EditAppConfigActivity extends AppCompatActivity
             }
         }
 
-        //Return container
+        // Return container
         return fieldEditLayout;
     }
 
     private void populateContent()
     {
-        //Show/hide spinner depending on the config being loaded
+        // Show/hide spinner depending on the config being loaded
         spinnerView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.GONE : View.VISIBLE);
         editingView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.VISIBLE : View.GONE);
         if (!AppConfigStorage.instance.isLoaded())
@@ -611,11 +621,11 @@ public class EditAppConfigActivity extends AppCompatActivity
             return;
         }
 
-        //Clear all views to re-populate
+        // Clear all views to re-populate
         editingView.removeAllViews();
         fieldViews.clear();
 
-        //Determine values and categories
+        // Determine values and categories
         AppConfigStorageItem config = AppConfigStorage.instance.getConfigNotNull(getIntent().getStringExtra(ARG_CONFIG_NAME));
         ArrayList<String> values = config.valueList();
         ArrayList<String> categories = new ArrayList<>();
@@ -628,7 +638,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             categories = baseModel.getCategories();
         }
 
-        //Add section for name (if applicable)
+        // Add section for name (if applicable)
         if (AppConfigStorage.instance.isCustomConfig(getIntent().getStringExtra(ARG_CONFIG_NAME)) || getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
         {
             String name = getIntent().getStringExtra(ARG_CONFIG_NAME);
@@ -647,7 +657,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             fieldViews.add(layoutView.findViewWithTag("name"));
         }
 
-        //Add editing fields to view
+        // Add editing fields to view
         if (categories.size() > 0)
         {
             for (String category : categories)
@@ -664,7 +674,7 @@ public class EditAppConfigActivity extends AppCompatActivity
             editingView.addView(generateSectionDivider(true));
         }
 
-        //Create layout containing buttons
+        // Create layout containing buttons
         LinearLayout buttonLayout = new LinearLayout(this);
         buttonLayout.setOrientation(LinearLayout.VERTICAL);
         buttonLayout.setBackgroundColor(Color.WHITE);
@@ -672,7 +682,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         editingView.addView(buttonLayout);
         editingView.addView(generateSectionDivider(false));
 
-        //Add buttons
+        // Add buttons
         if (getIntent().getBooleanExtra(ARG_CREATE_CUSTOM, false))
         {
             LinearLayout createButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_ok_edit_new"), true);
@@ -689,7 +699,7 @@ public class EditAppConfigActivity extends AppCompatActivity
         }
         else
         {
-            //Updating configuration handler
+            // Updating configuration handler
             LinearLayout saveButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_ok_edit"), true);
             saveButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_edit_save"));
             buttonLayout.addView(saveButton);
@@ -702,7 +712,7 @@ public class EditAppConfigActivity extends AppCompatActivity
                 }
             });
 
-            //Restore to defaults or delete handler
+            // Restore to defaults or delete handler
             String buttonText = AppConfigResourceHelper.getString(this, AppConfigStorage.instance.isCustomConfig(getIntent().getStringExtra(ARG_CONFIG_NAME)) ? "app_config_action_delete" : "app_config_action_restore");
             LinearLayout deleteButton = generateButtonView(buttonText, true);
             deleteButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_edit_clear"));
@@ -740,9 +750,11 @@ public class EditAppConfigActivity extends AppCompatActivity
         });
     }
 
-    /**
-     * Configuration mutations
-     */
+
+    // ---
+    // Configuration mutations
+    // ---
+
     private AppConfigStorageItem fetchEditedValues()
     {
         AppConfigStorageItem item = new AppConfigStorageItem();

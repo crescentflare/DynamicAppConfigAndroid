@@ -40,15 +40,18 @@ import java.util.ArrayList;
  */
 public class ManageAppConfigActivity extends AppCompatActivity implements AppConfigStorage.ChangedConfigListener
 {
-    /**
-     * Constants
-     */
+    // ---
+    // Constants
+    // ---
+
     private static final int RESULT_CODE_CUSTOM_COPY_FROM = 1000;
     private static final int RESULT_CODE_EDIT_CONFIG = 1001;
 
-    /**
-     * Members
-     */
+
+    // ---
+    // Members
+    // ---
+
     private LinearLayout layout = null;
     private ListView listView = null;
     private LinearLayout spinnerView = null;
@@ -56,9 +59,10 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
     private int buildNr = -1;
 
 
-    /**
-     * Initialization
-     */
+    // ---
+    // Initialization
+    // ---
+
     public static Intent newInstance(Context context)
     {
         return new Intent(context, ManageAppConfigActivity.class);
@@ -67,7 +71,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        //Obtain build number
+        // Obtain build number
         super.onCreate(savedInstanceState);
         if (!AppConfigStorage.instance.isInitialized())
         {
@@ -90,7 +94,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         {
         }
 
-        //Create layout and configure action bar
+        // Create layout and configure action bar
         layout = createContentView();
         setTitle(AppConfigResourceHelper.getString(this, "app_config_title_list"));
         if (getSupportActionBar() != null)
@@ -100,7 +104,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         }
         setContentView(layout);
 
-        //Load data and populate content
+        // Load data and populate content
         AppConfigStorage.instance.loadFromSource(this, new Runnable()
         {
             @Override
@@ -116,9 +120,11 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         fromActivity.startActivityForResult(newInstance(fromActivity), resultCode);
     }
 
-    /**
-     * State handling
-     */
+
+    // ---
+    // State handling
+    // ---
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -152,9 +158,11 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         AppConfigStorage.instance.addChangedConfigListener(this);
     }
 
-    /**
-     * Menu handling
-     */
+
+    // ---
+    // Menu handling
+    // ---
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -166,9 +174,11 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Layout and content handling
-     */
+
+    // ---
+    // Layout and content handling
+    // ---
+
     @Override
     public void onChangedConfig()
     {
@@ -182,11 +192,11 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
 
     private LinearLayout createContentView()
     {
-        //Create main layout
+        // Create main layout
         layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        //Add a toolbar on top (if no action bar is present)
+        // Add a toolbar on top (if no action bar is present)
         if (getSupportActionBar() == null)
         {
             Toolbar bar = new Toolbar(this);
@@ -194,11 +204,11 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             setSupportActionBar(bar);
         }
 
-        //Add frame layout to contain listview or loading indicator
+        // Add frame layout to contain listview or loading indicator
         FrameLayout container = new FrameLayout(this);
         layout.addView(container);
 
-        //Add listview for configurations
+        // Add listview for configurations
         listView = new ListView(this);
         adapter = new AppConfigAdapter(this);
         listView.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_list"));
@@ -209,7 +219,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         listView.setVisibility(View.GONE);
         container.addView(listView);
 
-        //Add spinner view for loading
+        // Add spinner view for loading
         spinnerView = new LinearLayout(this);
         spinnerView.setBackgroundColor(Color.WHITE);
         spinnerView.setGravity(Gravity.CENTER);
@@ -217,11 +227,11 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         spinnerView.setPadding(dip(8), dip(8), dip(8), dip(8));
         container.addView(spinnerView);
 
-        //Add progress bar to it (animated spinner)
+        // Add progress bar to it (animated spinner)
         ProgressBar iconView = new ProgressBar(this);
         spinnerView.addView(iconView);
 
-        //Add loading text to it
+        // Add loading text to it
         TextView progressTextView = new TextView(this);
         LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         textLayoutParams.setMargins(0, dip(8), 0, 0);
@@ -230,7 +240,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         progressTextView.setText(AppConfigResourceHelper.getString(this, "app_config_loading"));
         spinnerView.addView(progressTextView);
 
-        //Add build number below loading text
+        // Add build number below loading text
         if (buildNr > 0)
         {
             TextView progressBuildView = new TextView(this);
@@ -242,7 +252,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             spinnerView.addView(progressBuildView);
         }
 
-        //List view click handler
+        // List view click handler
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -266,7 +276,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             }
         });
 
-        //List view long click handler (edit configuration)
+        // List view long click handler (edit configuration)
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
         {
             @Override
@@ -294,7 +304,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
 
     private void populateContent()
     {
-        //Show/hide spinner depending on the config being loaded
+        // Show/hide spinner depending on the config being loaded
         spinnerView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.GONE : View.VISIBLE);
         listView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.VISIBLE : View.GONE);
         if (!AppConfigStorage.instance.isLoaded())
@@ -302,7 +312,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             return;
         }
 
-        //Add last selection configuration (if present)
+        // Add last selection configuration (if present)
         ArrayList<AppConfigAdapterEntry> entries = new ArrayList<>();
         entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_last_selection")));
         if (AppConfigStorage.instance.getSelectedConfig() != null)
@@ -315,7 +325,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.LastSelected, "", AppConfigResourceHelper.getString(this, "app_config_item_none"), false));
         }
 
-        //Add list of configurations
+        // Add list of configurations
         ArrayList<String> configs = AppConfigStorage.instance.configList();
         if (configs.size() > 0)
         {
@@ -326,7 +336,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             }
         }
 
-        //Add area for custom configurations, and adding them
+        // Add area for custom configurations, and adding them
         ArrayList<String> customConfigs = AppConfigStorage.instance.customConfigList();
         entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_custom")));
         for (String configName : customConfigs)
@@ -338,7 +348,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         }
         entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.Add, "", AppConfigResourceHelper.getString(this, "app_config_action_add"), false));
 
-        //Add build information
+        // Add build information
         entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_build_info")));
         entries.add(AppConfigAdapterEntry.entryForBuildInfo(AppConfigResourceHelper.getString(this, "app_config_field_build"), "" + buildNr));
         entries.add(AppConfigAdapterEntry.entryForBuildInfo(AppConfigResourceHelper.getString(this, "app_config_field_api_level"), "" + Build.VERSION.SDK_INT));

@@ -24,24 +24,28 @@ import java.util.ArrayList;
  */
 public class AppConfigChoiceAdapter extends BaseAdapter implements ListAdapter
 {
-    /**
-     * Members
-     */
+    // ---
+    // Members
+    // ---
+
     private Context context;
     private ArrayList<String> choices = new ArrayList<>();
 
 
-    /**
-     * Initialization
-     */
+    // ---
+    // Initialization
+    // ---
+
     public AppConfigChoiceAdapter(Context context)
     {
         this.context = context;
     }
 
-    /**
-     * Enabled check
-     */
+
+    // ---
+    // Enabled check
+    // ---
+
     @Override
     public boolean areAllItemsEnabled()
     {
@@ -54,9 +58,11 @@ public class AppConfigChoiceAdapter extends BaseAdapter implements ListAdapter
         return true;
     }
 
-    /**
-     * Item handling
-     */
+
+    // ---
+    // Item handling
+    // ---
+
     @Override
     public int getCount()
     {
@@ -81,9 +87,11 @@ public class AppConfigChoiceAdapter extends BaseAdapter implements ListAdapter
         return false;
     }
 
-    /**
-     * View handling
-     */
+
+    // ---
+    // View handling
+    // ---
+
     private int dip(int pixels)
     {
         return (int)(context.getResources().getDisplayMetrics().density * pixels);
@@ -154,18 +162,22 @@ public class AppConfigChoiceAdapter extends BaseAdapter implements ListAdapter
         return view;
     }
 
-    /**
-     * Update list and notify data change
-     */
+
+    // ---
+    // Update list and notify data change
+    // ---
+
     public void setChoices(ArrayList<String> choices)
     {
         this.choices = choices;
         notifyDataSetChanged();
     }
 
-    /**
-     * Listview tag to easily access subviews
-     */
+
+    // ---
+    // Listview tag to easily access subviews
+    // ---
+
     public static class ViewHolder
     {
         public TextView labelView = null;

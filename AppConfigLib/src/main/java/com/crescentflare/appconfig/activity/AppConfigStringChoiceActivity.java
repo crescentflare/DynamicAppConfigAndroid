@@ -29,25 +29,29 @@ import java.util.ArrayList;
  */
 public class AppConfigStringChoiceActivity extends AppCompatActivity
 {
-    /**
-     * Constants
-     */
+    // ---
+    // Constants
+    // ---
+
     public static final String ARG_INTENT_RESULT_SELECTED_INDEX = "ARG_INTENT_RESULT_SELECTED_INDEX";
     public static final String ARG_INTENT_RESULT_SELECTED_STRING = "ARG_INTENT_RESULT_SELECTED_STRING";
     private static final String ARG_TITLE = "ARG_TITLE";
     private static final String ARG_SELECTION_TITLE = "ARG_SELECTION_TITLE";
     private static final String ARG_CHOICES = "ARG_CHOICES";
 
-    /**
-     * Members
-     */
+
+    // ---
+    // Members
+    // ---
+
     private ListView listView = null;
     private AppConfigChoiceAdapter adapter = null;
 
 
-    /**
-     * Initialization
-     */
+    // ---
+    // Initialization
+    // ---
+
     public static Intent newInstance(Context context, String title, String selectionTitle, ArrayList<String> options)
     {
         Intent intent = new Intent(context, AppConfigStringChoiceActivity.class);
@@ -60,13 +64,13 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        //Create main layout
+        // Create main layout
         super.onCreate(savedInstanceState);
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         setContentView(layout);
 
-        //Add a toolbar on top (if no action bar is present)
+        // Add a toolbar on top (if no action bar is present)
         if (getSupportActionBar() == null)
         {
             Toolbar bar = new Toolbar(this);
@@ -74,7 +78,7 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
             setSupportActionBar(bar);
         }
 
-        //Add list view
+        // Add list view
         listView = new ListView(this);
         listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
         listView.setDivider(null);
@@ -87,18 +91,18 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         }
         layout.addView(listView);
 
-        //Add header and footer
+        // Add header and footer
         listView.setHeaderDividersEnabled(false);
         listView.setFooterDividersEnabled(false);
         listView.addHeaderView(generateHeader());
         listView.addFooterView(generateFooter());
 
-        //Set adapter
+        // Set adapter
         adapter = new AppConfigChoiceAdapter(this);
         listView.setAdapter(adapter);
         adapter.setChoices(getIntent().getStringArrayListExtra(ARG_CHOICES));
 
-        //Listview click handler
+        // Listview click handler
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -121,9 +125,11 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         fromActivity.startActivityForResult(newInstance(fromActivity, title, selectionTitle, options), resultCode);
     }
 
-    /**
-     * Menu handling
-     */
+
+    // ---
+    // Menu handling
+    // ---
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -135,9 +141,11 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * View handling
-     */
+
+    // ---
+    // View handling
+    // ---
+
     private int dip(int pixels)
     {
         return (int)(getResources().getDisplayMetrics().density * pixels);
@@ -159,17 +167,17 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
 
     private View generateFooter()
     {
-        //Create container
+        // Create container
         LinearLayout dividerLayout = new LinearLayout(this);
         dividerLayout.setOrientation(LinearLayout.VERTICAL);
 
-        //Top line divider (edge)
+        // Top line divider (edge)
         View topLineView = new View(this);
         topLineView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
         topLineView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_section_divider_line"));
         dividerLayout.addView(topLineView);
 
-        //Middle divider (gradient on background)
+        // Middle divider (gradient on background)
         View gradientView = new View(this);
         int colors[] = new int[]
         {
@@ -189,7 +197,7 @@ public class AppConfigStringChoiceActivity extends AppCompatActivity
         }
         dividerLayout.addView(gradientView);
 
-        //Return created view
+        // Return created view
         return dividerLayout;
     }
 }

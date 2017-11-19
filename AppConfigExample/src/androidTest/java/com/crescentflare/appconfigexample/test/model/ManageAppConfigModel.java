@@ -29,9 +29,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class ManageAppConfigModel
 {
-    /**
-     * Configuration enum
-     */
+    // ---
+    // Configuration enum
+    // ---
+
     public enum Configuration
     {
         Mock,
@@ -41,9 +42,11 @@ public class ManageAppConfigModel
         Production
     }
 
-    /**
-     * Interaction
-     */
+
+    // ---
+    // Interaction
+    // ---
+
     public ManageAppConfigModel revertToConfigurationDefaults()
     {
         getInstrumentation().runOnMainSync(new Runnable()
@@ -70,9 +73,11 @@ public class ManageAppConfigModel
         return this;
     }
 
-    /**
-     * Checks
-     */
+
+    // ---
+    // Checks
+    // ---
+
     public MainAppModel expectMainAppScreen()
     {
         CheckViewHelper.checkOnPage("Example App Config");
@@ -86,9 +91,11 @@ public class ManageAppConfigModel
         return new EditAppConfigModel();
     }
 
-    /**
-     * Helper
-     */
+
+    // ---
+    // Helper
+    // ---
+
     private String configurationToString(Configuration configuration)
     {
         switch (configuration)
@@ -107,9 +114,11 @@ public class ManageAppConfigModel
         return "";
     }
 
-    /**
-     * Custom matcher for the manage config selection list view
-     */
+
+    // ---
+    // Custom matcher for the manage config selection list view
+    // ---
+
     private static Matcher<Object> withConfigSelectionContent(String expectedText)
     {
         checkNotNull(expectedText);

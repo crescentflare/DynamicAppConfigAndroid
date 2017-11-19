@@ -29,9 +29,10 @@ import static org.hamcrest.core.AllOf.allOf;
  */
 public class EditAppConfigModel
 {
-    /**
-     * Interaction
-     */
+    // ---
+    // Interaction
+    // ---
+
     public Setting changeSetting(SettingType setting)
     {
         return new Setting(this, setting.toString());
@@ -43,9 +44,11 @@ public class EditAppConfigModel
         return this;
     }
 
-    /**
-     * Checks
-     */
+
+    // ---
+    // Checks
+    // ---
+
     public ManageAppConfigModel expectAppConfigurationsScreen()
     {
         CheckViewHelper.checkOnPage("App configurations");
@@ -53,9 +56,11 @@ public class EditAppConfigModel
         return new ManageAppConfigModel();
     }
 
-    /**
-     * Setting class for changing values
-     */
+
+    // ---
+    // Setting class for changing values
+    // ---
+
     public static class Setting
     {
         private EditAppConfigModel model;

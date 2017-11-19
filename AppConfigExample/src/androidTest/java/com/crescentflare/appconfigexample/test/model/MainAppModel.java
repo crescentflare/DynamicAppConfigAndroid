@@ -17,25 +17,30 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
  */
 public class MainAppModel
 {
-    /**
-     * Interaction
-     */
+    // ---
+    // Interaction
+    // ---
+
     public ManualSetting setSettingManually(SettingType setting)
     {
         return new ManualSetting(this, setting.toString());
     }
 
-    /**
-     * Checks
-     */
+
+    // ---
+    // Checks
+    // ---
+
     public Setting expectSetting(SettingType setting)
     {
         return new Setting(this, settingToViewId(setting), settingToPrefix(setting));
     }
 
-    /**
-     * Helper
-     */
+
+    // ---
+    // Helper
+    // ---
+
     private int settingToViewId(SettingType setting)
     {
         switch (setting)
@@ -59,9 +64,11 @@ public class MainAppModel
         return setting.toString() + ": ";
     }
 
-    /**
-     * Setting class for manually changing values
-     */
+
+    // ---
+    // Setting class for manually changing values
+    // ---
+
     public static class ManualSetting
     {
         private MainAppModel model;
@@ -102,9 +109,11 @@ public class MainAppModel
         }
     }
 
-    /**
-     * Setting class for checking values
-     */
+
+    // ---
+    // Setting class for checking values
+    // ---
+
     public static class Setting
     {
         private MainAppModel model;
