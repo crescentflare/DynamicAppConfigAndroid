@@ -17,7 +17,7 @@ public class ExampleApplication extends Application implements AppConfigStorage.
     public void onCreate()
     {
         super.onCreate();
-        if (getResources().getBoolean(R.bool.app_config_selection_enabled))
+        if (!BuildConfig.BUILD_TYPE.equals("release"))
         {
             AppConfigStorage.instance.init(this, ExampleAppConfigManager.instance);
             AppConfigStorage.instance.setLoadingSourceAssetFile("appConfig.json");

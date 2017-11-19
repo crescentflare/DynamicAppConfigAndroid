@@ -28,6 +28,13 @@ android {
             minifyEnabled false
             testCoverageEnabled true
         }
+        prerelease {
+            debuggable false
+            minifyEnabled false
+            testCoverageEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
@@ -60,26 +67,4 @@ dependencies {
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.1'
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2'
-}
-
-task cleanAppConfig {
-    doLast {
-        //The property below could be enforced by a build server for release (acceptance test) builds with configuration
-        //Important: make sure to design it as "opt-in" to prevent selection builds from being deployed to Google Play
-        if (!project.ext.has("keepAppConfig") || project.ext.get("keepAppConfig").toLowerCase() == "false") {
-            File jsonDest = file('src/main/assets/appConfig.json')
-            def jsonContents = "{}";
-            jsonDest.createNewFile()
-            jsonDest.write(jsonContents)
-
-            File resDest = file('src/main/res/values/app_config_enabler.xml')
-            def resContents = "<resources><bool name=\"app_config_selection_enabled\">false</bool></resources>";
-            resDest.createNewFile()
-            resDest.write(resContents)
-        }
-    }
-}
-
-afterEvaluate {
-    assembleRelease.dependsOn { task -> [cleanAppConfig] }
 }
