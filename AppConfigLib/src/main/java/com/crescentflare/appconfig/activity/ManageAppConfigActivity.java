@@ -317,11 +317,13 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
 
         // Add frame layout to contain the editing views or loading indicator
         FrameLayout container = new FrameLayout(this);
+        container.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         container.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
         layout.addView(container);
 
         // Add managing view for configuration selection and global settings editing
         ScrollView scrollView = new ScrollView(this);
+        scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         managingView = new AppConfigCellList(this);
         managingView.setVisibility(View.GONE);
         scrollView.addView(managingView);
@@ -478,7 +480,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             managingView.startSection(AppConfigResourceHelper.getString(this, "app_config_header_list_last_selection"));
 
             // Determine last selection
-            String buttonName = "";
+            String buttonName;
             boolean isOverride = false;
             boolean hasLastSelection = false;
             if (AppConfigStorage.instance.getSelectedConfig() != null)
@@ -530,11 +532,10 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             managingView.startSection(AppConfigResourceHelper.getString(this, "app_config_header_list"));
 
             // Add buttons
-            int index = 0;
             for (final String configName : configs)
             {
                 AppConfigClickableCell configButton = generateButtonView(configName, AppConfigStorage.instance.isConfigOverride(configName));
-                configButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_select_current")); // TODO: change
+                configButton.setTag("config: " + configName);
                 managingView.addSectionItem(configButton);
                 configButton.setOnClickListener(new View.OnClickListener()
                 {
@@ -555,7 +556,6 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
                         return true;
                     }
                 });
-                index++;
             }
 
             // End section
@@ -575,7 +575,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
                 if (AppConfigStorage.instance.isCustomConfig(configName))
                 {
                     AppConfigClickableCell configButton = generateButtonView(configName, false);
-                    configButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_select_current")); // TODO: change
+                    configButton.setTag("config: " + configName);
                     managingView.addSectionItem(configButton);
                     configButton.setOnClickListener(new View.OnClickListener()
                     {
@@ -634,17 +634,20 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             categories = baseModel.getGlobalCategories();
         }
 
-        // Add global editing fields to view
-        if (categories.size() > 0)
+        // Add global editing fields to view (if present)
+        if (values.size() > 0)
         {
-            for (String category : categories)
+            if (categories.size() > 0)
             {
-                generateEditingContent(category, values, config, baseModel);
+                for (String category : categories)
+                {
+                    generateEditingContent(category, values, config, baseModel);
+                }
             }
-        }
-        else
-        {
-            generateEditingContent(null, values, config, baseModel);
+            else
+            {
+                generateEditingContent(null, values, config, baseModel);
+            }
         }
 
         // Add build information

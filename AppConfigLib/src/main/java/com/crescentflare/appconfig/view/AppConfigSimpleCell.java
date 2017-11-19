@@ -2,15 +2,7 @@ package com.crescentflare.appconfig.view;
 
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.RippleDrawable;
-import android.graphics.drawable.StateListDrawable;
-import android.os.Build;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -18,7 +10,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
 import com.crescentflare.appconfig.helper.AppConfigViewHelper;
 
 /**

@@ -10,8 +10,6 @@ import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -22,20 +20,6 @@ import android.widget.TextView;
 
 import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
 import com.crescentflare.appconfig.helper.AppConfigViewHelper;
-import com.crescentflare.appconfig.model.AppConfigModelCategory;
-import com.crescentflare.appconfig.model.AppConfigModelGlobal;
-import com.crescentflare.appconfig.model.AppConfigModelSort;
-import com.crescentflare.appconfig.model.AppConfigStorageItem;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Library view: clickable cell

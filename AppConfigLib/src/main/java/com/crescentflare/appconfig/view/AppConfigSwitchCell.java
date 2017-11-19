@@ -2,9 +2,7 @@ package com.crescentflare.appconfig.view;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -12,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.crescentflare.appconfig.helper.AppConfigViewHelper;
 
