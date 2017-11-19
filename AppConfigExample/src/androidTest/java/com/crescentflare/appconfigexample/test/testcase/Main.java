@@ -4,7 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.crescentflare.appconfigexample.MainActivity;
-import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigEnum;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigRunType;
 import com.crescentflare.appconfigexample.test.model.ManageAppConfigModel;
 import com.crescentflare.appconfigexample.test.model.TestApplication;
 import com.crescentflare.appconfigexample.test.model.shared.SettingType;
@@ -50,7 +50,7 @@ public class Main
                 .expectMainAppScreen()
                 .expectSetting(SettingType.Name).toBe("Test server")
                 .expectSetting(SettingType.ApiURL).toBe("https://test.example.com/")
-                .expectSetting(SettingType.RunType).toBe(ExampleAppConfigEnum.RunNormally)
+                .expectSetting(SettingType.RunType).toBe(ExampleAppConfigRunType.RunNormally)
                 .expectSetting(SettingType.AcceptAllSSL).toBe(false)
                 .expectSetting(SettingType.NetworkTimeoutSeconds).toBe(20);
     }

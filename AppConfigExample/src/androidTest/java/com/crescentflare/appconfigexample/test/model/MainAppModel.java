@@ -2,7 +2,7 @@ package com.crescentflare.appconfigexample.test.model;
 
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.R;
-import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigEnum;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigRunType;
 import com.crescentflare.appconfigexample.test.model.shared.SettingType;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -103,7 +103,7 @@ public class MainAppModel
             return model;
         }
 
-        public MainAppModel to(ExampleAppConfigEnum value)
+        public MainAppModel to(ExampleAppConfigRunType value)
         {
             return to("" + value);
         }
@@ -145,7 +145,7 @@ public class MainAppModel
             return model;
         }
 
-        public MainAppModel toBe(ExampleAppConfigEnum value)
+        public MainAppModel toBe(ExampleAppConfigRunType value)
         {
             onView(withId(viewId)).check(matches(withText(prefix + value)));
             return model;

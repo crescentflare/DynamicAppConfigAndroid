@@ -3,6 +3,8 @@
     <item type="id" name="app_config_activity_manage_list"/>
     <item type="id" name="app_config_menu_save"/>
     <item type="id" name="app_config_menu_create"/>
+    <item type="id" name="app_config_activity_manage_select_current"/>
+    <item type="id" name="app_config_activity_manage_new_custom"/>
     <item type="id" name="app_config_activity_edit_save"/>
     <item type="id" name="app_config_activity_edit_clear"/>
     <item type="id" name="app_config_activity_edit_cancel"/>

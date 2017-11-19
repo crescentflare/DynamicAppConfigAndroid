@@ -34,6 +34,7 @@ public class AppConfigStorage
     private static final String PREFERENCE_FILE_NAME = "custom.app.config";
     private static final String SELECTED_PREFIX = "selected.";
     private static final String CUSTOM_PREFIX = "custom.";
+    private static final String GLOBAL_PREFIX = "global.";
 
 
     // ---
@@ -44,6 +45,7 @@ public class AppConfigStorage
     private AppConfigBaseManager configManager = null;
     private LinkedHashMap<String, AppConfigStorageItem> storedConfigs = new LinkedHashMap<>();
     private LinkedHashMap<String, AppConfigStorageItem> customConfigs = new LinkedHashMap<>();
+    private AppConfigStorageItem globalConfig = new AppConfigStorageItem();
     private ArrayList<ChangedConfigListener> changedConfigListeners = new ArrayList<>();
     private String loadFromAssetFile = null;
     private String selectedItem = "";
@@ -68,9 +70,11 @@ public class AppConfigStorage
     {
         configManager = manager;
         loadSelectedItemFromPreferences(context);
+        loadGlobalConfigFromPreferences(context);
         if (configManager != null)
         {
             configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+            configManager.applyCurrentConfig(selectedItem, globalConfig);
         }
         initialized = true;
     }
@@ -131,6 +135,11 @@ public class AppConfigStorage
     public AppConfigStorageItem getSelectedConfigNotNull()
     {
         return getConfigNotNull(selectedItem);
+    }
+
+    public AppConfigStorageItem getGlobalConfig()
+    {
+        return globalConfig;
     }
 
     public String getSelectedConfigName()
@@ -238,6 +247,20 @@ public class AppConfigStorage
         if (configManager != null)
         {
             configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+        }
+        for (ChangedConfigListener listener : changedConfigListeners)
+        {
+            listener.onChangedConfig();
+        }
+    }
+
+    public void updateGlobalConfig(Context context, AppConfigStorageItem item)
+    {
+        globalConfig = item;
+        storeGlobalConfigInPreferences(context);
+        if (configManager != null)
+        {
+            configManager.applyCurrentConfig(selectedItem, globalConfig);
         }
         for (ChangedConfigListener listener : changedConfigListeners)
         {
@@ -358,7 +381,7 @@ public class AppConfigStorage
         AppConfigStorageItem defaultItem = null;
         if (configManager != null)
         {
-            ArrayList<String> values = configManager.getBaseModelInstance().valueList();
+            ArrayList<String> values = configManager.getBaseModelInstance().configurationValueList();
             if (values.size() > 0)
             {
                 defaultItem = new AppConfigStorageItem();
@@ -656,6 +679,60 @@ public class AppConfigStorage
             }
             editor.apply();
         }
+    }
+
+    private void loadGlobalConfigFromPreferences(Context context)
+    {
+        String preferencesFileName = context.getPackageName() + "." + PREFERENCE_FILE_NAME;
+        SharedPreferences preferences = context.getSharedPreferences(preferencesFileName, Context.MODE_PRIVATE);
+        Map<String, ?> objectMap = preferences.getAll();
+        AppConfigStorageItem globalConfig = new AppConfigStorageItem();
+        for (String key : objectMap.keySet())
+        {
+            if (key.startsWith(GLOBAL_PREFIX))
+            {
+                key = key.substring(GLOBAL_PREFIX.length());
+                globalConfig.put(key, objectMap.get(GLOBAL_PREFIX + key));
+            }
+        }
+        this.globalConfig = globalConfig;
+    }
+
+    private void storeGlobalConfigInPreferences(Context context)
+    {
+        String preferencesFileName = context.getPackageName() + "." + PREFERENCE_FILE_NAME;
+        SharedPreferences preferences = context.getSharedPreferences(preferencesFileName, Context.MODE_PRIVATE);
+        Map<String, ?> objectMap = preferences.getAll();
+        SharedPreferences.Editor editor = preferences.edit();
+        for (String key : objectMap.keySet())
+        {
+            if (key.startsWith(GLOBAL_PREFIX))
+            {
+                editor.remove(key);
+            }
+        }
+        ArrayList<String> valueList = globalConfig.valueList();
+        for (String key : valueList)
+        {
+            Object itemValue = globalConfig.get(key);
+            if (itemValue instanceof Boolean)
+            {
+                editor.putBoolean(GLOBAL_PREFIX + key, globalConfig.getBoolean(key));
+            }
+            else if (itemValue instanceof Integer)
+            {
+                editor.putInt(GLOBAL_PREFIX + key, globalConfig.getInt(key));
+            }
+            else if (itemValue instanceof Long)
+            {
+                editor.putLong(GLOBAL_PREFIX + key, globalConfig.getLong(key));
+            }
+            else
+            {
+                editor.putString(GLOBAL_PREFIX + key, globalConfig.getStringNotNull(key));
+            }
+        }
+        editor.apply();
     }
 
 

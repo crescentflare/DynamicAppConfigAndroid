@@ -2,7 +2,6 @@ package com.crescentflare.appconfigexample.test.model;
 
 import android.support.test.espresso.matcher.BoundedMatcher;
 
-import com.crescentflare.appconfig.adapter.AppConfigAdapterEntry;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.R;
 import com.crescentflare.appconfigexample.test.helper.CheckViewHelper;

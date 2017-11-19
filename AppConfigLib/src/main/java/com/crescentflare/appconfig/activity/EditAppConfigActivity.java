@@ -113,6 +113,11 @@ public class EditAppConfigActivity extends AppCompatActivity
         fromActivity.startActivityForResult(newInstance(fromActivity, config, createCustom), resultCode);
     }
 
+
+    // ---
+    // State handling
+    // ---
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -634,8 +639,8 @@ public class EditAppConfigActivity extends AppCompatActivity
         {
             baseModel = AppConfigStorage.instance.getConfigManager().getBaseModelInstance();
             baseModel.applyCustomSettings(getIntent().getStringExtra(ARG_CONFIG_NAME), config);
-            values = AppConfigStorage.instance.getConfigManager().getBaseModelInstance().valueList();
-            categories = baseModel.getCategories();
+            values = AppConfigStorage.instance.getConfigManager().getBaseModelInstance().configurationValueList();
+            categories = baseModel.getConfigurationCategories();
         }
 
         // Add section for name (if applicable)

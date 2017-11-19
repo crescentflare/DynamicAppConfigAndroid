@@ -3,7 +3,7 @@ package com.crescentflare.appconfigexample.test.model;
 import android.os.SystemClock;
 
 import com.crescentflare.appconfigexample.R;
-import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigEnum;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigRunType;
 import com.crescentflare.appconfigexample.test.helper.CheckViewHelper;
 import com.crescentflare.appconfigexample.test.helper.WaitViewHelper;
 import com.crescentflare.appconfigexample.test.model.shared.SettingType;
@@ -91,7 +91,7 @@ public class EditAppConfigModel
             return model;
         }
 
-        public EditAppConfigModel to(ExampleAppConfigEnum value)
+        public EditAppConfigModel to(ExampleAppConfigRunType value)
         {
             onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(click());
             onData(allOf(is(instanceOf(String.class)), withStringAdapterContent(value.toString()))).perform(click());
