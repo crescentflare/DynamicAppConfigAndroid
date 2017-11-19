@@ -188,7 +188,10 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
     protected void onResume()
     {
         super.onResume();
-        latestEditValues = fetchEditedValues();
+        if (initialEditValues != null)
+        {
+            latestEditValues = fetchEditedValues();
+        }
         populateContent();
         AppConfigStorage.instance.addChangedConfigListener(this);
     }
