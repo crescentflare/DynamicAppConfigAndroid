@@ -73,8 +73,7 @@ public class AppConfigStorage
         loadGlobalConfigFromPreferences(context);
         if (configManager != null)
         {
-            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
-            configManager.applyCurrentConfig(selectedItem, globalConfig);
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull(), globalConfig);
         }
         initialized = true;
     }
@@ -219,7 +218,7 @@ public class AppConfigStorage
             selectedItem = "";
             if (configManager != null)
             {
-                configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+                configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull(), globalConfig);
             }
             for (ChangedConfigListener listener : changedConfigListeners)
             {
@@ -246,7 +245,7 @@ public class AppConfigStorage
         storeSelectedItemInPreferences(context);
         if (configManager != null)
         {
-            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull(), globalConfig);
         }
         for (ChangedConfigListener listener : changedConfigListeners)
         {
@@ -260,7 +259,7 @@ public class AppConfigStorage
         storeGlobalConfigInPreferences(context);
         if (configManager != null)
         {
-            configManager.applyCurrentConfig(selectedItem, globalConfig);
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull(), globalConfig);
         }
         for (ChangedConfigListener listener : changedConfigListeners)
         {
@@ -287,9 +286,11 @@ public class AppConfigStorage
         customConfigs.clear();
         selectedItem = "";
         storeSelectedItemInPreferences(context);
+        globalConfig = new AppConfigStorageItem();
+        storeGlobalConfigInPreferences(context);
         if (configManager != null)
         {
-            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull(), globalConfig);
         }
         for (ChangedConfigListener listener : changedConfigListeners)
         {
@@ -303,7 +304,21 @@ public class AppConfigStorage
         storeSelectedItemInPreferences(context);
         if (configManager != null)
         {
-            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull());
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull(), globalConfig);
+        }
+        for (ChangedConfigListener listener : changedConfigListeners)
+        {
+            listener.onChangedConfig();
+        }
+    }
+
+    public void manuallyChangeGlobalConfig(Context context, String key, String value)
+    {
+        globalConfig.putString(key, value);
+        storeGlobalConfigInPreferences(context);
+        if (configManager != null)
+        {
+            configManager.applyCurrentConfig(selectedItem, getSelectedConfigNotNull(), globalConfig);
         }
         for (ChangedConfigListener listener : changedConfigListeners)
         {
