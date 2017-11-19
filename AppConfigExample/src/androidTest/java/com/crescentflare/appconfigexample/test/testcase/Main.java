@@ -14,10 +14,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Feature: I can change my application configuration
+ * Feature: I can change my application configuration or a global setting
  * As an app developer or tester
- * I want to be able to change the configuration
- * So I can test multiple configurations in one build
+ * I want to be able to change the configuration or a global setting
+ * So I can test multiple configurations and settings in one build
  */
 @RunWith(AndroidJUnit4.class)
 public class Main

@@ -56,7 +56,7 @@ public class ExampleAppConfigModel extends AppConfigBaseModel
 
     @AppConfigModelGlobal
     @AppConfigModelSort(3)
-    private ExampleAppConfigLogEnum logLevel = ExampleAppConfigLogEnum.LogDisabled;
+    private ExampleAppConfigLogLevel logLevel = ExampleAppConfigLogLevel.LogDisabled;
 
 
     // ---
@@ -143,12 +143,12 @@ public class ExampleAppConfigModel extends AppConfigBaseModel
         this.consoleEnabled = consoleEnabled;
     }
 
-    public ExampleAppConfigLogEnum getLogLevel()
+    public ExampleAppConfigLogLevel getLogLevel()
     {
         return logLevel;
     }
 
-    public void setLogLevel(ExampleAppConfigLogEnum logLevel)
+    public void setLogLevel(ExampleAppConfigLogLevel logLevel)
     {
         this.logLevel = logLevel;
     }

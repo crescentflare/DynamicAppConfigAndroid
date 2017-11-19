@@ -2,6 +2,7 @@ package com.crescentflare.appconfigexample.test.model;
 
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.R;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigLogLevel;
 import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigRunType;
 import com.crescentflare.appconfigexample.test.model.shared.SettingType;
 
@@ -23,7 +24,12 @@ public class MainAppModel
 
     public ManualSetting setSettingManually(SettingType setting)
     {
-        return new ManualSetting(this, setting.toString());
+        return new ManualSetting(this, setting.toString(), false);
+    }
+
+    public ManualSetting setGlobalSettingManually(SettingType setting)
+    {
+        return new ManualSetting(this, setting.toString(), true);
     }
 
 
@@ -55,6 +61,14 @@ public class MainAppModel
                 return R.id.activity_main_config_accept_all_ssl;
             case NetworkTimeoutSeconds:
                 return R.id.activity_main_config_network_timeout_sec;
+            case ConsoleURL:
+                return R.id.activity_main_config_console_url;
+            case ConsoleEnabled:
+                return R.id.activity_main_config_console_enabled;
+            case ConsoleTimeoutSeconds:
+                return R.id.activity_main_config_console_timeout_sec;
+            case LogLevel:
+                return R.id.activity_main_config_log_level;
         }
         return 0;
     }
@@ -73,11 +87,13 @@ public class MainAppModel
     {
         private MainAppModel model;
         private String key;
+        private boolean global;
 
-        public ManualSetting(MainAppModel model, String key)
+        public ManualSetting(MainAppModel model, String key, boolean global)
         {
             this.model = model;
             this.key = key;
+            this.global = global;
         }
 
         public MainAppModel to(boolean value)
@@ -97,13 +113,25 @@ public class MainAppModel
                 @Override
                 public void run()
                 {
-                    AppConfigStorage.instance.manuallyChangeCurrentConfig(getInstrumentation().getTargetContext(), key, value);
+                    if (global)
+                    {
+                        AppConfigStorage.instance.manuallyChangeGlobalConfig(getInstrumentation().getTargetContext(), key, value);
+                    }
+                    else
+                    {
+                        AppConfigStorage.instance.manuallyChangeCurrentConfig(getInstrumentation().getTargetContext(), key, value);
+                    }
                 }
             });
             return model;
         }
 
         public MainAppModel to(ExampleAppConfigRunType value)
+        {
+            return to("" + value);
+        }
+
+        public MainAppModel to(ExampleAppConfigLogLevel value)
         {
             return to("" + value);
         }
@@ -146,6 +174,12 @@ public class MainAppModel
         }
 
         public MainAppModel toBe(ExampleAppConfigRunType value)
+        {
+            onView(withId(viewId)).check(matches(withText(prefix + value)));
+            return model;
+        }
+
+        public MainAppModel toBe(ExampleAppConfigLogLevel value)
         {
             onView(withId(viewId)).check(matches(withText(prefix + value)));
             return model;
