@@ -1,4 +1,7 @@
 # DynamicAppConfigAndroid
+
+[![Version](https://img.shields.io/bintray/v/crescentflare/maven/AppConfigLib.svg?style=flat)](https://bintray.com/crescentflare/maven/AppConfigLib)
+
 A useful library to support multiple build configurations or global settings in one application build.
 
 For example: be able to make one build with a build selector that contains development, test, acceptance and a production configuration. There would be no need to deliver multiple builds for each environment for testing, it can all be done from one build.
