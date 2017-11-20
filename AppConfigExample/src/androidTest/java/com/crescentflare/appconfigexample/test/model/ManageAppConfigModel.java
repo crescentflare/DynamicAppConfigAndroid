@@ -1,18 +1,30 @@
 package com.crescentflare.appconfigexample.test.model;
 
+import android.os.SystemClock;
+
 import com.crescentflare.appconfig.manager.AppConfigStorage;
-import com.crescentflare.appconfigexample.R;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigLogLevel;
 import com.crescentflare.appconfigexample.test.helper.CheckViewHelper;
-import com.crescentflare.appconfigexample.test.helper.PerformViewHelper;
 import com.crescentflare.appconfigexample.test.helper.WaitViewHelper;
+import com.crescentflare.appconfigexample.test.model.shared.SettingType;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withConfigTagStringMatching;
+import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withStringAdapterContent;
+import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withTagStringMatching;
+import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellSwitch;
+import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellText;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 
 /**
  * Test model: manage app config
@@ -63,6 +75,11 @@ public class ManageAppConfigModel
         return this;
     }
 
+    public Setting changeGlobalSetting(SettingType setting)
+    {
+        return new Setting(this, setting.toString());
+    }
+
 
     // ---
     // Checks
@@ -102,5 +119,48 @@ public class ManageAppConfigModel
                 return "Production";
         }
         return "";
+    }
+
+
+    // ---
+    // Setting class for changing values
+    // ---
+
+    public static class Setting
+    {
+        private ManageAppConfigModel model;
+        private String key;
+
+        public Setting(ManageAppConfigModel model, String key)
+        {
+            this.model = model;
+            this.key = key;
+        }
+
+        public ManageAppConfigModel to(boolean value)
+        {
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellSwitch(value));
+            SystemClock.sleep(2000);
+            return model;
+        }
+
+        public ManageAppConfigModel to(int value)
+        {
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellText("" + value));
+            return model;
+        }
+
+        public ManageAppConfigModel to(String value)
+        {
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellText(value));
+            return model;
+        }
+
+        public ManageAppConfigModel to(ExampleAppConfigLogLevel value)
+        {
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(click());
+            onData(allOf(is(instanceOf(String.class)), withStringAdapterContent(value.toString()))).perform(click());
+            return model;
+        }
     }
 }

@@ -18,7 +18,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withStringAdapterContent;
 import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withTagStringMatching;
-import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setSwitch;
+import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellSwitch;
+import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellText;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.AllOf.allOf;
@@ -74,20 +75,20 @@ public class EditAppConfigModel
 
         public EditAppConfigModel to(boolean value)
         {
-            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setSwitch(value));
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellSwitch(value));
             SystemClock.sleep(2000);
             return model;
         }
 
         public EditAppConfigModel to(int value)
         {
-            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(clearText()).perform(click()).perform(typeText("" + value));
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellText("" + value));
             return model;
         }
 
         public EditAppConfigModel to(String value)
         {
-            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(clearText()).perform(click()).perform(typeText(value));
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellText(value));
             return model;
         }
 

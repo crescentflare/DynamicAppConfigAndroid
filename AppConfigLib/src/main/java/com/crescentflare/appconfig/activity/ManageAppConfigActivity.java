@@ -501,17 +501,17 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             AppConfigClickableCell selectButton = generateButtonView(buttonName, isOverride);
             selectButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_select_current"));
             managingView.addSectionItem(selectButton);
-            selectButton.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    setResult(RESULT_OK);
-                    finish();
-                }
-            });
             if (hasLastSelection)
             {
+                selectButton.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                });
                 final String configName = buttonName;
                 selectButton.setOnLongClickListener(new View.OnLongClickListener()
                 {
@@ -545,6 +545,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
                     @Override
                     public void onClick(View v)
                     {
+                        saveGlobalData();
                         AppConfigStorage.instance.selectConfig(ManageAppConfigActivity.this, configName);
                         setResult(RESULT_OK);
                         finish();
@@ -585,6 +586,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
                         @Override
                         public void onClick(View v)
                         {
+                            saveGlobalData();
                             AppConfigStorage.instance.selectConfig(ManageAppConfigActivity.this, configName);
                             setResult(RESULT_OK);
                             finish();

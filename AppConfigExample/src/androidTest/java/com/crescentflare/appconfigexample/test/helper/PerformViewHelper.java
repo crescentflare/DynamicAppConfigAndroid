@@ -7,6 +7,9 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.ListView;
 
+import com.crescentflare.appconfig.view.AppConfigEditableCell;
+import com.crescentflare.appconfig.view.AppConfigSwitchCell;
+
 import org.hamcrest.Matcher;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -29,29 +32,59 @@ public class PerformViewHelper
 
 
     // ---
-    // View action to force a switch setting
+    // View action to force a cell text setting
     // ---
 
-    public static ViewAction setSwitch(final boolean enabled)
+    public static ViewAction setCellText(final String text)
     {
         return new ViewAction()
         {
             @Override
             public Matcher<View> getConstraints()
             {
-                return ViewMatchers.isAssignableFrom(SwitchCompat.class);
+                return ViewMatchers.isAssignableFrom(AppConfigEditableCell.class);
             }
 
             @Override
             public String getDescription()
             {
-                return "Set switch to: " + enabled;
+                return "Set cell text to: " + text;
             }
 
             @Override
             public void perform(UiController uiController, View view)
             {
-                SwitchCompat switchView = (SwitchCompat)view;
+                AppConfigEditableCell editView = (AppConfigEditableCell)view;
+                editView.setValue(text);
+            }
+        };
+    }
+
+
+    // ---
+    // View action to force a cell switch setting
+    // ---
+
+    public static ViewAction setCellSwitch(final boolean enabled)
+    {
+        return new ViewAction()
+        {
+            @Override
+            public Matcher<View> getConstraints()
+            {
+                return ViewMatchers.isAssignableFrom(AppConfigSwitchCell.class);
+            }
+
+            @Override
+            public String getDescription()
+            {
+                return "Set cell switch to: " + enabled;
+            }
+
+            @Override
+            public void perform(UiController uiController, View view)
+            {
+                AppConfigSwitchCell switchView = (AppConfigSwitchCell)view;
                 switchView.setChecked(enabled);
             }
         };
