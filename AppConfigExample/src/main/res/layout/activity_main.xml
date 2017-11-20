@@ -39,4 +39,27 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="2dip"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="8dip"/>
+    <TextView
+        android:id="@+id/activity_main_config_console_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="2dip"/>
+    <TextView
+        android:id="@+id/activity_main_config_console_enabled"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="2dip"/>
+    <TextView
+        android:id="@+id/activity_main_config_console_timeout_sec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="2dip"/>
+    <TextView
+        android:id="@+id/activity_main_config_log_level"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="2dip"/>
 </LinearLayout>

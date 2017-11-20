@@ -9,18 +9,21 @@ import com.crescentflare.appconfigexample.test.helper.WaitViewHelper;
  */
 public class TestApplication
 {
-    /**
-     * Singleton
-     */
+    // ---
+    // Singleton
+    // ---
+
     public static TestApplication instance = new TestApplication();
 
     private TestApplication()
     {
     }
 
-    /**
-     * Checks
-     */
+
+    // ---
+    // Checks
+    // ---
+
     public ManageAppConfigModel expectAppConfigurationsScreen()
     {
         CheckViewHelper.checkOnPage("App configurations");

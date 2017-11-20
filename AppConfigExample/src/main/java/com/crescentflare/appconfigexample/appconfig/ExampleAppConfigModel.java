@@ -3,6 +3,7 @@ package com.crescentflare.appconfigexample.appconfig;
 
 import com.crescentflare.appconfig.model.AppConfigBaseModel;
 import com.crescentflare.appconfig.model.AppConfigModelCategory;
+import com.crescentflare.appconfig.model.AppConfigModelGlobal;
 import com.crescentflare.appconfig.model.AppConfigModelSort;
 
 /**
@@ -12,9 +13,10 @@ import com.crescentflare.appconfig.model.AppConfigModelSort;
  */
 public class ExampleAppConfigModel extends AppConfigBaseModel
 {
-    /**
-     * Members
-     */
+    // ---
+    // Configuration settings
+    // ---
+
     private String name = "Production";
 
     @AppConfigModelSort(0)
@@ -30,12 +32,37 @@ public class ExampleAppConfigModel extends AppConfigBaseModel
     private boolean acceptAllSSL = false;
 
     @AppConfigModelSort(3)
-    private ExampleAppConfigEnum runType = ExampleAppConfigEnum.RunNormally;
+    private ExampleAppConfigRunType runType = ExampleAppConfigRunType.RunNormally;
 
 
-    /**
-     * Generated code
-     */
+    // ---
+    // Global settings
+    // ---
+
+    @AppConfigModelGlobal
+    @AppConfigModelSort(0)
+    @AppConfigModelCategory("Console related")
+    private String consoleUrl = "http://127.0.0.1:4000/";
+
+    @AppConfigModelGlobal
+    @AppConfigModelSort(1)
+    @AppConfigModelCategory("Console related")
+    private int consoleTimeoutSec = 10;
+
+    @AppConfigModelGlobal
+    @AppConfigModelSort(2)
+    @AppConfigModelCategory("Console related")
+    private boolean consoleEnabled = false;
+
+    @AppConfigModelGlobal
+    @AppConfigModelSort(3)
+    private ExampleAppConfigLogLevel logLevel = ExampleAppConfigLogLevel.LogDisabled;
+
+
+    // ---
+    // Generated code
+    // ---
+
     public String getName()
     {
         return name;
@@ -56,12 +83,12 @@ public class ExampleAppConfigModel extends AppConfigBaseModel
         this.apiUrl = apiUrl;
     }
 
-    public ExampleAppConfigEnum getRunType()
+    public ExampleAppConfigRunType getRunType()
     {
         return runType;
     }
 
-    public void setRunType(ExampleAppConfigEnum runType)
+    public void setRunType(ExampleAppConfigRunType runType)
     {
         this.runType = runType;
     }
@@ -84,5 +111,45 @@ public class ExampleAppConfigModel extends AppConfigBaseModel
     public void setNetworkTimeoutSec(int networkTimeoutSec)
     {
         this.networkTimeoutSec = networkTimeoutSec;
+    }
+
+    public String getConsoleUrl()
+    {
+        return consoleUrl;
+    }
+
+    public void setConsoleUrl(String consoleUrl)
+    {
+        this.consoleUrl = consoleUrl;
+    }
+
+    public int getConsoleTimeoutSec()
+    {
+        return consoleTimeoutSec;
+    }
+
+    public void setConsoleTimeoutSec(int consoleTimeoutSec)
+    {
+        this.consoleTimeoutSec = consoleTimeoutSec;
+    }
+
+    public boolean isConsoleEnabled()
+    {
+        return consoleEnabled;
+    }
+
+    public void setConsoleEnabled(boolean consoleEnabled)
+    {
+        this.consoleEnabled = consoleEnabled;
+    }
+
+    public ExampleAppConfigLogLevel getLogLevel()
+    {
+        return logLevel;
+    }
+
+    public void setLogLevel(ExampleAppConfigLogLevel logLevel)
+    {
+        this.logLevel = logLevel;
     }
 }

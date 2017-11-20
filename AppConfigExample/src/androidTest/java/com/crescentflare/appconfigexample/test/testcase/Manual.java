@@ -4,6 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.crescentflare.appconfigexample.MainActivity;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigLogLevel;
 import com.crescentflare.appconfigexample.test.model.ManageAppConfigModel;
 import com.crescentflare.appconfigexample.test.model.TestApplication;
 import com.crescentflare.appconfigexample.test.model.shared.SettingType;
@@ -13,19 +14,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Feature: I can manually change the active configuration
+ * Feature: I can manually change the active configuration or a global setting
  * As an app developer or tester
- * I want to be able to manually change the active configuration
+ * I want to be able to manually change the active configuration or a global setting
  * So I can optimize testing and make smaller test scripts
  */
 @RunWith(AndroidJUnit4.class)
 public class Manual
 {
-    /**
-     * Members
-     */
+    // ---
+    // Members
+    // ---
+
     @Rule
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule(MainActivity.class);
+
+
+    // ---
+    // Scenarios
+    // ---
 
     /**
      * Scenario: Manually change a configuration
@@ -45,5 +52,25 @@ public class Manual
                 .expectMainAppScreen()
                 .setSettingManually(SettingType.ApiURL).to("https://manualchange.example.com/")
                 .expectSetting(SettingType.ApiURL).toBe("https://manualchange.example.com/");
+    }
+
+    /**
+     * Scenario: Manually change a global setting
+     * Given I am on the "App configurations" page
+     * When I reset configuration data
+     * And I select the "Test server" configuration
+     * And I manually change "logLevel" into "logVerbose"
+     * Then I see "logLevel" set to "logVerbose"
+     */
+    @Test
+    public void testManuallyChangeGlobalSetting()
+    {
+        TestApplication.instance
+                .expectAppConfigurationsScreen()
+                .revertToConfigurationDefaults()
+                .selectConfig(ManageAppConfigModel.Configuration.Test)
+                .expectMainAppScreen()
+                .setGlobalSettingManually(SettingType.LogLevel).to(ExampleAppConfigLogLevel.LogVerbose)
+                .expectSetting(SettingType.LogLevel).toBe(ExampleAppConfigLogLevel.LogVerbose);
     }
 }

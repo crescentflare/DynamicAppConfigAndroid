@@ -1,27 +1,30 @@
 package com.crescentflare.appconfigexample.test.model;
 
-import android.support.test.espresso.matcher.BoundedMatcher;
+import android.os.SystemClock;
 
-import com.crescentflare.appconfig.adapter.AppConfigAdapterEntry;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
-import com.crescentflare.appconfigexample.R;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigLogLevel;
 import com.crescentflare.appconfigexample.test.helper.CheckViewHelper;
-import com.crescentflare.appconfigexample.test.helper.PerformViewHelper;
 import com.crescentflare.appconfigexample.test.helper.WaitViewHelper;
-
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
+import com.crescentflare.appconfigexample.test.model.shared.SettingType;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
-import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
+import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withConfigTagStringMatching;
+import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withStringAdapterContent;
+import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withTagStringMatching;
+import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellSwitch;
+import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellText;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.AllOf.allOf;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * Test model: manage app config
@@ -29,9 +32,10 @@ import static org.hamcrest.core.IsEqual.equalTo;
  */
 public class ManageAppConfigModel
 {
-    /**
-     * Configuration enum
-     */
+    // ---
+    // Configuration enum
+    // ---
+
     public enum Configuration
     {
         Mock,
@@ -41,9 +45,11 @@ public class ManageAppConfigModel
         Production
     }
 
-    /**
-     * Interaction
-     */
+
+    // ---
+    // Interaction
+    // ---
+
     public ManageAppConfigModel revertToConfigurationDefaults()
     {
         getInstrumentation().runOnMainSync(new Runnable()
@@ -59,20 +65,26 @@ public class ManageAppConfigModel
 
     public ManageAppConfigModel selectConfig(Configuration configuration)
     {
-        PerformViewHelper.disableLongClick(R.id.app_config_activity_manage_list);
-        onData(allOf(is(instanceOf(AppConfigAdapterEntry.class)), withConfigSelectionContent(configurationToString(configuration)))).inAdapterView(withId(R.id.app_config_activity_manage_list)).perform(click());
+        onView(withTagValue(withConfigTagStringMatching(configurationToString(configuration)))).perform(scrollTo()).perform(click());
         return this;
     }
 
     public ManageAppConfigModel editConfig(Configuration configuration)
     {
-        onData(allOf(is(instanceOf(AppConfigAdapterEntry.class)), withConfigSelectionContent(configurationToString(configuration)))).inAdapterView(withId(R.id.app_config_activity_manage_list)).perform(longClick());
+        onView(withTagValue(withConfigTagStringMatching(configurationToString(configuration)))).perform(scrollTo()).perform(longClick());
         return this;
     }
 
-    /**
-     * Checks
-     */
+    public Setting changeGlobalSetting(SettingType setting)
+    {
+        return new Setting(this, setting.toString());
+    }
+
+
+    // ---
+    // Checks
+    // ---
+
     public MainAppModel expectMainAppScreen()
     {
         CheckViewHelper.checkOnPage("Example App Config");
@@ -86,9 +98,11 @@ public class ManageAppConfigModel
         return new EditAppConfigModel();
     }
 
-    /**
-     * Helper
-     */
+
+    // ---
+    // Helper
+    // ---
+
     private String configurationToString(Configuration configuration)
     {
         switch (configuration)
@@ -107,32 +121,46 @@ public class ManageAppConfigModel
         return "";
     }
 
-    /**
-     * Custom matcher for the manage config selection list view
-     */
-    private static Matcher<Object> withConfigSelectionContent(String expectedText)
-    {
-        checkNotNull(expectedText);
-        return withConfigSelectionContent(equalTo(expectedText));
-    }
 
-    private static Matcher<Object> withConfigSelectionContent(final Matcher<String> itemTextMatcher)
+    // ---
+    // Setting class for changing values
+    // ---
+
+    public static class Setting
     {
-        checkNotNull(itemTextMatcher);
-        return new BoundedMatcher<Object, AppConfigAdapterEntry>(AppConfigAdapterEntry.class)
+        private ManageAppConfigModel model;
+        private String key;
+
+        public Setting(ManageAppConfigModel model, String key)
         {
-            @Override
-            public boolean matchesSafely(AppConfigAdapterEntry entry)
-            {
-                return itemTextMatcher.matches(entry.getLabel().replace(" *", "")) && entry.getType() == AppConfigAdapterEntry.Type.Configuration && entry.getSection() != AppConfigAdapterEntry.Section.LastSelected;
-            }
+            this.model = model;
+            this.key = key;
+        }
 
-            @Override
-            public void describeTo(Description description)
-            {
-                description.appendText("with item content: ");
-                itemTextMatcher.describeTo(description);
-            }
-        };
+        public ManageAppConfigModel to(boolean value)
+        {
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellSwitch(value));
+            SystemClock.sleep(2000);
+            return model;
+        }
+
+        public ManageAppConfigModel to(int value)
+        {
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellText("" + value));
+            return model;
+        }
+
+        public ManageAppConfigModel to(String value)
+        {
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellText(value));
+            return model;
+        }
+
+        public ManageAppConfigModel to(ExampleAppConfigLogLevel value)
+        {
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(click());
+            onData(allOf(is(instanceOf(String.class)), withStringAdapterContent(value.toString()))).perform(click());
+            return model;
+        }
     }
 }

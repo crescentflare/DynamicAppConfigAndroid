@@ -1,5 +1,8 @@
 # DynamicAppConfigAndroid
-A useful library to support multiple build configurations in one application build.
+
+[![Version](https://img.shields.io/bintray/v/crescentflare/maven/AppConfigLib.svg?style=flat)](https://bintray.com/crescentflare/maven/AppConfigLib)
+
+A useful library to support multiple build configurations or global settings in one application build.
 
 For example: be able to make one build with a build selector that contains development, test, acceptance and a production configuration. There would be no need to deliver multiple builds for each environment for testing, it can all be done from one build.
 
@@ -8,12 +11,13 @@ For example: be able to make one build with a build selector that contains devel
 - A built-in app configuration selection activity
 - Edit app configurations to customize them from within the app
 - Easily access the currently selected configuration (or last stored selection) everywhere
+- Separate global settings which work across different configurations
 - Dynamic configurations can be disabled to prevent them from being available on Google Play builds
 
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-    compile 'com.crescentflare.appconfig:AppConfigLib:0.9.1'
+    compile 'com.crescentflare.appconfig:AppConfigLib:1.0.0'
 
 Make sure that jcenter is added as a repository.
 
@@ -22,9 +26,9 @@ Make sure that jcenter is added as a repository.
 
 To enable the build selection menu, add the following activities to your manifest file (they support rotation changes):
         
-        <activity android:name="com.crescentflare.appconfig.activity.ManageAppConfigActivity"/>
-        <activity android:name="com.crescentflare.appconfig.activity.EditAppConfigActivity"/>
-        <activity android:name="com.crescentflare.appconfig.activity.AppConfigStringChoiceActivity"/>
+    <activity android:name="com.crescentflare.appconfig.activity.ManageAppConfigActivity"/>
+    <activity android:name="com.crescentflare.appconfig.activity.EditAppConfigActivity"/>
+    <activity android:name="com.crescentflare.appconfig.activity.AppConfigStringChoiceActivity"/>
       
         
 **Add custom model and manager**
@@ -113,9 +117,20 @@ In your main activity you can start the app configuration menu to allow yourself
      
 The last parameter (1000) is the result code, which can be checked in onActivityResult. There is also a listener available which is called when a different configuration is selected. Check the example for more details.
 
+
+**Global settings**
+
+You can also define global settings in the custom model. These are globally available within every configuration that you use and are changed from the main selection menu. For example a log enabled setting would be defined as this:
+
+    @AppConfigModelGlobal
+    public boolean logEnabled = false;
+
+Global settings can also be grouped using the AppConfigModelCategory annotation.
+
+
 ### Storage
 
-When existing configurations are edited or custom ones are being added, the changes are saved in the user preferences of the device. Also the last selected configuration is stored inside the preferences. This makes sure that it remembers the correct settings, even if the app is closed silently when the device is running out of memory.
+When existing configurations are edited or custom ones are being added, the changes are saved in the user preferences of the device. Also the last selected configuration and global settings are stored inside the preferences. This makes sure that it remembers the correct settings, even if the app is closed silently when the device is running out of memory.
 
 ### Automated testing
 
@@ -123,8 +138,8 @@ The library is ready for automated testing using Espresso. The example project p
 
 ### Security
 
-Because the library can give a lot of control on the product (by making its settings configurable), it's important to prevent any code (either the selection menu itself, or the JSON configuration data like test servers and passwords) from being deployed to Google Play. Take a look at the example project for more information. It uses a simple gradle script to make safe release builds.
+Because the library can give a lot of control on the product (by making its settings configurable), it's important to prevent any code (either the selection menu itself, or the JSON configuration data like test servers and passwords) from being deployed to Google Play. Take a look at the example project for more information. For the release configuration it doesn't activate the app config and places an empty configuration json in the asset folder (for that specific configuration).
 
 ### Status
 
-The library should be useful in its basic form, however, there may be bugs. Improvements in features, stability and code structure are welcome.
+The library is stable and has been used in many projects. New features may be added in the future.

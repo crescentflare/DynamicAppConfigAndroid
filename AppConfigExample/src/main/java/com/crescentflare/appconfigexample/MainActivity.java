@@ -14,14 +14,17 @@ import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigManager;
  */
 public class MainActivity extends AppCompatActivity implements AppConfigStorage.ChangedConfigListener
 {
-    /**
-     * Constants
-     */
+    // ---
+    // Constants
+    // ---
+
     private static final int RESULT_CODE_MANAGE_APP_CONFIG = 1001;
 
-    /**
-     * Initialization
-     */
+
+    // ---
+    // Initialization
+    // ---
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -34,9 +37,11 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
         }
     }
 
-    /**
-     * Activity state handling
-     */
+
+    // ---
+    // Activity state handling
+    // ---
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -59,9 +64,11 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
         fillContent();
     }
 
-    /**
-     * Fill content (show configuration values)
-     */
+
+    // ---
+    // Fill content (show configuration values)
+    // ---
+
     @Override
     public void onChangedConfig()
     {
@@ -70,18 +77,26 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
 
     public void fillContent()
     {
-        //Fetch text views
+        // Fetch text views
         TextView tvConfigName = (TextView)findViewById(R.id.activity_main_config_name);
         TextView tvConfigApiUrl = (TextView)findViewById(R.id.activity_main_config_api_url);
         TextView tvConfigRunType = (TextView)findViewById(R.id.activity_main_config_run_type);
         TextView tvConfigAcceptAllSSL = (TextView)findViewById(R.id.activity_main_config_accept_all_ssl);
         TextView tvConfigNetworkTimeout = (TextView)findViewById(R.id.activity_main_config_network_timeout_sec);
+        TextView tvConfigConsoleUrl = (TextView)findViewById(R.id.activity_main_config_console_url);
+        TextView tvConfigConsoleEnabled = (TextView)findViewById(R.id.activity_main_config_console_enabled);
+        TextView tvConfigConsoleTimeout = (TextView)findViewById(R.id.activity_main_config_console_timeout_sec);
+        TextView tvConfigLogLevel = (TextView)findViewById(R.id.activity_main_config_log_level);
 
-        //Fill with config settings
+        // Fill with config settings
         tvConfigName.setText(getString(R.string.prefix_config_name) + " " + ExampleAppConfigManager.currentConfig().getName());
         tvConfigApiUrl.setText(getString(R.string.prefix_config_api_url) + " " + ExampleAppConfigManager.currentConfig().getApiUrl());
         tvConfigRunType.setText(getString(R.string.prefix_config_run_type) + " " + ExampleAppConfigManager.currentConfig().getRunType().toString());
         tvConfigAcceptAllSSL.setText(getString(R.string.prefix_config_accept_all_ssl) + " " + (ExampleAppConfigManager.currentConfig().isAcceptAllSSL() ? "true" : "false"));
         tvConfigNetworkTimeout.setText(getString(R.string.prefix_config_network_timeout_sec) + " " + ExampleAppConfigManager.currentConfig().getNetworkTimeoutSec());
+        tvConfigConsoleUrl.setText(getString(R.string.prefix_config_console_url) + " " + ExampleAppConfigManager.currentConfig().getConsoleUrl());
+        tvConfigConsoleEnabled.setText(getString(R.string.prefix_config_console_enabled) + " " + (ExampleAppConfigManager.currentConfig().isConsoleEnabled() ? "true" : "false"));
+        tvConfigConsoleTimeout.setText(getString(R.string.prefix_config_console_timeout_sec) + " " + ExampleAppConfigManager.currentConfig().getConsoleTimeoutSec());
+        tvConfigLogLevel.setText(getString(R.string.prefix_config_log_level) + " " + ExampleAppConfigManager.currentConfig().getLogLevel().toString());
     }
 }

@@ -10,15 +10,17 @@ import java.util.HashMap;
  */
 public class AppConfigStorageItem
 {
-    /**
-     * Member
-     */
+    // ---
+    // Member
+    // ---
+
     private HashMap<String, Object> storedSettings = new HashMap<>();
 
 
-    /**
-     * Obtain settings
-     */
+    // ---
+    // Obtain settings
+    // ---
+
     public boolean getBoolean(String setting)
     {
         Object settingObject = storedSettings.get(setting);
@@ -140,9 +142,11 @@ public class AppConfigStorageItem
         return list;
     }
 
-    /**
-     * Adjust settings
-     */
+
+    // ---
+    // Adjust settings
+    // ---
+
     public void putBoolean(String setting, boolean value)
     {
         removeSetting(setting);
@@ -186,9 +190,11 @@ public class AppConfigStorageItem
         }
     }
 
-    /**
-     * Other operations
-     */
+
+    // ---
+    // Other operations
+    // ---
+
     public boolean removeSetting(String setting)
     {
         if (storedSettings.containsKey(setting))
@@ -227,21 +233,23 @@ public class AppConfigStorageItem
         }
     }
 
-    /**
-     * Comparison
-     */
+
+    // ---
+    // Comparison
+    // ---
+
     @Override
     public boolean equals(Object o)
     {
         if (o instanceof AppConfigStorageItem)
         {
-            //No need to check if the instance is the same
+            // No need to check if the instance is the same
             if (o == this)
             {
                 return true;
             }
 
-            //Both should contain the same set of setting keys
+            // Both should contain the same set of setting keys
             AppConfigStorageItem checkItem = (AppConfigStorageItem)o;
             for (String key : storedSettings.keySet())
             {
@@ -258,7 +266,7 @@ public class AppConfigStorageItem
                 }
             }
 
-            //Values should be the same
+            // Values should be the same
             for (String key : storedSettings.keySet())
             {
                 Object value1 = storedSettings.get(key);

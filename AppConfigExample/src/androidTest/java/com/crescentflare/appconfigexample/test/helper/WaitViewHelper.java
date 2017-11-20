@@ -21,17 +21,20 @@ import static org.hamcrest.Matchers.isA;
  */
 public class WaitViewHelper
 {
-    /**
-     * Utility functions
-     */
+    // ---
+    // Utility functions
+    // ---
+
     public static void waitOptionalTextDisappear(String text, int timeout)
     {
         onView(isRoot()).perform(waitForOptionalTextToDisappear(text, timeout));
     }
 
-    /**
-     * View action: wait for a view with the given text to disappear (or skip if the text isn't there at all)
-     */
+
+    // ---
+    // View action: wait for a view with the given text to disappear (or skip if the text isn't there at all)
+    // ---
+
     private static ViewAction waitForOptionalTextToDisappear(final String text, final int timeout)
     {
         return new ViewAction()

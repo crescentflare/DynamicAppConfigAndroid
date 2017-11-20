@@ -2,7 +2,8 @@ package com.crescentflare.appconfigexample.test.model;
 
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.R;
-import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigEnum;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigLogLevel;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigRunType;
 import com.crescentflare.appconfigexample.test.model.shared.SettingType;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -17,25 +18,35 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
  */
 public class MainAppModel
 {
-    /**
-     * Interaction
-     */
+    // ---
+    // Interaction
+    // ---
+
     public ManualSetting setSettingManually(SettingType setting)
     {
-        return new ManualSetting(this, setting.toString());
+        return new ManualSetting(this, setting.toString(), false);
     }
 
-    /**
-     * Checks
-     */
+    public ManualSetting setGlobalSettingManually(SettingType setting)
+    {
+        return new ManualSetting(this, setting.toString(), true);
+    }
+
+
+    // ---
+    // Checks
+    // ---
+
     public Setting expectSetting(SettingType setting)
     {
         return new Setting(this, settingToViewId(setting), settingToPrefix(setting));
     }
 
-    /**
-     * Helper
-     */
+
+    // ---
+    // Helper
+    // ---
+
     private int settingToViewId(SettingType setting)
     {
         switch (setting)
@@ -50,6 +61,14 @@ public class MainAppModel
                 return R.id.activity_main_config_accept_all_ssl;
             case NetworkTimeoutSeconds:
                 return R.id.activity_main_config_network_timeout_sec;
+            case ConsoleURL:
+                return R.id.activity_main_config_console_url;
+            case ConsoleEnabled:
+                return R.id.activity_main_config_console_enabled;
+            case ConsoleTimeoutSeconds:
+                return R.id.activity_main_config_console_timeout_sec;
+            case LogLevel:
+                return R.id.activity_main_config_log_level;
         }
         return 0;
     }
@@ -59,18 +78,22 @@ public class MainAppModel
         return setting.toString() + ": ";
     }
 
-    /**
-     * Setting class for manually changing values
-     */
+
+    // ---
+    // Setting class for manually changing values
+    // ---
+
     public static class ManualSetting
     {
         private MainAppModel model;
         private String key;
+        private boolean global;
 
-        public ManualSetting(MainAppModel model, String key)
+        public ManualSetting(MainAppModel model, String key, boolean global)
         {
             this.model = model;
             this.key = key;
+            this.global = global;
         }
 
         public MainAppModel to(boolean value)
@@ -90,21 +113,35 @@ public class MainAppModel
                 @Override
                 public void run()
                 {
-                    AppConfigStorage.instance.manuallyChangeCurrentConfig(getInstrumentation().getTargetContext(), key, value);
+                    if (global)
+                    {
+                        AppConfigStorage.instance.manuallyChangeGlobalConfig(getInstrumentation().getTargetContext(), key, value);
+                    }
+                    else
+                    {
+                        AppConfigStorage.instance.manuallyChangeCurrentConfig(getInstrumentation().getTargetContext(), key, value);
+                    }
                 }
             });
             return model;
         }
 
-        public MainAppModel to(ExampleAppConfigEnum value)
+        public MainAppModel to(ExampleAppConfigRunType value)
+        {
+            return to("" + value);
+        }
+
+        public MainAppModel to(ExampleAppConfigLogLevel value)
         {
             return to("" + value);
         }
     }
 
-    /**
-     * Setting class for checking values
-     */
+
+    // ---
+    // Setting class for checking values
+    // ---
+
     public static class Setting
     {
         private MainAppModel model;
@@ -136,7 +173,13 @@ public class MainAppModel
             return model;
         }
 
-        public MainAppModel toBe(ExampleAppConfigEnum value)
+        public MainAppModel toBe(ExampleAppConfigRunType value)
+        {
+            onView(withId(viewId)).check(matches(withText(prefix + value)));
+            return model;
+        }
+
+        public MainAppModel toBe(ExampleAppConfigLogLevel value)
         {
             onView(withId(viewId)).check(matches(withText(prefix + value)));
             return model;

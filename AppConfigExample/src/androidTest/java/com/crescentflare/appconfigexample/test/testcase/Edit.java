@@ -4,7 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.crescentflare.appconfigexample.MainActivity;
-import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigEnum;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigRunType;
 import com.crescentflare.appconfigexample.test.model.ManageAppConfigModel;
 import com.crescentflare.appconfigexample.test.model.TestApplication;
 import com.crescentflare.appconfigexample.test.model.shared.SettingType;
@@ -22,11 +22,17 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class Edit
 {
-    /**
-     * Members
-     */
+    // ---
+    // Members
+    // ---
+
     @Rule
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule(MainActivity.class);
+
+
+    // ---
+    // Scenarios
+    // ---
 
     /**
      * Scenario: Edit a configuration
@@ -55,7 +61,7 @@ public class Edit
                 .expectEditConfigScreen()
                 .changeSetting(SettingType.ApiURL).to("https://changed.example.com")
                 .changeSetting(SettingType.NetworkTimeoutSeconds).to(10)
-                .changeSetting(SettingType.RunType).to(ExampleAppConfigEnum.RunQuickly)
+                .changeSetting(SettingType.RunType).to(ExampleAppConfigRunType.RunQuickly)
                 .changeSetting(SettingType.AcceptAllSSL).to(true)
                 .applyChanges()
                 .expectAppConfigurationsScreen()
@@ -64,7 +70,7 @@ public class Edit
                 .expectSetting(SettingType.Name).toBe("Test server")
                 .expectSetting(SettingType.ApiURL).toBe("https://changed.example.com")
                 .expectSetting(SettingType.NetworkTimeoutSeconds).toBe(10)
-                .expectSetting(SettingType.RunType).toBe(ExampleAppConfigEnum.RunQuickly)
+                .expectSetting(SettingType.RunType).toBe(ExampleAppConfigRunType.RunQuickly)
                 .expectSetting(SettingType.AcceptAllSSL).toBe(true);
     }
 }

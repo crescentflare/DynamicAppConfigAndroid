@@ -3,7 +3,7 @@ package com.crescentflare.appconfigexample.test.model;
 import android.os.SystemClock;
 
 import com.crescentflare.appconfigexample.R;
-import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigEnum;
+import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigRunType;
 import com.crescentflare.appconfigexample.test.helper.CheckViewHelper;
 import com.crescentflare.appconfigexample.test.helper.WaitViewHelper;
 import com.crescentflare.appconfigexample.test.model.shared.SettingType;
@@ -18,7 +18,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withStringAdapterContent;
 import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withTagStringMatching;
-import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setSwitch;
+import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellSwitch;
+import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellText;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.AllOf.allOf;
@@ -29,9 +30,10 @@ import static org.hamcrest.core.AllOf.allOf;
  */
 public class EditAppConfigModel
 {
-    /**
-     * Interaction
-     */
+    // ---
+    // Interaction
+    // ---
+
     public Setting changeSetting(SettingType setting)
     {
         return new Setting(this, setting.toString());
@@ -43,9 +45,11 @@ public class EditAppConfigModel
         return this;
     }
 
-    /**
-     * Checks
-     */
+
+    // ---
+    // Checks
+    // ---
+
     public ManageAppConfigModel expectAppConfigurationsScreen()
     {
         CheckViewHelper.checkOnPage("App configurations");
@@ -53,9 +57,11 @@ public class EditAppConfigModel
         return new ManageAppConfigModel();
     }
 
-    /**
-     * Setting class for changing values
-     */
+
+    // ---
+    // Setting class for changing values
+    // ---
+
     public static class Setting
     {
         private EditAppConfigModel model;
@@ -69,24 +75,24 @@ public class EditAppConfigModel
 
         public EditAppConfigModel to(boolean value)
         {
-            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setSwitch(value));
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellSwitch(value));
             SystemClock.sleep(2000);
             return model;
         }
 
         public EditAppConfigModel to(int value)
         {
-            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(clearText()).perform(click()).perform(typeText("" + value));
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellText("" + value));
             return model;
         }
 
         public EditAppConfigModel to(String value)
         {
-            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(clearText()).perform(click()).perform(typeText(value));
+            onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(setCellText(value));
             return model;
         }
 
-        public EditAppConfigModel to(ExampleAppConfigEnum value)
+        public EditAppConfigModel to(ExampleAppConfigRunType value)
         {
             onView(withTagValue(withTagStringMatching(key))).perform(scrollTo()).perform(click());
             onData(allOf(is(instanceOf(String.class)), withStringAdapterContent(value.toString()))).perform(click());

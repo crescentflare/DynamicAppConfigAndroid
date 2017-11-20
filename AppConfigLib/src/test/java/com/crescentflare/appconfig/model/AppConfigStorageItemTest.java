@@ -10,6 +10,10 @@ import java.util.Arrays;
  */
 public class AppConfigStorageItemTest
 {
+    // ---
+    // Test cases
+    // ---
+
     @Test
     public void testStorage()
     {

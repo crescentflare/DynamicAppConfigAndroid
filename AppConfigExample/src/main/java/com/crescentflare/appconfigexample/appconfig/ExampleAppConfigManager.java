@@ -9,23 +9,28 @@ import com.crescentflare.appconfig.model.AppConfigBaseModel;
  */
 public class ExampleAppConfigManager extends AppConfigBaseManager
 {
-    /**
-     * Members
-     */
+    // ---
+    // Members
+    // ---
+
     public static ExampleAppConfigManager instance = new ExampleAppConfigManager();
 
-    /**
-     * Return an instance of the app base model
-     */
+
+    // ---
+    // Return an instance of the app base model
+    // ---
+
     @Override
     public AppConfigBaseModel getBaseModelInstance()
     {
         return new ExampleAppConfigModel();
     }
 
-    /**
-     * Return the current selected config, cast to the custom model
-     */
+
+    // ---
+    // Return the current selected config, cast to the custom model
+    // ---
+
     public static ExampleAppConfigModel currentConfig()
     {
         return (ExampleAppConfigModel)instance.getCurrentConfigInstance();
