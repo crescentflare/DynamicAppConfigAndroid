@@ -14,7 +14,7 @@ For example: be able to make one build with a build selector that contains devel
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-    compile 'com.crescentflare.appconfig:AppConfigLib:0.9.1'
+    compile 'com.crescentflare.appconfig:AppConfigLib:1.0.0'
 
 Make sure that jcenter is added as a repository.
 
@@ -139,4 +139,4 @@ Because the library can give a lot of control on the product (by making its sett
 
 ### Status
 
-The library should be useful in its basic form, however, there may be bugs. Improvements in features, stability and code structure are welcome.
+The library is stable and has been used in many projects. New features may be added in the future.
