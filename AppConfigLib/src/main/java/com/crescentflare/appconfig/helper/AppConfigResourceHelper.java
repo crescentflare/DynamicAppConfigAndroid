@@ -7,9 +7,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.util.TypedValue;
 
-import com.crescentflare.appconfig.model.AppConfigBaseModel;
-import com.crescentflare.appconfig.model.AppConfigStorageItem;
-
 /**
  * Library helper: resource access
  * A helper library to access app resources for skinning the user interface

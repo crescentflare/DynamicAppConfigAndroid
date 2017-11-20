@@ -5,32 +5,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SpinnerAdapter;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.crescentflare.appconfig.adapter.AppConfigAdapter;
-import com.crescentflare.appconfig.adapter.AppConfigAdapterEntry;
 import com.crescentflare.appconfig.helper.AppConfigResourceHelper;
+import com.crescentflare.appconfig.helper.AppConfigViewHelper;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
+import com.crescentflare.appconfig.model.AppConfigBaseModel;
+import com.crescentflare.appconfig.model.AppConfigStorageItem;
+import com.crescentflare.appconfig.view.AppConfigCellList;
+import com.crescentflare.appconfig.view.AppConfigClickableCell;
+import com.crescentflare.appconfig.view.AppConfigEditableCell;
+import com.crescentflare.appconfig.view.AppConfigSimpleCell;
+import com.crescentflare.appconfig.view.AppConfigSwitchCell;
 
 import java.util.ArrayList;
 
@@ -46,16 +48,19 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
 
     private static final int RESULT_CODE_CUSTOM_COPY_FROM = 1000;
     private static final int RESULT_CODE_EDIT_CONFIG = 1001;
+    private static final int RESULT_CODE_SELECT_ENUM = 1004;
 
 
     // ---
     // Members
     // ---
 
+    private ArrayList<View> fieldViews = new ArrayList<>();
     private LinearLayout layout = null;
-    private ListView listView = null;
+    private AppConfigCellList managingView = null;
     private LinearLayout spinnerView = null;
-    private AppConfigAdapter adapter = null;
+    private AppConfigStorageItem initialEditValues = null;
+    private AppConfigStorageItem latestEditValues = null;
     private int buildNr = -1;
 
 
@@ -111,6 +116,8 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             public void run()
             {
                 populateContent();
+                initialEditValues = fetchEditedValues();
+                latestEditValues = initialEditValues;
             }
         });
     }
@@ -141,6 +148,33 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         {
             populateContent();
         }
+        else if (requestCode >= RESULT_CODE_SELECT_ENUM && requestCode < RESULT_CODE_SELECT_ENUM + 1000 && resultCode == RESULT_OK)
+        {
+            String resultString = data.getStringExtra(AppConfigStringChoiceActivity.ARG_INTENT_RESULT_SELECTED_STRING);
+            if (resultString.length() > 0)
+            {
+                int index = requestCode - RESULT_CODE_SELECT_ENUM;
+                if (index < fieldViews.size() && fieldViews.get(index) instanceof AppConfigClickableCell)
+                {
+                    ((AppConfigClickableCell)fieldViews.get(index)).setText(fieldViews.get(index).getTag() + ": " + resultString);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void finish()
+    {
+        boolean hasChange = false;
+        if (initialEditValues != null)
+        {
+            hasChange = !fetchEditedValues().equals(initialEditValues);
+        }
+        if (hasChange)
+        {
+            saveGlobalData();
+        }
+        super.finish();
     }
 
     @Override
@@ -154,6 +188,10 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
     protected void onResume()
     {
         super.onResume();
+        if (initialEditValues != null)
+        {
+            latestEditValues = fetchEditedValues();
+        }
         populateContent();
         AppConfigStorage.instance.addChangedConfigListener(this);
     }
@@ -176,7 +214,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
 
 
     // ---
-    // Layout and content handling
+    // View component generators
     // ---
 
     @Override
@@ -185,10 +223,86 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         populateContent();
     }
 
-    private int dip(int pixels)
+    private int dp(int dp)
     {
-        return (int)(getResources().getDisplayMetrics().density * pixels);
+        return AppConfigViewHelper.dp(dp);
     }
+
+    private AppConfigSimpleCell generateInfoView(String infoLabel, String infoValue)
+    {
+        AppConfigSimpleCell cellView = new AppConfigSimpleCell(this);
+        cellView.setText(infoLabel + ": " + infoValue);
+        return cellView;
+    }
+
+    private AppConfigClickableCell generateButtonView(String action, boolean edited)
+    {
+        return generateButtonView(null, action, edited);
+    }
+
+    private AppConfigClickableCell generateButtonView(String label, String setting, boolean edited)
+    {
+        AppConfigClickableCell cellView = new AppConfigClickableCell(this);
+        cellView.setTag(label);
+        cellView.setText(setting);
+        if (edited)
+        {
+            cellView.setValue(AppConfigResourceHelper.getString(this, "app_config_item_edited"));
+        }
+        return cellView;
+    }
+
+    private AppConfigEditableCell generateEditTextView(String label, String setting, boolean limitNumbers)
+    {
+        AppConfigEditableCell editView = new AppConfigEditableCell(this);
+        editView.setDescription(label);
+        editView.setValue(setting);
+        editView.setTag(label);
+        editView.addTextChangedListener(new TextWatcher()
+        {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after)
+            {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s)
+            {
+                supportInvalidateOptionsMenu();
+            }
+        });
+        editView.setNumberLimit(limitNumbers);
+        return editView;
+    }
+
+    private AppConfigSwitchCell generateSwitchView(String label, boolean setting)
+    {
+        AppConfigSwitchCell switchView = new AppConfigSwitchCell(this);
+        LinearLayout.LayoutParams switchViewLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        switchView.setLayoutParams(switchViewLayoutParams);
+        switchView.setText(label);
+        switchView.setChecked(setting);
+        switchView.setTag(label);
+        switchView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                supportInvalidateOptionsMenu();
+            }
+        });
+        return switchView;
+    }
+
+
+    // ---
+    // Layout and content handling
+    // ---
 
     private LinearLayout createContentView()
     {
@@ -204,27 +318,26 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             setSupportActionBar(bar);
         }
 
-        // Add frame layout to contain listview or loading indicator
+        // Add frame layout to contain the editing views or loading indicator
         FrameLayout container = new FrameLayout(this);
+        container.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.setBackgroundColor(AppConfigResourceHelper.getColor(this, "app_config_background"));
         layout.addView(container);
 
-        // Add listview for configurations
-        listView = new ListView(this);
-        adapter = new AppConfigAdapter(this);
-        listView.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_list"));
-        listView.setBackgroundColor(AppConfigResourceHelper.getColor(this, "api_config_background"));
-        listView.setDivider(null);
-        listView.setDividerHeight(0);
-        listView.setAdapter(adapter);
-        listView.setVisibility(View.GONE);
-        container.addView(listView);
+        // Add managing view for configuration selection and global settings editing
+        ScrollView scrollView = new ScrollView(this);
+        scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        managingView = new AppConfigCellList(this);
+        managingView.setVisibility(View.GONE);
+        scrollView.addView(managingView);
+        container.addView(scrollView);
 
         // Add spinner view for loading
         spinnerView = new LinearLayout(this);
         spinnerView.setBackgroundColor(Color.WHITE);
         spinnerView.setGravity(Gravity.CENTER);
         spinnerView.setOrientation(LinearLayout.VERTICAL);
-        spinnerView.setPadding(dip(8), dip(8), dip(8), dip(8));
+        spinnerView.setPadding(dp(8), dp(8), dp(8), dp(8));
         container.addView(spinnerView);
 
         // Add progress bar to it (animated spinner)
@@ -233,9 +346,9 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
 
         // Add loading text to it
         TextView progressTextView = new TextView(this);
-        LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        textLayoutParams.setMargins(0, dip(8), 0, 0);
-        progressTextView.setLayoutParams(textLayoutParams);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(0, dp(12), 0, 0);
+        progressTextView.setLayoutParams(layoutParams);
         progressTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         progressTextView.setText(AppConfigResourceHelper.getString(this, "app_config_loading"));
         spinnerView.addView(progressTextView);
@@ -245,114 +358,358 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
         {
             TextView progressBuildView = new TextView(this);
             LinearLayout.LayoutParams buildLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            buildLayoutParams.setMargins(0, dip(2), 0, 0);
+            buildLayoutParams.setMargins(0, dp(2), 0, 0);
             progressBuildView.setLayoutParams(buildLayoutParams);
             progressBuildView.setGravity(Gravity.CENTER_HORIZONTAL);
             progressBuildView.setText("(" + AppConfigResourceHelper.getString(this, "app_config_field_build").toLowerCase() + ": " + buildNr + ")");
             spinnerView.addView(progressBuildView);
         }
-
-        // List view click handler
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                AppConfigAdapterEntry entry = (AppConfigAdapterEntry)parent.getItemAtPosition(position);
-                if (entry.getType() == AppConfigAdapterEntry.Type.Configuration)
-                {
-                    if (entry.getSection() == AppConfigAdapterEntry.Section.Add)
-                    {
-                        ArrayList<String> configs = AppConfigStorage.instance.configList();
-                        AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_edit_new"), AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_custom_copy"), configs, RESULT_CODE_CUSTOM_COPY_FROM);
-                    }
-                    else
-                    {
-                        AppConfigStorage.instance.selectConfig(ManageAppConfigActivity.this, entry.getName());
-                        setResult(RESULT_OK);
-                        finish();
-                    }
-                }
-            }
-        });
-
-        // List view long click handler (edit configuration)
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-        {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                AppConfigAdapterEntry entry = (AppConfigAdapterEntry)parent.getItemAtPosition(position);
-                if (entry.getType() == AppConfigAdapterEntry.Type.Configuration)
-                {
-                    if (entry.getSection() == AppConfigAdapterEntry.Section.Add)
-                    {
-                        ArrayList<String> configs = AppConfigStorage.instance.configList();
-                        AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_choose_custom_copy"), AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_custom_copy"), configs, RESULT_CODE_CUSTOM_COPY_FROM);
-                    }
-                    else
-                    {
-                        EditAppConfigActivity.startWithResult(ManageAppConfigActivity.this, entry.getName(), false, RESULT_CODE_EDIT_CONFIG);
-                    }
-                    return true;
-                }
-                return false;
-            }
-        });
         return layout;
+    }
+
+    private void generateEditingContent(String category, ArrayList<String> values, AppConfigStorageItem config, AppConfigBaseModel baseModel)
+    {
+        // Start section
+        String title = AppConfigResourceHelper.getString(this, "app_config_header_global_prefix");
+        if (category != null)
+        {
+            if (category.length() > 0)
+            {
+                title += ": " + category;
+            }
+            else
+            {
+                title += ": " + AppConfigResourceHelper.getString(this, "app_config_header_edit_other");
+            }
+        }
+        managingView.startSection(title);
+
+        // Fetch objects and filter by category
+        ArrayList<String> editValues = new ArrayList<>();
+        ArrayList<Object> editObjects = new ArrayList<>();
+        for (String value : values)
+        {
+            boolean belongsToCategory = true;
+            if (category != null && baseModel != null)
+            {
+                belongsToCategory = baseModel.valueBelongsToCategory(value, category);
+            }
+            if (belongsToCategory && !value.equals("name"))
+            {
+                editValues.add(value);
+                editObjects.add(baseModel != null ? baseModel.getCurrentValue(value) : config.get(value));
+            }
+        }
+
+        // Add editing views
+        for (int i = 0; i < editValues.size(); i++)
+        {
+            final String value = editValues.get(i);
+            View layoutView = null;
+            final Object result = editObjects.get(i);
+            if (result != null)
+            {
+                if (result instanceof Boolean)
+                {
+                    layoutView = generateSwitchView(value, (Boolean)result);
+                }
+                else if (result.getClass().isEnum())
+                {
+                    final int index = fieldViews.size();
+                    layoutView = generateButtonView(value, value + ": " + result.toString(), false);
+                    layoutView.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Object constants[] = result.getClass().getEnumConstants();
+                            ArrayList<String> enumValues = new ArrayList<>();
+                            for (int i = 0; i < constants.length; i++)
+                            {
+                                enumValues.add(constants[i].toString());
+                            }
+                            if (enumValues.size() > 0)
+                            {
+                                AppConfigStringChoiceActivity.startWithResult(
+                                        ManageAppConfigActivity.this,
+                                        AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_choose_enum_prefix") + " " + value,
+                                        AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_enum"),
+                                        enumValues,
+                                        RESULT_CODE_SELECT_ENUM + index
+                                );
+                            }
+                        }
+                    });
+                }
+                else if (result instanceof Integer || result instanceof Long)
+                {
+                    layoutView = generateEditTextView(value, "" + result, true);
+                }
+                else if (result instanceof String)
+                {
+                    layoutView = generateEditTextView(value, (String)result, false);
+                }
+                if (layoutView != null)
+                {
+                    managingView.addSectionItem(layoutView);
+                    fieldViews.add(layoutView.findViewWithTag(value));
+                }
+            }
+        }
+
+        // End section
+        managingView.endSection();
     }
 
     private void populateContent()
     {
         // Show/hide spinner depending on the config being loaded
         spinnerView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.GONE : View.VISIBLE);
-        listView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.VISIBLE : View.GONE);
+        managingView.setVisibility(AppConfigStorage.instance.isLoaded() ? View.VISIBLE : View.GONE);
         if (!AppConfigStorage.instance.isLoaded())
         {
             return;
         }
 
-        // Add last selection configuration (if present)
-        ArrayList<AppConfigAdapterEntry> entries = new ArrayList<>();
-        entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_last_selection")));
-        if (AppConfigStorage.instance.getSelectedConfig() != null)
-        {
-            String configName = AppConfigStorage.instance.getSelectedConfigName();
-            entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.LastSelected, configName, configName, AppConfigStorage.instance.isConfigOverride(configName)));
-        }
-        else
-        {
-            entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.LastSelected, "", AppConfigResourceHelper.getString(this, "app_config_item_none"), false));
-        }
+        // Clear all views to re-populate
+        managingView.removeAllViews();
+        fieldViews.clear();
 
-        // Add list of configurations
+        // Add last selected configuration (if present)
         ArrayList<String> configs = AppConfigStorage.instance.configList();
         if (configs.size() > 0)
         {
-            entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list")));
-            for (String configName : configs)
+            // Start section
+            managingView.startSection(AppConfigResourceHelper.getString(this, "app_config_header_list_last_selection"));
+
+            // Determine last selection
+            String buttonName;
+            boolean isOverride = false;
+            boolean hasLastSelection = false;
+            if (AppConfigStorage.instance.getSelectedConfig() != null)
             {
-                entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.Predefined, configName, AppConfigStorage.instance.isConfigOverride(configName)));
+                buttonName = AppConfigStorage.instance.getSelectedConfigName();
+                isOverride = AppConfigStorage.instance.isConfigOverride(buttonName);
+                hasLastSelection = true;
             }
+            else
+            {
+                buttonName = AppConfigResourceHelper.getString(this, "app_config_item_none");
+            }
+
+            // Add button
+            AppConfigClickableCell selectButton = generateButtonView(buttonName, isOverride);
+            selectButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_select_current"));
+            managingView.addSectionItem(selectButton);
+            if (hasLastSelection)
+            {
+                selectButton.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                });
+                final String configName = buttonName;
+                selectButton.setOnLongClickListener(new View.OnLongClickListener()
+                {
+                    @Override
+                    public boolean onLongClick(View v)
+                    {
+                        EditAppConfigActivity.startWithResult(ManageAppConfigActivity.this, configName, false, RESULT_CODE_EDIT_CONFIG);
+                        return true;
+                    }
+                });
+            }
+
+            // End section
+            managingView.endSection();
+        }
+
+        // Add list of configurations
+        if (configs.size() > 0)
+        {
+            // Start section
+            managingView.startSection(AppConfigResourceHelper.getString(this, "app_config_header_list"));
+
+            // Add buttons
+            for (final String configName : configs)
+            {
+                AppConfigClickableCell configButton = generateButtonView(configName, AppConfigStorage.instance.isConfigOverride(configName));
+                configButton.setTag("config: " + configName);
+                managingView.addSectionItem(configButton);
+                configButton.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        saveGlobalData();
+                        AppConfigStorage.instance.selectConfig(ManageAppConfigActivity.this, configName);
+                        setResult(RESULT_OK);
+                        finish();
+                    }
+                });
+                configButton.setOnLongClickListener(new View.OnLongClickListener()
+                {
+                    @Override
+                    public boolean onLongClick(View v)
+                    {
+                        EditAppConfigActivity.startWithResult(ManageAppConfigActivity.this, configName, false, RESULT_CODE_EDIT_CONFIG);
+                        return true;
+                    }
+                });
+            }
+
+            // End section
+            managingView.endSection();
         }
 
         // Add area for custom configurations, and adding them
-        ArrayList<String> customConfigs = AppConfigStorage.instance.customConfigList();
-        entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_custom")));
-        for (String configName : customConfigs)
+        if (configs.size() > 0)
         {
-            if (AppConfigStorage.instance.isCustomConfig(configName))
+            // Start section
+            managingView.startSection(AppConfigResourceHelper.getString(this, "app_config_header_list_custom"));
+
+            // Add buttons
+            ArrayList<String> customConfigs = AppConfigStorage.instance.customConfigList();
+            for (final String configName : customConfigs)
             {
-                entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.Custom, configName, false));
+                if (AppConfigStorage.instance.isCustomConfig(configName))
+                {
+                    AppConfigClickableCell configButton = generateButtonView(configName, false);
+                    configButton.setTag("config: " + configName);
+                    managingView.addSectionItem(configButton);
+                    configButton.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            saveGlobalData();
+                            AppConfigStorage.instance.selectConfig(ManageAppConfigActivity.this, configName);
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                    });
+                    configButton.setOnLongClickListener(new View.OnLongClickListener()
+                    {
+                        @Override
+                        public boolean onLongClick(View v)
+                        {
+                            EditAppConfigActivity.startWithResult(ManageAppConfigActivity.this, configName, false, RESULT_CODE_EDIT_CONFIG);
+                            return true;
+                        }
+                    });
+                }
+            }
+
+            // Add new custom config button
+            AppConfigClickableCell newButton = generateButtonView(AppConfigResourceHelper.getString(this, "app_config_action_add"), false);
+            newButton.setId(AppConfigResourceHelper.getIdentifier(this, "app_config_activity_manage_new_custom"));
+            managingView.addSectionItem(newButton);
+            newButton.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    ArrayList<String> configs = AppConfigStorage.instance.configList();
+                    AppConfigStringChoiceActivity.startWithResult(ManageAppConfigActivity.this, AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_title_edit_new"), AppConfigResourceHelper.getString(ManageAppConfigActivity.this, "app_config_header_choose_custom_copy"), configs, RESULT_CODE_CUSTOM_COPY_FROM);
+                }
+            });
+
+            // End section
+            managingView.endSection();
+        }
+
+        // Determine global values and categories
+        AppConfigStorageItem config = AppConfigStorage.instance.getGlobalConfig();
+        if (latestEditValues != null)
+        {
+            config = latestEditValues;
+        }
+        ArrayList<String> values = config.valueList();
+        ArrayList<String> categories = new ArrayList<>();
+        AppConfigBaseModel baseModel = null;
+        if (AppConfigStorage.instance.getConfigManager() != null)
+        {
+            baseModel = AppConfigStorage.instance.getConfigManager().getBaseModelInstance();
+            baseModel.applyCustomSettings("Global", config);
+            values = AppConfigStorage.instance.getConfigManager().getBaseModelInstance().globalValueList();
+            categories = baseModel.getGlobalCategories();
+        }
+
+        // Add global editing fields to view (if present)
+        if (values.size() > 0)
+        {
+            if (categories.size() > 0)
+            {
+                for (String category : categories)
+                {
+                    generateEditingContent(category, values, config, baseModel);
+                }
+            }
+            else
+            {
+                generateEditingContent(null, values, config, baseModel);
             }
         }
-        entries.add(AppConfigAdapterEntry.entryForConfiguration(AppConfigAdapterEntry.Section.Add, "", AppConfigResourceHelper.getString(this, "app_config_action_add"), false));
 
         // Add build information
-        entries.add(AppConfigAdapterEntry.entryForHeader(AppConfigResourceHelper.getString(this, "app_config_header_list_build_info")));
-        entries.add(AppConfigAdapterEntry.entryForBuildInfo(AppConfigResourceHelper.getString(this, "app_config_field_build"), "" + buildNr));
-        entries.add(AppConfigAdapterEntry.entryForBuildInfo(AppConfigResourceHelper.getString(this, "app_config_field_api_level"), "" + Build.VERSION.SDK_INT));
-        entries.add(AppConfigAdapterEntry.entryForFooter());
-        adapter.setEntries(entries);
+        managingView.startSection(AppConfigResourceHelper.getString(this, "app_config_header_list_build_info"));
+        managingView.addSectionItem(generateInfoView(AppConfigResourceHelper.getString(this, "app_config_field_build"), "" + buildNr));
+        managingView.addSectionItem(generateInfoView(AppConfigResourceHelper.getString(this, "app_config_field_api_level"), "" + Build.VERSION.SDK_INT));
+        managingView.endSection();
+    }
+
+
+    // ---
+    // Global configuration mutations
+    // ---
+
+    private AppConfigStorageItem fetchEditedValues()
+    {
+        AppConfigStorageItem item = new AppConfigStorageItem();
+        for (View view : fieldViews)
+        {
+            if (view.getTag() == null)
+            {
+                break;
+            }
+            if (view instanceof AppConfigEditableCell)
+            {
+                if (((AppConfigEditableCell)view).isNumberLimit())
+                {
+                    long number = 0;
+                    try
+                    {
+                        number = Long.parseLong(((AppConfigEditableCell)view).getValue());
+                    }
+                    catch (Exception ignored)
+                    {
+                    }
+                    item.putLong((String)view.getTag(), number);
+                }
+                else
+                {
+                    item.putString((String)view.getTag(), ((AppConfigEditableCell)view).getValue());
+                }
+            }
+            else if (view instanceof AppConfigSwitchCell)
+            {
+                item.putBoolean((String)view.getTag(), ((AppConfigSwitchCell)view).isChecked());
+            }
+            else if (view instanceof AppConfigClickableCell)
+            {
+                item.putString((String)view.getTag(), ((AppConfigClickableCell)view).getText().replace(view.getTag() + ": ", ""));
+            }
+        }
+        return item;
+    }
+
+    private void saveGlobalData()
+    {
+        AppConfigStorageItem item = fetchEditedValues();
+        AppConfigStorage.instance.updateGlobalConfig(ManageAppConfigActivity.this, item);
     }
 }

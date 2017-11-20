@@ -83,6 +83,10 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
         TextView tvConfigRunType = (TextView)findViewById(R.id.activity_main_config_run_type);
         TextView tvConfigAcceptAllSSL = (TextView)findViewById(R.id.activity_main_config_accept_all_ssl);
         TextView tvConfigNetworkTimeout = (TextView)findViewById(R.id.activity_main_config_network_timeout_sec);
+        TextView tvConfigConsoleUrl = (TextView)findViewById(R.id.activity_main_config_console_url);
+        TextView tvConfigConsoleEnabled = (TextView)findViewById(R.id.activity_main_config_console_enabled);
+        TextView tvConfigConsoleTimeout = (TextView)findViewById(R.id.activity_main_config_console_timeout_sec);
+        TextView tvConfigLogLevel = (TextView)findViewById(R.id.activity_main_config_log_level);
 
         // Fill with config settings
         tvConfigName.setText(getString(R.string.prefix_config_name) + " " + ExampleAppConfigManager.currentConfig().getName());
@@ -90,5 +94,9 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
         tvConfigRunType.setText(getString(R.string.prefix_config_run_type) + " " + ExampleAppConfigManager.currentConfig().getRunType().toString());
         tvConfigAcceptAllSSL.setText(getString(R.string.prefix_config_accept_all_ssl) + " " + (ExampleAppConfigManager.currentConfig().isAcceptAllSSL() ? "true" : "false"));
         tvConfigNetworkTimeout.setText(getString(R.string.prefix_config_network_timeout_sec) + " " + ExampleAppConfigManager.currentConfig().getNetworkTimeoutSec());
+        tvConfigConsoleUrl.setText(getString(R.string.prefix_config_console_url) + " " + ExampleAppConfigManager.currentConfig().getConsoleUrl());
+        tvConfigConsoleEnabled.setText(getString(R.string.prefix_config_console_enabled) + " " + (ExampleAppConfigManager.currentConfig().isConsoleEnabled() ? "true" : "false"));
+        tvConfigConsoleTimeout.setText(getString(R.string.prefix_config_console_timeout_sec) + " " + ExampleAppConfigManager.currentConfig().getConsoleTimeoutSec());
+        tvConfigLogLevel.setText(getString(R.string.prefix_config_log_level) + " " + ExampleAppConfigManager.currentConfig().getLogLevel().toString());
     }
 }

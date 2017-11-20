@@ -10,7 +10,11 @@ public enum SettingType
     ApiURL("apiUrl"),
     RunType("runType"),
     AcceptAllSSL("acceptAllSSL"),
-    NetworkTimeoutSeconds("networkTimeoutSec");
+    NetworkTimeoutSeconds("networkTimeoutSec"),
+    ConsoleURL("consoleUrl"),
+    ConsoleEnabled("consoleEnabled"),
+    ConsoleTimeoutSeconds("consoleTimeoutSec"),
+    LogLevel("logLevel");
 
     private String text;
 

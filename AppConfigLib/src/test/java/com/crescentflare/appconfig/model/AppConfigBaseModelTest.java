@@ -15,33 +15,66 @@ public class AppConfigBaseModelTest
     // ---
 
     @Test
-    public void testValueListForFields()
+    public void testConfigurationValueListForFields()
     {
         DerivedModelWithFields model = new DerivedModelWithFields();
         String[] expectedValues = { "simpleEnumField", "complexEnumField", "stringField", "longField", "intField", "boolField" };
-        String[] modelValues = model.valueList().toArray(new String[0]);
+        String[] modelValues = model.configurationValueList().toArray(new String[0]);
         Arrays.sort(expectedValues);
         Arrays.sort(modelValues);
         Assert.assertArrayEquals(expectedValues, modelValues);
     }
 
     @Test
-    public void testValueListForMethods()
+    public void testGlobalValueListForFields()
+    {
+        DerivedModelWithFields model = new DerivedModelWithFields();
+        String[] expectedValues = { "globalComplexEnumField", "globalStringField" };
+        String[] modelValues = model.globalValueList().toArray(new String[0]);
+        Arrays.sort(expectedValues);
+        Arrays.sort(modelValues);
+        Assert.assertArrayEquals(expectedValues, modelValues);
+    }
+
+    @Test
+    public void testConfigurationValueListForMethods()
     {
         DerivedModelWithMethods model = new DerivedModelWithMethods();
         String[] expectedValues = { "simpleEnumField", "complexEnumField", "stringField", "longField", "intField", "boolField" };
-        String[] modelValues = model.valueList().toArray(new String[0]);
+        String[] modelValues = model.configurationValueList().toArray(new String[0]);
         Arrays.sort(expectedValues);
         Arrays.sort(modelValues);
         Assert.assertArrayEquals(expectedValues, modelValues);
     }
 
     @Test
-    public void testGetCategories()
+    public void testGlobalValueListForMethods()
+    {
+        DerivedModelWithMethods model = new DerivedModelWithMethods();
+        String[] expectedValues = { "globalComplexEnumField", "globalStringField" };
+        String[] modelValues = model.globalValueList().toArray(new String[0]);
+        Arrays.sort(expectedValues);
+        Arrays.sort(modelValues);
+        Assert.assertArrayEquals(expectedValues, modelValues);
+    }
+
+    @Test
+    public void testGetConfigurationCategories()
     {
         DerivedModelWithFields model = new DerivedModelWithFields();
         String[] expectedValues = { "Enums", "Strings", "Numbers", "Booleans" };
-        String[] modelValues = model.getCategories().toArray(new String[0]);
+        String[] modelValues = model.getConfigurationCategories().toArray(new String[0]);
+        Arrays.sort(expectedValues);
+        Arrays.sort(modelValues);
+        Assert.assertArrayEquals(expectedValues, modelValues);
+    }
+
+    @Test
+    public void testGetGlobalCategories()
+    {
+        DerivedModelWithFields model = new DerivedModelWithFields();
+        String[] expectedValues = { "GlobalEnums", "GlobalStrings" };
+        String[] modelValues = model.getGlobalCategories().toArray(new String[0]);
         Arrays.sort(expectedValues);
         Arrays.sort(modelValues);
         Assert.assertArrayEquals(expectedValues, modelValues);
@@ -52,7 +85,7 @@ public class AppConfigBaseModelTest
     {
         DerivedModelWithMethods model = new DerivedModelWithMethods();
         String[] expectedValues = { "Enums", "Strings", "Numbers", "" };
-        String[] modelValues = model.getCategories().toArray(new String[0]);
+        String[] modelValues = model.getConfigurationCategories().toArray(new String[0]);
         Arrays.sort(expectedValues);
         Arrays.sort(modelValues);
         Assert.assertArrayEquals(expectedValues, modelValues);
@@ -204,6 +237,14 @@ public class AppConfigBaseModelTest
 
         @AppConfigModelCategory("Booleans")
         public boolean boolField = false;
+
+        @AppConfigModelGlobal
+        @AppConfigModelCategory("GlobalEnums")
+        public ComplexEnum globalComplexEnumField = ComplexEnum.Unknown;
+
+        @AppConfigModelGlobal
+        @AppConfigModelCategory("GlobalStrings")
+        public String globalStringField = "";
     }
 
 
@@ -229,6 +270,14 @@ public class AppConfigBaseModelTest
         private int intField = 0;
 
         private boolean boolField = false;
+
+        @AppConfigModelGlobal
+        @AppConfigModelCategory("GlobalEnums")
+        private ComplexEnum globalComplexEnumField = ComplexEnum.Unknown;
+
+        @AppConfigModelGlobal
+        @AppConfigModelCategory("GlobalStrings")
+        private String globalStringField = "";
 
         public SimpleEnum getSimpleEnumField()
         {
@@ -302,6 +351,26 @@ public class AppConfigBaseModelTest
         public boolean isShouldSkipValue()
         {
             return false;
+        }
+
+        public ComplexEnum getGlobalComplexEnumField()
+        {
+            return globalComplexEnumField;
+        }
+
+        public void setGlobalComplexEnumField(ComplexEnum globalComplexEnumField)
+        {
+            this.globalComplexEnumField = globalComplexEnumField;
+        }
+
+        public String getGlobalStringField()
+        {
+            return globalStringField;
+        }
+
+        public void setGlobalStringField(String globalStringField)
+        {
+            this.globalStringField = globalStringField;
         }
     }
 }

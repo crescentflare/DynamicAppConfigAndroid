@@ -37,6 +37,12 @@ public class CheckViewHelper
     // Custom matcher for checking tags
     // ---
 
+    public static Matcher<Object> withConfigTagStringMatching(String expectedText)
+    {
+        checkNotNull(expectedText);
+        return withTagStringMatching(equalTo("config: " + expectedText));
+    }
+
     public static Matcher<Object> withTagStringMatching(String expectedText)
     {
         checkNotNull(expectedText);

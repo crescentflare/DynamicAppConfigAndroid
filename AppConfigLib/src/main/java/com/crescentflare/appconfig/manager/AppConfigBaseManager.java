@@ -45,12 +45,13 @@ public class AppConfigBaseManager
     // Used internally to convert the config item to the model
     // ---
 
-    public void applyCurrentConfig(String configName, AppConfigStorageItem item)
+    public void applyCurrentConfig(String configName, AppConfigStorageItem item, AppConfigStorageItem globalItem)
     {
         currentConfig = getBaseModelInstance();
         if (item != null)
         {
             currentConfig.applyCustomSettings(configName, item);
+            currentConfig.applyCustomSettings(configName, globalItem);
         }
     }
 }
