@@ -681,6 +681,7 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
 
                 // Add plugin
                 AppConfigClickableCell pluginButton = generateButtonView(buttonText, false);
+                pluginButton.setTag("plugin: " + plugin.displayName());
                 managingView.addSectionItem(pluginButton);
                 if (plugin.canInteract())
                 {
