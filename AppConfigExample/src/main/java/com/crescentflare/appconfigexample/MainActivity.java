@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.crescentflare.appconfig.activity.ManageAppConfigActivity;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigManager;
+import com.crescentflare.appconfigexample.utility.Logger;
 
 /**
  * The example activity shows a simple screen with a message
@@ -75,11 +76,18 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
     @Override
     public void onChangedConfig()
     {
+        Logger.log("Configuration changed");
         fillContent();
     }
 
     public void fillContent()
     {
+        // Log config
+        Logger.logVerbose("apiUrl set to: " + ExampleAppConfigManager.currentConfig().getApiUrl());
+        Logger.logVerbose("runType set to: " + ExampleAppConfigManager.currentConfig().getRunType().toString());
+        Logger.logVerbose("acceptAllSsl set to: " + (ExampleAppConfigManager.currentConfig().isAcceptAllSSL() ? "true" : "false"));
+        Logger.logVerbose("networkTimeout set to: " + ExampleAppConfigManager.currentConfig().getNetworkTimeoutSec());
+
         // Fetch text views
         TextView tvConfigName = (TextView)findViewById(R.id.activity_main_config_name);
         TextView tvConfigApiUrl = (TextView)findViewById(R.id.activity_main_config_api_url);
