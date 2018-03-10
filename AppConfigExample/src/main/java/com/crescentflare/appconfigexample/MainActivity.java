@@ -3,11 +3,15 @@ package com.crescentflare.appconfigexample;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.crescentflare.appconfig.activity.ManageAppConfigActivity;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfigexample.appconfig.ExampleAppConfigManager;
+import com.crescentflare.appconfigexample.utility.Logger;
 
 /**
  * The example activity shows a simple screen with a message
@@ -72,11 +76,18 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
     @Override
     public void onChangedConfig()
     {
+        Logger.log("Configuration changed");
         fillContent();
     }
 
     public void fillContent()
     {
+        // Log config
+        Logger.logVerbose("apiUrl set to: " + ExampleAppConfigManager.currentConfig().getApiUrl());
+        Logger.logVerbose("runType set to: " + ExampleAppConfigManager.currentConfig().getRunType().toString());
+        Logger.logVerbose("acceptAllSsl set to: " + (ExampleAppConfigManager.currentConfig().isAcceptAllSSL() ? "true" : "false"));
+        Logger.logVerbose("networkTimeout set to: " + ExampleAppConfigManager.currentConfig().getNetworkTimeoutSec());
+
         // Fetch text views
         TextView tvConfigName = (TextView)findViewById(R.id.activity_main_config_name);
         TextView tvConfigApiUrl = (TextView)findViewById(R.id.activity_main_config_api_url);
@@ -98,5 +109,62 @@ public class MainActivity extends AppCompatActivity implements AppConfigStorage.
         tvConfigConsoleEnabled.setText(getString(R.string.prefix_config_console_enabled) + " " + (ExampleAppConfigManager.currentConfig().isConsoleEnabled() ? "true" : "false"));
         tvConfigConsoleTimeout.setText(getString(R.string.prefix_config_console_timeout_sec) + " " + ExampleAppConfigManager.currentConfig().getConsoleTimeoutSec());
         tvConfigLogLevel.setText(getString(R.string.prefix_config_log_level) + " " + ExampleAppConfigManager.currentConfig().getLogLevel().toString());
+
+        // Set long click listener on the action bar to show the selection menu again
+        View actionBar = findActionBar();
+        if (actionBar != null)
+        {
+            actionBar.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    ManageAppConfigActivity.startWithResult(MainActivity.this, RESULT_CODE_MANAGE_APP_CONFIG);
+                    return true;
+                }
+            });
+        }
+    }
+
+
+    // ---
+    // Helpers
+    // ---
+
+    public ViewGroup findActionBar()
+    {
+        int id = getResources().getIdentifier("action_bar", "id", "android");
+        ViewGroup actionBar = null;
+        if (id != 0)
+        {
+            actionBar = (ViewGroup)findViewById(id);
+        }
+        if (actionBar == null)
+        {
+            actionBar = findToolbar((ViewGroup)findViewById(android.R.id.content).getRootView());
+        }
+        return actionBar;
+    }
+
+    private ViewGroup findToolbar(ViewGroup viewGroup)
+    {
+        ViewGroup toolbar = null;
+        for (int i = 0, len = viewGroup.getChildCount(); i < len; i++)
+        {
+            View view = viewGroup.getChildAt(i);
+            if (view.getClass().getName().equals("android.support.v7.widget.Toolbar") || view.getClass().getName().equals("android.widget.Toolbar"))
+            {
+                toolbar = (ViewGroup)view;
+            }
+            else if (view instanceof ViewGroup)
+            {
+                toolbar = findToolbar((ViewGroup)view);
+            }
+            if (toolbar != null)
+            {
+                break;
+            }
+        }
+        return toolbar;
     }
 }

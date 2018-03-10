@@ -3,6 +3,10 @@ package com.crescentflare.appconfig.manager;
 
 import com.crescentflare.appconfig.model.AppConfigBaseModel;
 import com.crescentflare.appconfig.model.AppConfigStorageItem;
+import com.crescentflare.appconfig.plugin.AppConfigPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Library manager: base manager for app customization
@@ -11,10 +15,11 @@ import com.crescentflare.appconfig.model.AppConfigStorageItem;
 public class AppConfigBaseManager
 {
     // ---
-    // Member
+    // Members
     // ---
 
     AppConfigBaseModel currentConfig = null;
+    List<AppConfigPlugin> plugins = new ArrayList<>();
 
 
     // ---
@@ -53,5 +58,30 @@ public class AppConfigBaseManager
             currentConfig.applyCustomSettings(configName, item);
             currentConfig.applyCustomSettings(configName, globalItem);
         }
+    }
+
+
+    // --
+    // Plugins
+    // --
+
+    public List<AppConfigPlugin> getPlugins()
+    {
+        return plugins;
+    }
+
+    public void addPlugin(AppConfigPlugin plugin)
+    {
+        plugins.add(plugin);
+    }
+
+    public void setPlugins(List<AppConfigPlugin> plugins)
+    {
+        this.plugins = plugins;
+    }
+
+    public void removeAllPlugins()
+    {
+        plugins = new ArrayList<>();
     }
 }

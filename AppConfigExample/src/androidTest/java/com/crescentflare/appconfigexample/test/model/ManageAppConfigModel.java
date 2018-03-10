@@ -18,6 +18,7 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withConfigTagStringMatching;
+import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withCustomPluginTagStringMatching;
 import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withStringAdapterContent;
 import static com.crescentflare.appconfigexample.test.helper.CheckViewHelper.withTagStringMatching;
 import static com.crescentflare.appconfigexample.test.helper.PerformViewHelper.setCellSwitch;
@@ -43,6 +44,16 @@ public class ManageAppConfigModel
         TestInsecure,
         Accept,
         Production
+    }
+
+
+    // ---
+    // Plugin enum
+    // ---
+
+    public enum CustomPlugin
+    {
+        ViewLog
     }
 
 
@@ -80,6 +91,12 @@ public class ManageAppConfigModel
         return new Setting(this, setting.toString());
     }
 
+    public CustomPluginModel openCustomPlugin(CustomPlugin customPlugin)
+    {
+        onView(withTagValue(withCustomPluginTagStringMatching(customPluginToString(customPlugin)))).perform(scrollTo()).perform(click());
+        return new CustomPluginModel();
+    }
+
 
     // ---
     // Checks
@@ -100,7 +117,7 @@ public class ManageAppConfigModel
 
 
     // ---
-    // Helper
+    // Helpers
     // ---
 
     private String configurationToString(Configuration configuration)
@@ -117,6 +134,16 @@ public class ManageAppConfigModel
                 return "Acceptation server";
             case Production:
                 return "Production";
+        }
+        return "";
+    }
+
+    private String customPluginToString(CustomPlugin customPlugin)
+    {
+        switch (customPlugin)
+        {
+            case ViewLog:
+                return "View log";
         }
         return "";
     }

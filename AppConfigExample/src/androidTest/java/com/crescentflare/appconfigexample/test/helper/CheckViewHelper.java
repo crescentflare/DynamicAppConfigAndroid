@@ -43,6 +43,12 @@ public class CheckViewHelper
         return withTagStringMatching(equalTo("config: " + expectedText));
     }
 
+    public static Matcher<Object> withCustomPluginTagStringMatching(String expectedText)
+    {
+        checkNotNull(expectedText);
+        return withTagStringMatching(equalTo("plugin: " + expectedText));
+    }
+
     public static Matcher<Object> withTagStringMatching(String expectedText)
     {
         checkNotNull(expectedText);
