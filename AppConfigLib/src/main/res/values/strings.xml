@@ -11,6 +11,7 @@
     <string name="app_config_header_list_custom">Custom configurations</string>
     <string name="app_config_action_add">Add new...</string>
     <string name="app_config_header_global_prefix">Global settings</string>
+    <string name="app_config_header_list_plugins">Custom plugins</string>
     <string name="app_config_header_list_build_info">Build information</string>
     <string name="app_config_field_build">Build</string>
     <string name="app_config_field_api_level">API level</string>

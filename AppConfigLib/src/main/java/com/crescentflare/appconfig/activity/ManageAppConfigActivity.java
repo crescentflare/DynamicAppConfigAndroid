@@ -28,6 +28,7 @@ import com.crescentflare.appconfig.helper.AppConfigViewHelper;
 import com.crescentflare.appconfig.manager.AppConfigStorage;
 import com.crescentflare.appconfig.model.AppConfigBaseModel;
 import com.crescentflare.appconfig.model.AppConfigStorageItem;
+import com.crescentflare.appconfig.plugin.AppConfigPlugin;
 import com.crescentflare.appconfig.view.AppConfigCellList;
 import com.crescentflare.appconfig.view.AppConfigClickableCell;
 import com.crescentflare.appconfig.view.AppConfigEditableCell;
@@ -653,6 +654,51 @@ public class ManageAppConfigActivity extends AppCompatActivity implements AppCon
             {
                 generateEditingContent(null, values, config, baseModel);
             }
+        }
+
+        // Add plugins
+        if (AppConfigStorage.instance.getConfigManager() != null && AppConfigStorage.instance.getConfigManager().getPlugins() != null && AppConfigStorage.instance.getConfigManager().getPlugins().size() > 0)
+        {
+            // Start section
+            managingView.startSection(AppConfigResourceHelper.getString(this, "app_config_header_list_plugins"));
+
+            // Add plugins
+            for (final AppConfigPlugin plugin : AppConfigStorage.instance.getConfigManager().getPlugins())
+            {
+                // Determine text for plugin
+                String buttonText = plugin.displayName();
+                if (buttonText != null)
+                {
+                    if (plugin.displayValue() != null && plugin.displayValue().length() > 0)
+                    {
+                        buttonText += ": " + plugin.displayValue();
+                    }
+                }
+                else
+                {
+                    buttonText = plugin.displayValue();
+                }
+
+                // Add plugin
+                AppConfigClickableCell pluginButton = generateButtonView(buttonText, false);
+                pluginButton.setTag("plugin: " + plugin.displayName());
+                managingView.addSectionItem(pluginButton);
+                if (plugin.canInteract())
+                {
+                    pluginButton.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            plugin.interact(ManageAppConfigActivity.this);
+                            populateContent();
+                        }
+                    });
+                }
+            }
+
+            // End section
+            managingView.endSection();
         }
 
         // Add build information
