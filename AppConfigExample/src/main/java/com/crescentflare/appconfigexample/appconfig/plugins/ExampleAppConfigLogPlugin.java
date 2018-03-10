@@ -2,9 +2,11 @@ package com.crescentflare.appconfigexample.appconfig.plugins;
 
 
 import android.app.Activity;
+import android.content.Intent;
 
 import com.crescentflare.appconfig.plugin.AppConfigPlugin;
 import com.crescentflare.appconfigexample.utility.Logger;
+import com.crescentflare.appconfigexample.utility.ShowLogActivity;
 
 /**
  * App config: custom plugin for logging
@@ -33,6 +35,6 @@ public class ExampleAppConfigLogPlugin implements AppConfigPlugin
     @Override
     public void interact(Activity fromActivity)
     {
-        // To be implemented
+        fromActivity.startActivity(new Intent(fromActivity, ShowLogActivity.class));
     }
 }

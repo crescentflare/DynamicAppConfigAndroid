@@ -15,6 +15,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".utility.ShowLogActivity"
+            android:label="@string/show_log_title"/>
         <activity android:name="com.crescentflare.appconfig.activity.ManageAppConfigActivity"/>
         <activity android:name="com.crescentflare.appconfig.activity.EditAppConfigActivity"/>
         <activity android:name="com.crescentflare.appconfig.activity.AppConfigStringChoiceActivity"/>
