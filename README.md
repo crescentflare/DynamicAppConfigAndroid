@@ -12,12 +12,13 @@ For example: be able to make one build with a build selector that contains devel
 - Edit app configurations to customize them from within the app
 - Easily access the currently selected configuration (or last stored selection) everywhere
 - Separate global settings which work across different configurations
+- Be able to write custom plugins, like development tools, making them accessible through the selection menu
 - Dynamic configurations can be disabled to prevent them from being available on Google Play builds
 
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-    compile 'com.crescentflare.appconfig:AppConfigLib:1.0.0'
+    compile 'com.crescentflare.appconfig:AppConfigLib:1.1.0'
 
 Make sure that jcenter is added as a repository.
 
@@ -126,6 +127,42 @@ You can also define global settings in the custom model. These are globally avai
     public boolean logEnabled = false;
 
 Global settings can also be grouped using the AppConfigModelCategory annotation.
+
+
+**Custom plugins**
+
+If you're using additional developer tools (like a logging utility), it's now possible to integrate them with the app config library by making them accessible from the selection menu. Create a new class, implementing the AppConfigPlugin interface like this:
+
+    public class ExampleAppConfigPlugin implements AppConfigPlugin
+    {
+        @Override
+        public String displayName()
+        {
+            return "Example plugin"; // The name of the plugin
+        }
+
+        @Override
+        public String displayValue()
+        {
+            return null; // Optional: add a plugin value, shown next to the plugin name
+        }
+
+        @Override
+        public boolean canInteract()
+        {
+            return true; // Return true if the plugin item should be tappable
+        }
+
+        @Override
+        public void interact(Activity fromActivity)
+        {
+            fromActivity.startActivity(new Intent(fromActivity, ExamplePluginActivity.class));
+        }
+    }
+
+When the plugin is ready, it needs to be added to the app config manager, for example:
+
+    ExampleAppConfigManager.instance.addPlugin(new ExampleAppConfigPlugin());
 
 
 ### Storage
