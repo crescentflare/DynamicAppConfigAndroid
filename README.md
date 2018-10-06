@@ -6,7 +6,7 @@ A useful library to support multiple build configurations or global settings in 
 ### Integration guide
 When using gradle, the library can easily be imported into the build.gradle file of your project. Add the following dependency:
 
-compile 'com.crescentflare.appconfig:AppConfigLib:1.1.0'
+    compile 'com.crescentflare.appconfig:AppConfigLib:1.1.0'
 
 Make sure that jcenter is added as a repository.
 
